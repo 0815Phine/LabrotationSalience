@@ -41,13 +41,11 @@ Speed12_second_mean = mean(Speed12_second,2,'omitnan');
 % STD & Mean for deltaA = 14
 Speed14_initial = nan(1,3);
 for i = 1:3
-    Speed14_temp = cohort_Data16(i).intersec_initial;
-    Speed14_initial(1,i) = Speed14_temp;
+    Speed14_initial(1,i) = cohort_Data16(i).intersec_initial;
 end
 Speed14_second = nan(1,2);
 for i = 1:2
-    Speed14_temp = cohort_Data16(i).intersec_second;
-    Speed14_second(1,i) = Speed14_temp;
+    Speed14_second(1,i) = cohort_Data16(i).intersec_second;
 end
 
 Speed14_initial_std = std(Speed14_initial,0,2,'omitnan');
@@ -59,13 +57,11 @@ Speed14_second_mean = mean(Speed14_second,2,'omitnan');
 % STD & Mean for deltaA = 16
 Speed16_initial = nan(1,3);
 for i = 4:6
-    Speed16_temp = cohort_Data16(i).intersec_initial;
-    Speed16_initial(1,i-3) = Speed16_temp;
+    Speed16_initial(1,i-3) = cohort_Data16(i).intersec_initial;
 end
 Speed16_second = nan(1,3);
 for i = 4:6
-    Speed16_temp = cohort_Data16(i).intersec_second;
-    Speed16_second(1,i-3) = Speed16_temp;
+    Speed16_second(1,i-3) = cohort_Data16(i).intersec_second;
 end
 
 Speed16_initial_std = std(Speed16_initial,0,2,'omitnan');
@@ -103,44 +99,67 @@ SpeedCNO_second_mean = mean(SpeedCNO_second,2,'omitnan');
 
 %% Plot Data (deltaA comparison initial rules)
 deltaA = [12,14,16,20];
-Speed_initial_mean = [Speed12_initial_mean, Speed14_initial_mean, Speed16_initial_mean, Speed20_initial_mean];
-Speed_initial_std = [Speed12_initial_std, Speed14_initial_std, Speed16_initial_std, Speed20_initial_std];
+speed_initial_mean = [Speed12_initial_mean, Speed14_initial_mean, Speed16_initial_mean, Speed20_initial_mean];
+speed_initial_std = [Speed12_initial_std, Speed14_initial_std, Speed16_initial_std, Speed20_initial_std];
 speed_all_initial = [[12*ones(size(Speed12_initial))';14*ones(size(Speed14_initial))';16*ones(size(Speed16_initial))';20*ones(size(Speed20_initial))'],...
     [Speed12_initial';Speed14_initial';Speed16_initial';Speed20_initial']];
 
-figure; errorbar(deltaA,Speed_initial_mean,Speed_initial_std,'LineStyle','none','Marker','o')
-hold on
-plot(speed_all_initial(:,1),speed_all_initial(:,2),'LineStyle','none','Marker','.')
-xlabel('deltaA [mm]')
+figure; errorbar(deltaA,speed_initial_mean,speed_initial_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
+hold on; plot(speed_all_initial(:,1),speed_all_initial(:,2),'LineStyle','none','Marker','.')
+xlabel('contrast [mm]')
 ylabel('Learning Speed [Trials]')
-title('Learning Speed per deltaA - initial Rules')
-xlim([10 22])
+title('Learning Speed over contrast - initial Rules')
+xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
+xlim([5 22])
+
+speed_max_initial = arrayfun(@(c) max(speed_all_initial(speed_all_initial(:,1) == c, 2)), deltaA);
+text(12,speed_max_initial(1)+100,sprintf('n=%d',sum(speed_all_initial(:,1) == 12)),'HorizontalAlignment','center')
+text(14,speed_max_initial(2)+100,sprintf('n=%d',sum(speed_all_initial(:,1) == 14)),'HorizontalAlignment','center')
+text(16,speed_max_initial(3)+100,sprintf('n=%d',sum(speed_all_initial(:,1) == 16)),'HorizontalAlignment','center')
+text(20,speed_max_initial(4)+100,sprintf('n=%d',sum(speed_all_initial(:,1) == 20)),'HorizontalAlignment','center')
+ylim([200 1800])
 
 %% Plot Data (deltaA comparison ruleswitch)
-Speed_second_mean = [Speed12_second_mean, Speed14_second_mean, Speed16_second_mean, Speed20_second_mean];
-Speed_second_std = [Speed12_second_std, Speed14_second_std, Speed16_second_std, Speed20_second_std];
+speed_second_mean = [Speed12_second_mean, Speed14_second_mean, Speed16_second_mean, Speed20_second_mean];
+speed_second_std = [Speed12_second_std, Speed14_second_std, Speed16_second_std, Speed20_second_std];
 speed_all_second = [[12*ones(size(Speed12_second))';14*ones(size(Speed14_second))';16*ones(size(Speed16_second))';20*ones(size(Speed20_second))'],...
     [Speed12_second';Speed14_second';Speed16_second';Speed20_second']];
 
-figure; errorbar(deltaA,Speed_second_mean,Speed_second_std,'LineStyle','none','Marker','o')
-hold on
-plot(speed_all_second(:,1),speed_all_second(:,2),'LineStyle','none','Marker','.')
-xlabel('deltaA [mm]')
+figure; errorbar(deltaA,speed_second_mean,speed_second_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
+hold on; plot(speed_all_second(:,1),speed_all_second(:,2),'LineStyle','none','Marker','.')
+xlabel('contrast [mm]')
 ylabel('Learning Speed [Trials]')
-title('Learning Speed per deltaA - second Rules')
-xlim([10 22])
+title('Learning Speed over contrast - second Rules')
+xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
+xlim([5 22])
+
+speed_max_second = arrayfun(@(c) max(speed_all_second(speed_all_second(:,1) == c, 2)), deltaA);
+text(12,speed_max_second(1)+100,sprintf('n=%d',sum(speed_all_second(:,1) == 12)),'HorizontalAlignment','center')
+text(14,2615,sprintf('n=%d',sum(speed_all_second(:,1) == 14)),'HorizontalAlignment','center')
+text(16,speed_max_second(3)+100,sprintf('n=%d',sum(speed_all_second(:,1) == 16)),'HorizontalAlignment','center')
+text(20,speed_max_second(4)+100,sprintf('n=%d',sum(speed_all_second(:,1) == 20)),'HorizontalAlignment','center')
+ylim([800 3000])
+
+%% Plot Data (deltaA comparison - Boxchart)
+figure; boxchart(speed_all_initial(:,1), speed_all_initial(:,2), 'BoxFaceColor', 'k')
+hold on; boxchart(speed_all_second(:,1), speed_all_second(:,2))
+xlabel('contrast [mm]')
+ylabel('Learning Speed [Trials]')
+title('Learning Speed over contrast')
+xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
+xlim([5 22])
+legend('initial rules','second rules')
 
 %% Plot Data (native-saline-CNO)
 x = [1,2,3,5,6,7];
-Speed_mean = [Speed20_initial_mean, SpeedSa_initial_mean, SpeedCNO_initial_mean, Speed20_second_mean, SpeedSa_second_mean, SpeedCNO_second_mean];
-Speed_std = [Speed20_initial_std, SpeedSa_initial_std, SpeedCNO_initial_std, Speed20_second_std, SpeedSa_second_std, SpeedCNO_second_std];
+speed_mean = [Speed20_initial_mean, SpeedSa_initial_mean, SpeedCNO_initial_mean, Speed20_second_mean, SpeedSa_second_mean, SpeedCNO_second_mean];
+speed_std = [Speed20_initial_std, SpeedSa_initial_std, SpeedCNO_initial_std, Speed20_second_std, SpeedSa_second_std, SpeedCNO_second_std];
 speed_all = [[1*ones(size(Speed20_initial))';2*ones(size(SpeedSa_initial))';3*ones(size(SpeedCNO_initial))';...
     5*ones(size(Speed20_second))';6*ones(size(SpeedSa_second))';7*ones(size(SpeedCNO_second))'],...
     [Speed20_initial';SpeedSa_initial';SpeedCNO_initial';Speed20_second';SpeedSa_second';SpeedCNO_second']];
 
-figure; errorbar(x,Speed_mean,Speed_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
-hold on
-plot(speed_all(:,1),speed_all(:,2),'LineStyle','none','Marker','.')
+figure; errorbar(x,speed_mean,speed_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
+hold on; plot(speed_all(:,1),speed_all(:,2),'LineStyle','none','Marker','.')
 xticks([1:3,5:7]); xticklabels({'native', 'saline', 'CNO','native', 'saline', 'CNO'});
 ax = gca;
 ax.XAxis.TickLabelRotation = 30;

@@ -1,4 +1,5 @@
 clearvars
+close all
 
 startPath = 'Z:\Filippo\Animals';
 try
@@ -104,7 +105,7 @@ speed_initial_std = [Speed12_initial_std, Speed14_initial_std, Speed16_initial_s
 speed_all_initial = [[12*ones(size(Speed12_initial))';14*ones(size(Speed14_initial))';16*ones(size(Speed16_initial))';20*ones(size(Speed20_initial))'],...
     [Speed12_initial';Speed14_initial';Speed16_initial';Speed20_initial']];
 
-figure; errorbar(deltaA,speed_initial_mean,speed_initial_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
+f1 = figure; errorbar(deltaA,speed_initial_mean,speed_initial_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
 hold on; plot(speed_all_initial(:,1),speed_all_initial(:,2),'LineStyle','none','Marker','.')
 xlabel('contrast [mm]')
 ylabel('Trials to expert')
@@ -125,7 +126,7 @@ speed_second_std = [Speed12_second_std, Speed14_second_std, Speed16_second_std, 
 speed_all_second = [[12*ones(size(Speed12_second))';14*ones(size(Speed14_second))';16*ones(size(Speed16_second))';20*ones(size(Speed20_second))'],...
     [Speed12_second';Speed14_second';Speed16_second';Speed20_second']];
 
-figure; errorbar(deltaA,speed_second_mean,speed_second_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
+f2 = figure; errorbar(deltaA,speed_second_mean,speed_second_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
 hold on; plot(speed_all_second(:,1),speed_all_second(:,2),'LineStyle','none','Marker','.')
 xlabel('contrast [mm]')
 ylabel('Trials to expert')
@@ -141,7 +142,7 @@ text(20,speed_max_second(4)+100,sprintf('n=%d',sum(speed_all_second(:,1) == 20))
 ylim([800 3000])
 
 %% Plot Data (deltaA comparison - Boxchart)
-figure; boxchart(speed_all_initial(:,1), speed_all_initial(:,2), 'BoxFaceColor', 'k')
+f3 = figure; boxchart(speed_all_initial(:,1), speed_all_initial(:,2), 'BoxFaceColor', 'k')
 hold on; boxchart(speed_all_second(:,1), speed_all_second(:,2))
 xlabel('contrast [mm]')
 ylabel('Trials to expert')
@@ -158,7 +159,7 @@ speed_all = [[1*ones(size(Speed20_initial))';2*ones(size(SpeedSa_initial))';3*on
     5*ones(size(Speed20_second))';6*ones(size(SpeedSa_second))';7*ones(size(SpeedCNO_second))'],...
     [Speed20_initial';SpeedSa_initial';SpeedCNO_initial';Speed20_second';SpeedSa_second';SpeedCNO_second']];
 
-figure; errorbar(x,speed_mean,speed_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
+f4 = figure; errorbar(x,speed_mean,speed_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
 hold on; plot(speed_all(:,1),speed_all(:,2),'LineStyle','none','Marker','.')
 xticks([1:3,5:7]); xticklabels({'native', 'saline', 'CNO','native', 'saline', 'CNO'});
 ax = gca;
@@ -223,7 +224,7 @@ speed_all_saline = [[2*ones(size(SpeedSa_initial))';6*ones(size(SpeedSa_second))
 speed_all_CNO = [[3*ones(size(SpeedCNO_initial))';7*ones(size(SpeedCNO_second))'],...
     [SpeedCNO_initial';SpeedCNO_second']];
 
-figure; boxchart(speed_all_native(:,1), speed_all_native(:,2), 'BoxFaceColor', '#0072BD')
+f5 = figure; boxchart(speed_all_native(:,1), speed_all_native(:,2), 'BoxFaceColor', '#0072BD')
 hold on; boxchart(speed_all_saline(:,1), speed_all_saline(:,2))
 boxchart(speed_all_CNO(:,1), speed_all_CNO(:,2), 'BoxFaceColor', 'k')
 %scatter(speed_all(:,1),speed_all(:,2),'Marker','.','MarkerEdgeColor','k','Jitter','on')
@@ -231,7 +232,6 @@ ylabel('Trials to expert'); ylim([200 1900])
 xticks([]), xticklabels({})
 text(2, 100, 'initial Rules', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold')
 text(6, 100, 'second Rules', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold')
-title('')
 
 plot([1 3],[speed_max(3)+150 speed_max(3)+150], 'k')
 if p0 < 0.05 && p0 > 0.01
@@ -280,3 +280,8 @@ end
 legend('native','saline','CNO','Location','southeast'); legend('boxoff')
 
 %% Save all Plots
+savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures','LearningSpeed_initial.fig'))
+savefig(f2, fullfile('Z:\Josephine\Master-Thesis_Figures','LearningSpeed_second.fig'))
+savefig(f3, fullfile('Z:\Josephine\Master-Thesis_Figures','LearningSpeed_Boxcharts.fig'))
+savefig(f4, fullfile('Z:\Josephine\Master-Thesis_Figures','LearningSpeed_CNO.fig'))
+savefig(f5, fullfile('Z:\Josephine\Master-Thesis_Figures','LearningSpeed_CNO_Boxcharts.fig'))

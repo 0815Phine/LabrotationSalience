@@ -55,7 +55,7 @@ p = nan(2, 6);
 p(1,1) = anova1(whiskerpluck_table(:,3),whiskerpluck_table(:,4),'off');
 p(2,1) = ranksum(whiskerpluck_table(whiskerpluck_table(:,4)==1,3),whiskerpluck_table(whiskerpluck_table(:,4)==2,3));
 if p(1,1) < 0.05 && p(2,1) < 0.05
-    fprintf('The d prime is significantly different before and after the whiskerpluck, p =  %.3f\n', p(1,1));
+    fprintf('The d prime is significantly different before and after the whiskerpluck, p =  %.3f\n', p(2,1));
 end
 
 contrast = [20 16 14 12 8];
@@ -68,41 +68,65 @@ for i = contrast
     p(1,ii) = anova1(whiskerpluck_table(groupFlag == 2,3),whiskerpluck_table(groupFlag == 2,4),'off');
     p(2,ii) = ranksum(whiskerpluck_table(prepluckFlag,3),whiskerpluck_table(postpluckFlag,3));
     if p(1,ii) < 0.05 && p(2,ii) < 0.05
-        fprintf('The d prime is significantly different before and after the whiskerpluck for a contrast of %dmm, p =  %.3f\n', i, p(1,ii))
+        fprintf('The d prime is significantly different before and after the whiskerpluck for a contrast of %dmm, p =  %.3f\n', i, p(2,ii))
     end
 end
 
 %% Plot Data
 % all whiskerplucks combined before and after
-figure; boxchart(whiskerpluck_table(:,4), whiskerpluck_table(:,3),'BoxFaceColor', 'k','Notch','on','MarkerColor','k')
-hold on; xticks([1,2]); xticklabels({'pre whiskerpluck','post whiskerpluck'})
+f1 = figure; boxchart(whiskerpluck_table(:,4), whiskerpluck_table(:,3),'BoxFaceColor', '#D95319','Notch','on','MarkerColor','k')
+hold on; scatter(whiskerpluck_table(:,4),whiskerpluck_table(:,3),'Marker','.','Jitter','on')
+xticks([1,2]); xticklabels({'pre whiskerpluck','post whiskerpluck'})
 ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
+yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
 xlim([0 3])
 ylim([-0.5 4.5])
 
-if p(1) < 0.05
-   plot([1 2],[4 4], 'k')
+dprime_max = arrayfun(@(c) max(whiskerpluck_table(whiskerpluck_table(:,1) == c, 3)), contrast);
+
+if p(2,1) < 0.05
+   plot([1 2],[max(dprime_max)+0.2 max(dprime_max)+0.2], 'k')
 end
 
-if p(1) < 0.05 && p(1) > 0.01
-   text(1.5, 4.1,'*','HorizontalAlignment','center')
-elseif p(1) < 0.01 && p(1) > 0.001
-    text(1.5, 4.1,'**','HorizontalAlignment','center')
-elseif p(1) < 0.001
-    text(1.5, 4.1,'***','HorizontalAlignment','center')
+if p(2,1) <= 0.05 && p(2,1) > 0.01
+   text(1.5, max(dprime_max)+0.3,'*','HorizontalAlignment','center')
+elseif p(2,1) <= 0.01 && p(2,1) > 0.001
+    text(1.5, max(dprime_max)+0.3,'**','HorizontalAlignment','center')
+elseif p(2,1) <= 0.001
+    text(1.5, max(dprime_max)+0.3,'***','HorizontalAlignment','center')
 end
+
+savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures\Whiskerpluck','whiskerpluck_all.fig'))
 
 % for individual contrast
 for i= contrast
     flag = (whiskerpluck_table(1:120,1) == i)+(whiskerpluck_table(1:120,2)<2);
-    figure; boxchart(whiskerpluck_table(flag == 2,4), whiskerpluck_table(flag == 2,3),'BoxFaceColor', 'k','MarkerColor','k')
+    loopf = figure; boxchart(whiskerpluck_table(flag == 2,4), whiskerpluck_table(flag == 2,3),'BoxFaceColor', 'k','MarkerColor','k')
     hold on; xticks([1,2]); xticklabels({'pre whiskerpluck','post whiskerpluck'})
     ylabel('d prime')
     title(sprintf('Performance for contrast: %dmm',i))
-    ylim([-0.5 4])
+    ylim([-0.5 max(whiskerpluck_table(whiskerpluck_table(:,1) == i, 3))+0.5])
     yline([1.65, 1.65],'Color','black','LineStyle','--')
+    yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
+
+    ii = [false, ismember(contrast, i)];
+    iii = [ismember(contrast, i)];
+    if p(2,ii) < 0.05
+        plot([1 2],[dprime_max(iii)+0.2 dprime_max(iii)+0.2], 'k')
+    end
+    
+    
+    if p(2,ii) <= 0.05 && p(2,ii) > 0.01
+        text(1.5, dprime_max(iii)+0.3,'*','HorizontalAlignment','center')
+    elseif p(2,ii) <= 0.01 && p(2,ii) > 0.001
+        text(1.5, dprime_max(iii)+0.3,'**','HorizontalAlignment','center')
+    elseif p(2,ii) <= 0.001
+        text(1.5, dprime_max(iii)+0.3,'***','HorizontalAlignment','center')
+    end
+
+    savefig(loopf, fullfile('Z:\Josephine\Master-Thesis_Figures\Whiskerpluck',sprintf('whiskerpluck_%d.fig',i)))
 end
 
 %% Cohort 18 (partial Pluck)
-cohort_Data18 = animalData.cohort(18).animal;
+

@@ -173,44 +173,44 @@ ylim([150, 2000])
 speed_max = arrayfun(@(c) max(speed_all(speed_all(:,1) == c, 2)), x);
 
 plot([1 3],[speed_max(3)+150 speed_max(3)+150], 'k')
-if p0 < 0.05 && p0 > 0.01
+if p0 <= 0.05 && p0 > 0.01
     text(2, speed_max(3)+200,'*','HorizontalAlignment','center')
-elseif p0 < 0.01 && p0 > 0.001
+elseif p0 <= 0.01 && p0 > 0.001
     text(2, speed_max(3)+200,'**','HorizontalAlignment','center')
-elseif p0 < 0.001
+elseif p0 <= 0.001
     text(2, speed_max(3)+200,'***','HorizontalAlignment','center')
 else
     text(2, speed_max(3)+200,'ns','HorizontalAlignment','center')
 end
 
 plot([2 3],[speed_max(3)+50 speed_max(3)+50], 'k')
-if p1 < 0.05 && p1 > 0.01
+if p1 <= 0.05 && p1 > 0.01
     text(2.5, speed_max(3)+100,'*','HorizontalAlignment','center')
-elseif p1 < 0.01 && p1 > 0.001
+elseif p1 <= 0.01 && p1 > 0.001
     text(2.5, speed_max(3)+100,'**','HorizontalAlignment','center')
-elseif p1 < 0.001
+elseif p1 <= 0.001
     text(2.5, speed_max(3)+100,'***','HorizontalAlignment','center')
 else
     text(2.5, speed_max(3)+100,'ns','HorizontalAlignment','center')
 end
 
 plot([5 7],[speed_max(6)+150 speed_max(6)+150], 'k')
-if p2 < 0.05 && p2 > 0.01
+if p2 <= 0.05 && p2 > 0.01
     text(6, speed_max(6)+200,'*','HorizontalAlignment','center')
-elseif p2 < 0.01 && p2 > 0.001
+elseif p2 <= 0.01 && p2 > 0.001
     text(6, speed_max(6)+200,'**','HorizontalAlignment','center')
-elseif p2 < 0.001
+elseif p2 <= 0.001
     text(6, speed_max(6)+200,'***','HorizontalAlignment','center')
 else
     text(6, speed_max(6)+200,'ns','HorizontalAlignment','center')
 end
 
 plot([6 7],[speed_max(6)+50 speed_max(6)+50], 'k')
-if p3 < 0.05 && p3 > 0.01
+if p3 <= 0.05 && p3 > 0.01
     text(6.5, speed_max(6)+100,'*','HorizontalAlignment','center')
-elseif p3 < 0.01 && p3 > 0.001
+elseif p3 <= 0.01 && p3 > 0.001
     text(6.5, speed_max(6)+100,'**','HorizontalAlignment','center')
-elseif p3 < 0.001
+elseif p3 <= 0.001
     text(6.5, speed_max(6)+100,'***','HorizontalAlignment','center')
 else
     text(6.5, speed_max(6)+100,'ns','HorizontalAlignment','center')
@@ -234,44 +234,44 @@ text(2, 100, 'initial Rules', 'HorizontalAlignment', 'center', 'VerticalAlignmen
 text(6, 100, 'second Rules', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold')
 
 plot([1 3],[speed_max(3)+150 speed_max(3)+150], 'k')
-if p0 < 0.05 && p0 > 0.01
+if p0 <= 0.05 && p0 > 0.01
     text(2, speed_max(3)+200,'*','HorizontalAlignment','center')
-elseif p0 < 0.01 && p0 > 0.001
+elseif p0 <= 0.01 && p0 > 0.001
     text(2, speed_max(3)+200,'**','HorizontalAlignment','center')
-elseif p0 < 0.001
+elseif p0 <= 0.001
     text(2, speed_max(3)+200,'***','HorizontalAlignment','center')
 else
     text(2, speed_max(3)+200,'ns','HorizontalAlignment','center')
 end
 
 plot([2 3],[speed_max(3)+50 speed_max(3)+50], 'k')
-if p1 < 0.05 && p1 > 0.01
+if p1 <= 0.05 && p1 > 0.01
     text(2.5, speed_max(3)+100,'*','HorizontalAlignment','center')
-elseif p1 < 0.01 && p1 > 0.001
+elseif p1 <= 0.01 && p1 > 0.001
     text(2.5, speed_max(3)+100,'**','HorizontalAlignment','center')
-elseif p1 < 0.001
+elseif p1 <= 0.001
     text(2.5, speed_max(3)+100,'***','HorizontalAlignment','center')
 else
     text(2.5, speed_max(3)+100,'ns','HorizontalAlignment','center')
 end
 
 plot([5 7],[speed_max(6)+150 speed_max(6)+150], 'k')
-if p2 < 0.05 && p2 > 0.01
+if p2 <= 0.05 && p2 > 0.01
     text(6, speed_max(6)+200,'*','HorizontalAlignment','center')
-elseif p2 < 0.01 && p2 > 0.001
+elseif p2 <= 0.01 && p2 > 0.001
     text(6, speed_max(6)+200,'**','HorizontalAlignment','center')
-elseif p2 < 0.001
+elseif p2 <= 0.001
     text(6, speed_max(6)+200,'***','HorizontalAlignment','center')
 else
     text(6, speed_max(6)+200,'ns','HorizontalAlignment','center')
 end
 
 plot([6 7],[speed_max(6)+50 speed_max(6)+50], 'k')
-if p3 < 0.05 && p3 > 0.01
+if p3 <= 0.05 && p3 > 0.01
     text(6.5, speed_max(6)+100,'*','HorizontalAlignment','center')
-elseif p3 < 0.01 && p3 > 0.001
+elseif p3 <= 0.01 && p3 > 0.001
     text(6.5, speed_max(6)+100,'**','HorizontalAlignment','center')
-elseif p3 < 0.001
+elseif p3 <= 0.001
     text(6.5, speed_max(6)+100,'***','HorizontalAlignment','center')
 else
     text(6.5, speed_max(6)+100,'ns','HorizontalAlignment','center')
@@ -280,8 +280,8 @@ end
 legend('native','saline','CNO','Location','southeast'); legend('boxoff')
 
 %% Save all Plots
-savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures','LearningSpeed_initial.fig'))
-savefig(f2, fullfile('Z:\Josephine\Master-Thesis_Figures','LearningSpeed_second.fig'))
-savefig(f3, fullfile('Z:\Josephine\Master-Thesis_Figures','LearningSpeed_Boxcharts.fig'))
-savefig(f4, fullfile('Z:\Josephine\Master-Thesis_Figures','LearningSpeed_CNO.fig'))
-savefig(f5, fullfile('Z:\Josephine\Master-Thesis_Figures','LearningSpeed_CNO_Boxcharts.fig'))
+savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_initial.fig'))
+savefig(f2, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_second.fig'))
+savefig(f3, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_Boxcharts.fig'))
+savefig(f4, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_CNO.fig'))
+savefig(f5, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_CNO_Boxcharts.fig'))

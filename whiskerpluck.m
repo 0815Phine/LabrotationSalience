@@ -73,7 +73,7 @@ for i = contrast
 end
 
 %% Plot Data
-% all whiskerplucks combined before and after
+% all whiskerplucks combined before and after (3 sessions)
 f1 = figure; boxchart(whiskerpluck_table(:,4), whiskerpluck_table(:,3),'BoxFaceColor', '#D95319','Notch','on','MarkerColor','k')
 hold on; scatter(whiskerpluck_table(:,4),whiskerpluck_table(:,3),'Marker','.','Jitter','on')
 xticks([1,2]); xticklabels({'pre whiskerpluck','post whiskerpluck'})
@@ -98,6 +98,31 @@ elseif p(2,1) <= 0.001
 end
 
 savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures\Whiskerpluck','whiskerpluck_all.fig'))
+
+% all whiskerplucks combined before and after (1 session)
+sesFlag = (whiskerpluck_table(1:120,2)<2);
+f2 = figure; boxchart(whiskerpluck_table(sesFlag == 1,4), whiskerpluck_table(sesFlag == 1,3),'BoxFaceColor', '#D95319','Notch','on','MarkerColor','k')
+hold on; scatter(whiskerpluck_table(sesFlag == 1,4),whiskerpluck_table(sesFlag == 1,3),'Marker','.','Jitter','on')
+xticks([1,2]); xticklabels({'pre whiskerpluck','post whiskerpluck'})
+ylabel('d prime')
+yline([1.65, 1.65],'Color','black','LineStyle','--')
+yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
+xlim([0 3])
+ylim([-0.5 4.5])
+
+if p(2,1) < 0.05
+   plot([1 2],[max(dprime_max)+0.2 max(dprime_max)+0.2], 'k')
+end
+
+if p(2,1) <= 0.05 && p(2,1) > 0.01
+   text(1.5, max(dprime_max)+0.3,'*','HorizontalAlignment','center')
+elseif p(2,1) <= 0.01 && p(2,1) > 0.001
+    text(1.5, max(dprime_max)+0.3,'**','HorizontalAlignment','center')
+elseif p(2,1) <= 0.001
+    text(1.5, max(dprime_max)+0.3,'***','HorizontalAlignment','center')
+end
+
+savefig(f2, fullfile('Z:\Josephine\Master-Thesis_Figures\Whiskerpluck','whiskerpluck_all_first.fig'))
 
 % for individual contrast
 for i= contrast

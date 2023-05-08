@@ -152,6 +152,3 @@ for i= contrast
 
     savefig(loopf, fullfile('Z:\Josephine\Master-Thesis_Figures\Whiskerpluck',sprintf('whiskerpluck_%d.fig',i)))
 end
-
-%% Cohort 18 (partial Pluck)
-

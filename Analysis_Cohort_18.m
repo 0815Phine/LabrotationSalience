@@ -262,6 +262,7 @@ end
 legend('saline','CNO','Location','southwest'); legend('boxoff')
 savefig(f2, fullfile('Z:\Josephine\Master-Thesis_Figures\Cohort_18','break.fig'))
 
+% check if "memory deficit" results from bodyweight increase
 
 %% no Backlights
 % table for last two sessions with lights
@@ -363,5 +364,3 @@ else
 end
 
 savefig(f3, fullfile('Z:\Josephine\Master-Thesis_Figures\Cohort_18','backlights.fig'))
-
-%% partial Pluck

@@ -12,32 +12,34 @@ end
 
 % load Cohort Data
 cohort_Data18 = animalData.cohort(18).animal;
-cohort_Table = create_cohort_table (cohort_Data18);
+cohort_Data19 = animalData.cohort(19).animal;
+cohort_Table18 = create_cohort_table (cohort_Data18);
+cohort_Table19 = create_cohort_table (cohort_Data19);
 
 %% Retrieval-Test
 stages = string({'P3.2','P3.4'});
 mice = string({'#69','#71','#73','#75'});
-stageflag = string(cohort_Table(:,2)) == stages;
-mouseflag = string(cohort_Table(:,1)) == mice;
+stageflag = string(cohort_Table18(:,2)) == stages;
+mouseflag = string(cohort_Table18(:,1)) == mice;
 
 retrieval_table_sa = [];
 for mf = mouseflag
     for sf = stageflag
         trueflag = find(mf & sf, 4, 'last');
-        retrieval_table_sa = [retrieval_table_sa;cohort_Table(trueflag,:)];
+        retrieval_table_sa = [retrieval_table_sa;cohort_Table18(trueflag,:)];
     end
 end
 
 stages = string({'P3.3','P3.5','P3.7'});
 mice = string({'#69','#71','#73','#75'});
-stageflag = string(cohort_Table(:,2)) == stages;
-mouseflag = string(cohort_Table(:,1)) == mice;
+stageflag = string(cohort_Table18(:,2)) == stages;
+mouseflag = string(cohort_Table18(:,1)) == mice;
 
 retrieval_table_cno = [];
 for mf = mouseflag
     for sf = stageflag
         trueflag = find(mf & sf, 4, 'first');
-        retrieval_table_cno = [retrieval_table_cno;cohort_Table(trueflag,:)];
+        retrieval_table_cno = [retrieval_table_cno;cohort_Table18(trueflag,:)];
     end
 end
 
@@ -121,14 +123,14 @@ savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures\Cohort_18','retrieval_t
 break_table_before = [];
 stages = string({'P3.3','P3.4','P3.5'});
 mice = string({'#69','#70','#72','#73','#74','#75','#76'});
-stageflag = string(cohort_Table(:,2)) == stages;
-mouseflag = string(cohort_Table(:,1)) == mice;
+stageflag = string(cohort_Table18(:,2)) == stages;
+mouseflag = string(cohort_Table18(:,1)) == mice;
 
 break_table_before = [];
 for mf = mouseflag
     for sf = stageflag
         trueflag = find(mf & sf, 4, 'last');
-        break_table_before = [break_table_before ;cohort_Table(trueflag,:)];
+        break_table_before = [break_table_before ;cohort_Table18(trueflag,:)];
     end
 end
 
@@ -168,14 +170,14 @@ end
 break_table_after = [];
 stages = string({'P3.4','P3.5','P3.6'});
 mice = string({'#69','#70','#72','#73','#74','#75','#76'});
-stageflag = string(cohort_Table(:,2)) == stages;
-mouseflag = string(cohort_Table(:,1)) == mice;
+stageflag = string(cohort_Table18(:,2)) == stages;
+mouseflag = string(cohort_Table18(:,1)) == mice;
 
 break_table_after = [];
 for mf = mouseflag
     for sf = stageflag
         trueflag = find(mf & sf, 1, 'first');
-        break_table_after = [break_table_after ;cohort_Table(trueflag,:)];
+        break_table_after = [break_table_after ;cohort_Table18(trueflag,:)];
     end
 end
 
@@ -262,21 +264,94 @@ end
 legend('saline','CNO','Location','southwest'); legend('boxoff')
 savefig(f2, fullfile('Z:\Josephine\Master-Thesis_Figures\Cohort_18','break.fig'))
 
-% check if "memory deficit" results from bodyweight increase
+% check if "memory deficit" results from NGFs or GFs
+% + plot bodyweight
+event_table = NaN(8,7);
+for i = 1:length(cohort_Data18)
+    if i == 3
+        continue
+    elseif i == 5
+        isbefore = contains(cohort_Data18(i).session_names,'ruleswitch_CNO');
+        sesFlagbe = find(isbefore, 1, 'last');
+        isafter = contains(cohort_Data18(i).session_names,'retrain');
+        sesFlagaf = find(isafter, 1, 'first');
+
+        eventsbe = cohort_Data18(i).Lick_Events{sesFlagbe};
+        GoFail = (sum(strcmp('Go Failure (LP1)',eventsbe))+sum(strcmp('Go Failure (LP2)',eventsbe)))/numel(eventsbe);
+        NoGoFail = (sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsbe))+...
+            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsbe)))/numel(eventsbe);
+
+        event_table(i,1) = GoFail; event_table(i,2) = NoGoFail;
+
+        eventsaf = cohort_Data18(i).Lick_Events{sesFlagaf};
+        GoFail = (sum(strcmp('Go Failure (LP1)',eventsaf))+sum(strcmp('Go Failure (LP2)',eventsaf)))/numel(eventsaf);
+        NoGoFail = (sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsaf))+...
+            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsaf)))/numel(eventsaf);
+
+        event_table(i,3) = GoFail; event_table(i,4) = NoGoFail;
+        event_table(i,5) = cohort_Data18(i).bodyweight(sesFlagbe,2); event_table(i,6) = cohort_Data18(i).bodyweight(sesFlagaf,2);
+    else
+        isbefore = contains(cohort_Data18(i).session_names,'ruleswitch_ses');
+        sesFlagbe = find(isbefore, 1, 'last');
+        isafter = contains(cohort_Data18(i).session_names,'retrain');
+        sesFlagaf = find(isafter, 1, 'first');
+
+        eventsbe = cohort_Data18(i).Lick_Events{sesFlagbe};
+        GoFail = (sum(strcmp('Go Failure (LP1)',eventsbe))+sum(strcmp('Go Failure (LP2)',eventsbe)))/numel(eventsbe);
+        NoGoFail = (sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsbe))+...
+            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsbe)))/numel(eventsbe);
+        
+        event_table(i,1) = GoFail; event_table(i,2) = NoGoFail;
+
+        eventsaf = cohort_Data18(i).Lick_Events{sesFlagaf};
+        GoFail = (sum(strcmp('Go Failure (LP1)',eventsaf))+sum(strcmp('Go Failure (LP2)',eventsaf)))/numel(eventsaf);
+        NoGoFail = (sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsaf))+...
+            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsaf)))/numel(eventsaf);
+
+        event_table(i,3) = GoFail; event_table(i,4) = NoGoFail;
+        event_table(i,5) = cohort_Data18(i).bodyweight(sesFlagbe,2); event_table(i,6) = cohort_Data18(i).bodyweight(sesFlagaf,2);
+    end
+end
+event_table(:,7) = [1,2,1,2,1,2,1,2]';
+
+figure, hold on
+scatter(1,event_table(event_table(:,7)==1,1), 'MarkerEdgeColor', '#D95319', 'Jitter', 'on')
+scatter(1,event_table(event_table(:,7)==1,2), 'MarkerEdgeColor', '#D95319', 'Jitter', 'on', 'Marker', 'square')
+scatter(1,event_table(event_table(:,7)==2,1), 'MarkerEdgeColor', 'k', 'Jitter', 'on')
+scatter(1,event_table(event_table(:,7)==2,2), 'MarkerEdgeColor', 'k', 'Jitter', 'on', 'Marker', 'square')
+
+scatter(1,event_table(event_table(:,7)==1,3), 'MarkerEdgeColor', '#D95319', 'MarkerFaceColor', '#D95319', 'Jitter', 'on')
+scatter(1,event_table(event_table(:,7)==1,4), 'MarkerEdgeColor', '#D95319', 'MarkerFaceColor', '#D95319', 'Jitter', 'on', 'Marker', 'square')
+scatter(1,event_table(event_table(:,7)==2,3), 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'k', 'Jitter', 'on')
+scatter(1,event_table(event_table(:,7)==2,4), 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'k', 'Jitter', 'on', 'Marker', 'square')
+
+%xticks([])
+ylabel('Counts [%]')
+title({'Distribution of Failures', 'before and after Break'})
+legend('Go Failure','','','','No-Go Failure'); legend('boxoff')
+
+figure, hold on
+scatter(1,event_table(event_table(:,7)==1,5), 'MarkerEdgeColor', '#D95319', 'Jitter', 'on')
+scatter(1,event_table(event_table(:,7)==2,5), 'MarkerEdgeColor', 'k', 'Jitter', 'on')
+scatter(1,event_table(event_table(:,7)==1,6), 'MarkerEdgeColor', '#D95319', 'MarkerFaceColor', '#D95319', 'Jitter', 'on')
+scatter(1,event_table(event_table(:,7)==2,6), 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'k', 'Jitter', 'on')
+
+title('Bodyweight before and after Break')
+ylabel('Bodyweight [%]')
 
 %% no Backlights
 % table for last two sessions with lights
 backlights_table_before = [];
 stages = string({'P3.4','P3.5','P3.6'});
 mice = string({'#69','#72','#73','#74','#75','#76'});
-stageflag = string(cohort_Table(:,2)) == stages;
-mouseflag = string(cohort_Table(:,1)) == mice;
+stageflag = string(cohort_Table18(:,2)) == stages;
+mouseflag = string(cohort_Table18(:,1)) == mice;
 
 backlights_table_before = [];
 for mf = mouseflag
     for sf = stageflag
         trueflag = find(mf & sf, 2, 'last');
-        backlights_table_before = [backlights_table_before ;cohort_Table(trueflag,:)];
+        backlights_table_before = [backlights_table_before ;cohort_Table18(trueflag,:)];
     end
 end
 
@@ -306,14 +381,14 @@ backlights_table_before(1:length(backlights_table_before),5) = {1};
 backlights_table_after = [];
 stages = string({'P3.5','P3.6','P3.7'});
 mice = string({'#69','#72','#73','#74','#75','#76'});
-stageflag = string(cohort_Table(:,2)) == stages;
-mouseflag = string(cohort_Table(:,1)) == mice;
+stageflag = string(cohort_Table18(:,2)) == stages;
+mouseflag = string(cohort_Table18(:,1)) == mice;
 
 backlights_table_after = [];
 for mf = mouseflag
     for sf = stageflag
         trueflag = find(mf & sf, 2, 'first');
-        backlights_table_after = [backlights_table_after ;cohort_Table(trueflag,:)];
+        backlights_table_after = [backlights_table_after ;cohort_Table18(trueflag,:)];
     end
 end
 

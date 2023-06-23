@@ -44,12 +44,13 @@ trials_dprime_mean = mean(alldvalues,2,'omitnan'); trials_dprime_mean(isnan(tria
 trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
 curve1 = trials_dprime_mean + trials_dprime_std;
 curve2 = trials_dprime_mean - trials_dprime_std;
-plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'), hold on
-plot(201:length(curve2)+200, curve2,'Color','#4d4d4d');
-fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],'FaceColor','#e6e6e6', 'EdgeColor','none');
+% plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'); hold on
+% plot(201:length(curve2)+200, curve2,'Color','#4d4d4d');
+fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],...
+    'FaceColor','#e6e6e6', 'EdgeColor','none','FaceAlpha',0.5); hold on
 plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color', 'k')
 
-xlabel('trials')
+xlabel('Trials')
 ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
@@ -92,9 +93,10 @@ for ii = cohortFlag
         trials_dprime_std = std(alldvalues14,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
         curve1 = trials_dprime_mean + trials_dprime_std;
         curve2 = trials_dprime_mean - trials_dprime_std;
-        plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'), hold on
-        plot(201:length(curve2)+200, curve2,'Color','#4d4d4d');
-        fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],'FaceColor','#e6e6e6', 'EdgeColor','none');
+        % plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'); hold on
+        % plot(201:length(curve2)+200, curve2,'Color','#4d4d4d')
+        fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],...
+            'FaceColor','#e6e6e6', 'EdgeColor','none','FaceAlpha',0.5); hold on
         plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color', 'k')
 
         xlabel('trials')
@@ -108,9 +110,10 @@ for ii = cohortFlag
         trials_dprime_std = std(alldvalues16,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
         curve1 = trials_dprime_mean + trials_dprime_std;
         curve2 = trials_dprime_mean - trials_dprime_std;
-        plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'), hold on
-        plot(201:length(curve2)+200, curve2,'Color','#4d4d4d');
-        fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],'FaceColor','#e6e6e6', 'EdgeColor','none');
+        % plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'); hold on
+        % plot(201:length(curve2)+200, curve2,'Color','#4d4d4d')
+        fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],...
+            'FaceColor','#e6e6e6', 'EdgeColor','none','FaceAlpha',0.5); hold on
         plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color', 'k')
     else
         figure
@@ -118,13 +121,14 @@ for ii = cohortFlag
         trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
         curve1 = trials_dprime_mean + trials_dprime_std;
         curve2 = trials_dprime_mean - trials_dprime_std;
-        plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'), hold on
-        plot(201:length(curve2)+200, curve2,'Color','#4d4d4d');
-        fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],'FaceColor','#e6e6e6', 'EdgeColor','none');
+        % plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'); hold on
+        % plot(201:length(curve2)+200, curve2,'Color','#4d4d4d')
+        fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],...
+            'FaceColor','#e6e6e6', 'EdgeColor','none','FaceAlpha',0.5); hold on
         plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color', 'k')
     end
 
-    xlabel('trials')
+    xlabel('Trials')
     ylabel('d prime')
     yline([1.65, 1.65],'Color','black','LineStyle','--')
     yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
@@ -152,6 +156,7 @@ for ii = cohortFlag
             continue
         else
             dvalues(trialFlag-199:end) = [];
+            dvalues(1:200) = [];
         end
 
         trialFlag = sum(cohortData(i).trial_num(1:sesFlag_first-1));
@@ -177,11 +182,12 @@ for ii = cohortFlag
         trials_dprime_std = std(alldvalues14,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
         curve1 = trials_dprime_mean + trials_dprime_std;
         curve2 = trials_dprime_mean - trials_dprime_std;
-        plot(1:length(curve1), curve1,'Color','#4d4d4d'), hold on
-        plot(1:length(curve2), curve2,'Color','#4d4d4d');
-        fill([1:length(curve1) fliplr(1:length(curve1))], [curve1' fliplr(curve2')],[0 0 .85],'FaceColor','#e6e6e6', 'EdgeColor','none');
-        plot((1:length(trials_dprime_mean)),trials_dprime_mean, 'Color', 'k')
-        xlabel('trials')
+        % plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'); hold on
+        % plot(201:length(curve2)+200, curve2,'Color','#4d4d4d')
+        fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],...
+            'FaceColor','#e6e6e6', 'EdgeColor','none','FaceAlpha',0.5); hold on
+        plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color', 'k')
+        xlabel('Trials')
         ylabel('d prime')
         yline([1.65, 1.65],'Color','black','LineStyle','--')
         yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
@@ -192,24 +198,25 @@ for ii = cohortFlag
         trials_dprime_std = std(alldvalues16,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
         curve1 = trials_dprime_mean + trials_dprime_std;
         curve2 = trials_dprime_mean - trials_dprime_std;
-        plot(1:length(curve1), curve1,'Color','#4d4d4d'), hold on
-        plot(1:length(curve2), curve2,'Color','#4d4d4d');
-        fill([1:length(curve1) fliplr(1:length(curve1))], [curve1' fliplr(curve2')],[0 0 .85],'FaceColor','#e6e6e6', 'EdgeColor','none');
-        plot((1:length(trials_dprime_mean)),trials_dprime_mean, 'Color', 'k')
+        % plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'); hold on
+        % plot(201:length(curve2)+200, curve2,'Color','#4d4d4d')
+        fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],...
+            'FaceColor','#e6e6e6', 'EdgeColor','none','FaceAlpha',0.5); hold on
+        plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color', 'k')
     else 
         figure
         trials_dprime_mean = mean(alldvalues,2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
         trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
         curve1 = trials_dprime_mean + trials_dprime_std;
         curve2 = trials_dprime_mean - trials_dprime_std;
-
-        plot(1:length(curve1), curve1,'Color','#4d4d4d'), hold on
-        plot(1:length(curve2), curve2,'Color','#4d4d4d');
-        fill([1:length(curve1) fliplr(1:length(curve1))], [curve1' fliplr(curve2')],[0 0 .85],'FaceColor','#e6e6e6', 'EdgeColor','none');
-        plot((1:length(trials_dprime_mean)),trials_dprime_mean, 'Color', 'k')
+        % plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'); hold on
+        % plot(201:length(curve2)+200, curve2,'Color','#4d4d4d')
+        fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],...
+            'FaceColor','#e6e6e6', 'EdgeColor','none','FaceAlpha',0.5); hold on
+        plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color', 'k')
     end
 
-    xlabel('trials')
+    xlabel('Trials')
     ylabel('d prime')
     yline([1.65, 1.65],'Color','black','LineStyle','--')
     yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
@@ -222,7 +229,6 @@ figure
 alldvalues = NaN(969,8);
 cohortFlag = [18, 19];
 mice = string({'#70','#72','#74','#76','#79','#80','#83','#84'});
-
 for ii = cohortFlag
     cohortData = animalData.cohort(ii).animal;
     for i = 1:length(cohortData)
@@ -258,19 +264,67 @@ trials_dprime_mean = mean(alldvalues,2,'omitnan'); trials_dprime_mean(isnan(tria
 trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
 curve1 = trials_dprime_mean + trials_dprime_std;
 curve2 = trials_dprime_mean - trials_dprime_std;
-plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'), hold on
-plot(201:length(curve2)+200, curve2,'Color','#4d4d4d');
-fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],'FaceColor','#e6e6e6', 'EdgeColor','none');
-plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color', 'k')
+fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],...
+    'FaceColor',[1 0.8 0.8],'EdgeColor','none','FaceAlpha',0.5); hold on
+% plot(201:length(curve1)+200, curve1,'Color','#4d4d4d')
+% plot(201:length(curve2)+200, curve2,'Color','#4d4d4d')
+plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color', [1 0.32 0.30])
 
-xlabel('trials')
+% get d_values for Saline animals
+alldvalues = NaN(1124,6);
+mice = string({'#69','#71','#73','#75','#78','#82'});
+for ii = cohortFlag
+    cohortData = animalData.cohort(ii).animal;
+    for i = 1:length(cohortData)
+        mouseflag = string(cohortData(i).animalName) == mice;
+        if sum(mouseflag) == 1
+            isP2 = contains(cohortData(i).session_names,'P3.2');
+            sesFlag_first = find(isP2, 1, 'first');
+            sesFlag_last = find(isP2, 1, 'last');
+            trialFlag = sum(cellfun(@numel, cohortData(i).Lick_Events(sesFlag_first:sesFlag_last)));
+
+            dvalues = cohortData(i).dvalues_trials;
+            dvalues(trialFlag+1:end) = [];
+            dvalues(1:200) = [];
+
+            %xvalues = (201:length(dvalues)+200)';
+            %plot(xvalues, dvalues, 'Color', '#bfbfbf'), hold on
+            
+            if i == 7
+                alldvalues(1:length(dvalues),i-1) = dvalues;
+            elseif ii == 18
+                alldvalues(1:length(dvalues),i) = dvalues;
+            elseif i == 1
+                alldvalues(1:length(dvalues),i+1) = dvalues;
+            elseif i == 5
+                alldvalues(1:length(dvalues),i-1) = dvalues;
+            end
+        continue
+        end
+    end
+end
+
+trials_dprime_mean = mean(alldvalues,2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
+trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
+curve1 = trials_dprime_mean + trials_dprime_std;
+curve2 = trials_dprime_mean - trials_dprime_std;
+fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],...
+    'FaceColor',[0.8 0.92 1],'EdgeColor','none','FaceAlpha',0.5)
+% plot(201:length(curve1)+200, curve1,'Color','#4d4d4d')
+% plot(201:length(curve2)+200, curve2,'Color','#4d4d4d');
+plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color', [0 0.45 0.74])
+
+xlabel('Trials')
 ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
 title ('Population Performance over trials (initial rules; contrast 20mm; CNO)')
+legend('','CNO','','saline'); legend('boxoff'); legend('location','best')
 
+% second rules
 figure
 alldvalues = NaN(1980,8);
+mice = string({'#70','#72','#74','#76','#79','#80','#83','#84'});
 for ii = cohortFlag
     cohortData = animalData.cohort(ii).animal;
     for i = 1:length(cohortData)
@@ -288,16 +342,17 @@ for ii = cohortFlag
                 continue
             else
                 dvalues(trialFlag-199:end) = [];
+                dvalues(1:200) = [];
             end
 
-            if ii == 18
-                alldvalues(1:length(dvalues),i) = dvalues;
-            elseif i == 2
+            if i == 7
                 alldvalues(1:length(dvalues),i-1) = dvalues;
-            elseif i == 6
-                alldvalues(1:length(dvalues),i-1) = dvalues;
-            else
+            elseif ii == 18
                 alldvalues(1:length(dvalues),i) = dvalues;
+            elseif i == 1
+                alldvalues(1:length(dvalues),i+1) = dvalues;
+            elseif i == 5
+                alldvalues(1:length(dvalues),i-1) = dvalues;
             end
         continue
         end
@@ -308,14 +363,62 @@ trials_dprime_mean = mean(alldvalues,2,'omitnan'); trials_dprime_mean(isnan(tria
 trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
 curve1 = trials_dprime_mean + trials_dprime_std;
 curve2 = trials_dprime_mean - trials_dprime_std;
+% plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'); hold on
+% plot(201:length(curve2)+200, curve2,'Color','#4d4d4d')
+fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],...
+    'FaceColor',[1 0.8 0.8], 'EdgeColor','none','FaceAlpha',0.5); hold on
+plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color',  [1 0.32 0.30])
 
-plot(1:length(curve1), curve1,'Color','#4d4d4d'), hold on
-plot(1:length(curve2), curve2,'Color','#4d4d4d');
-fill([1:length(curve1) fliplr(1:length(curve1))], [curve1' fliplr(curve2')],[0 0 .85],'FaceColor','#e6e6e6', 'EdgeColor','none');
-plot((1:length(trials_dprime_mean)),trials_dprime_mean, 'Color', 'k')
-xlabel('trials')
+% Saline animals
+alldvalues = NaN(2164,6);
+mice = string({'#69','#71','#73','#75','#78','#82'});
+for ii = cohortFlag
+    cohortData = animalData.cohort(ii).animal;
+    for i = 1:length(cohortData)
+        mouseflag = string(cohortData(i).animalName) == mice;
+        if sum(mouseflag) == 1
+            isP3 = contains(cohortData(i).session_names,'P3.4');
+            sesFlag_first = find(isP3, 1, 'first');
+            sesFlag_last = find(isP3, 1, 'last');
+
+            dvalues = cohortData(i).dvalues_trials;
+            trialFlag = sum(cellfun(@numel, cohortData(i).Lick_Events(1:sesFlag_first-1)));
+            dvalues(1:trialFlag) = [];
+            trialFlag = sum(cellfun(@numel, cohortData(i).Lick_Events(sesFlag_first:sesFlag_last)));
+            if trialFlag == 0
+                continue
+            else
+                dvalues(trialFlag-199:end) = [];
+                dvalues(1:200) = [];
+            end
+
+            if i == 7
+                alldvalues(1:length(dvalues),i-1) = dvalues;
+            elseif ii == 18
+                alldvalues(1:length(dvalues),i) = dvalues;
+            elseif i == 1
+                alldvalues(1:length(dvalues),i+1) = dvalues;
+            elseif i == 5
+                alldvalues(1:length(dvalues),i-1) = dvalues;
+            end
+        continue
+        end
+    end
+end
+
+trials_dprime_mean = mean(alldvalues,2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
+trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
+curve1 = trials_dprime_mean + trials_dprime_std;
+curve2 = trials_dprime_mean - trials_dprime_std;
+% plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'); hold on
+% plot(201:length(curve2)+200, curve2,'Color','#4d4d4d')
+fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],...
+    'FaceColor',[0.8 0.92 1], 'EdgeColor','none','FaceAlpha',0.5); hold on
+plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color',  [0 0.45 0.74])
+
+xlabel('Trials')
 ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
 title ('Population Performance over trials (second rules; contrast 20mm; CNO)')
-
+legend('','CNO','','saline'); legend('boxoff'); legend('location','best')

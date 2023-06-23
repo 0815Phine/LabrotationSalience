@@ -47,5 +47,5 @@ ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
 
-savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures','Performance_over_contrast.fig'))
+%savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures','Performance_over_contrast.fig'))
 

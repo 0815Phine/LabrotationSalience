@@ -108,10 +108,14 @@ SpeedCNO_control_second_std = std(SpeedCNO_control_second,0,2,'omitnan');
 SpeedCNO_control_second_mean = mean(SpeedCNO_control_second,2,'omitnan');
 
 %% Some Statistics
-[p0,h0] = ranksum(Speed20_initial,SpeedCNO_initial);
-[p1,h1] = ranksum(SpeedSa_initial,SpeedCNO_initial);
-[p2,h2] = ranksum(Speed20_second,SpeedCNO_second);
-[p3,h3] = ranksum(SpeedSa_second,SpeedCNO_second);
+[p0,h0] = ranksum(Speed20_initial,SpeedCNO_initial,'tail','left');
+[p1,h1] = ranksum(SpeedSa_initial,SpeedCNO_initial,'tail','left');
+[p2,h2] = ranksum(Speed20_second,SpeedCNO_second,'tail','left');
+[p3,h3] = ranksum(SpeedSa_second,SpeedCNO_second,'tail','left');
+[p4,h4] = ranksum(Speed20_initial,SpeedSa_initial);
+[p5,h5] = ranksum(Speed20_second,SpeedSa_second);
+[p6,h6] = ranksum(SpeedCNO_initial,SpeedCNO_control_initial);
+[p7,h7] = ranksum(SpeedCNO_second,SpeedCNO_control_second,'tail','right');
 
 %% Plot Data (deltaA comparison initial rules)
 deltaA = [12,14,16,20];
@@ -162,8 +166,8 @@ hold on; boxchart(speed_all_second(:,1), speed_all_second(:,2))
 xlabel('contrast [mm]')
 ylabel('Trials to expert')
 title('Learning Speed over contrast')
-xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
-xlim([5 22])
+%xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
+xlim([10 22])
 legend('initial Rules','second Rules','Location','southwest')
 
 %% Plot Data (native-saline-CNO)
@@ -241,61 +245,61 @@ speed_all_CNO = [[3*ones(size(SpeedCNO_initial))';8*ones(size(SpeedCNO_second))'
 speed_all_CNO_control = [[4*ones(size(SpeedCNO_control_initial))';9*ones(size(SpeedCNO_control_second))'],...
     [SpeedCNO_control_initial';SpeedCNO_control_second']];
 
-f5 = figure; boxchart(speed_all_native(:,1), speed_all_native(:,2), 'BoxFaceColor', '#0072BD')
-hold on; boxchart(speed_all_saline(:,1), speed_all_saline(:,2))
-boxchart(speed_all_CNO(:,1), speed_all_CNO(:,2), 'BoxFaceColor', 'k')
-boxchart(speed_all_CNO_control(:,1), speed_all_CNO_control(:,2), 'BoxFaceColor', '#77AC30')
+f5 = figure; boxchart(speed_all_native(:,1), speed_all_native(:,2), 'BoxFaceColor', 'k', 'MarkerColor', 'k')
+hold on; boxchart(speed_all_saline(:,1), speed_all_saline(:,2), 'BoxFaceColor', '#0072BD')
+boxchart(speed_all_CNO(:,1), speed_all_CNO(:,2), 'BoxFaceColor', [1.0000, 0.3216, 0.3020])
+%boxchart(speed_all_CNO_control(:,1), speed_all_CNO_control(:,2), 'BoxFaceColor', '#77AC30')
 %scatter(speed_all(:,1),speed_all(:,2),'Marker','.','MarkerEdgeColor','k','Jitter','on')
-ylabel('Trials to expert'); ylim([200 1900])
-xticks([]), xticklabels({})
-text(2.5, 100, 'initial Rules', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold')
-text(7.5, 100, 'second Rules', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold')
+ylabel('Trials to Expert'); ylim([200 1900])
+xticks([2 7]), xticklabels({'initial rules', 'second rules'})
+% text(2, 100, 'initial rules', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold')
+% text(7, 100, 'second rules', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold')
 
-plot([1 3],[speed_max(3)+150 speed_max(3)+150], 'k')
+plot([1 3],[speed_max(3)*1.15 speed_max(3)*1.15], 'k')
 if p0 <= 0.05 && p0 > 0.01
-    text(2, speed_max(3)+200,'*','HorizontalAlignment','center')
+    text(2, speed_max(3)*1.2,'*','HorizontalAlignment','center')
 elseif p0 <= 0.01 && p0 > 0.001
-    text(2, speed_max(3)+200,'**','HorizontalAlignment','center')
+    text(2, speed_max(3)*1.2,'**','HorizontalAlignment','center')
 elseif p0 <= 0.001
-    text(2, speed_max(3)+200,'***','HorizontalAlignment','center')
+    text(2, speed_max(3)*1.2,'***','HorizontalAlignment','center')
 else
-    text(2, speed_max(3)+200,'ns','HorizontalAlignment','center')
+    text(2, speed_max(3)*1.2,'ns','HorizontalAlignment','center')
 end
 
-plot([2 3],[speed_max(3)+50 speed_max(3)+50], 'k')
+plot([2 3],[speed_max(3)*1.05 speed_max(3)*1.05], 'k')
 if p1 <= 0.05 && p1 > 0.01
-    text(2.5, speed_max(3)+100,'*','HorizontalAlignment','center')
+    text(2.5, speed_max(3)*1.1,'*','HorizontalAlignment','center')
 elseif p1 <= 0.01 && p1 > 0.001
-    text(2.5, speed_max(3)+100,'**','HorizontalAlignment','center')
+    text(2.5, speed_max(3)*1.1,'**','HorizontalAlignment','center')
 elseif p1 <= 0.001
-    text(2.5, speed_max(3)+100,'***','HorizontalAlignment','center')
+    text(2.5, speed_max(3)*1.1,'***','HorizontalAlignment','center')
 else
-    text(2.5, speed_max(3)+100,'ns','HorizontalAlignment','center')
+    text(2.5, speed_max(3)*1.1,'ns','HorizontalAlignment','center')
 end
 
-plot([6 8],[speed_max(6)+150 speed_max(6)+150], 'k')
+plot([6 8],[speed_max(6)*1.05+100 speed_max(6)*1.05+100], 'k')
 if p2 <= 0.05 && p2 > 0.01
-    text(7, speed_max(6)+200,'*','HorizontalAlignment','center')
+    text(7, speed_max(6)*1.1+100,'*','HorizontalAlignment','center','VerticalAlignment','top')
 elseif p2 <= 0.01 && p2 > 0.001
-    text(7, speed_max(6)+200,'**','HorizontalAlignment','center')
+    text(7, speed_max(6)*1.1+100,'**','HorizontalAlignment','center','VerticalAlignment','top')
 elseif p2 <= 0.001
-    text(7, speed_max(6)+200,'***','HorizontalAlignment','center')
+    text(7, speed_max(6)*1.1+100,'***','HorizontalAlignment','center','VerticalAlignment','top')
 else
-    text(7, speed_max(6)+200,'ns','HorizontalAlignment','center')
+    text(7, speed_max(6)*1.1+100,'ns','HorizontalAlignment','center')
 end
 
-plot([7 8],[speed_max(6)+50 speed_max(6)+50], 'k')
+plot([7 8],[speed_max(6)*1.05 speed_max(6)*1.05], 'k')
 if p3 <= 0.05 && p3 > 0.01
-    text(7.5, speed_max(6)+100,'*','HorizontalAlignment','center')
+    text(7.5, speed_max(6)*1.1,'*','HorizontalAlignment','center','VerticalAlignment','top')
 elseif p3 <= 0.01 && p3 > 0.001
-    text(7.5, speed_max(6)+100,'**','HorizontalAlignment','center')
+    text(7.5, speed_max(6)*1.1,'**','HorizontalAlignment','center','VerticalAlignment','top')
 elseif p3 <= 0.001
-    text(7.5, speed_max(6)+100,'***','HorizontalAlignment','center')
+    text(7.5, speed_max(6)*1.1,'***','HorizontalAlignment','center','VerticalAlignment','top')
 else
-    text(7.5, speed_max(6)+100,'ns','HorizontalAlignment','center')
+    text(7.5, speed_max(6)*1.1,'ns','HorizontalAlignment','center')
 end
 
-legend('native','saline','CNO','mCherry','Location','southeast'); legend('boxoff')
+legend('native','saline','CNO','Location','southeast'); legend('boxoff')
 
 %% Save all Plots
 %savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_initial.fig'))

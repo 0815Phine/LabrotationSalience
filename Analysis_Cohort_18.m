@@ -77,8 +77,7 @@ injected_flag = [retrieval_table{:,5}]' == [2,4];
 
 % plot data
 f1 = figure;
-color_map = [lines(2);zeros(1,3)];
-color_map(1,:) = []; j=1;
+color_map = [[0 0.4470 0.7410]; [1 0.3216 0.3020]]; j=1;
 for i = [1, 2; 3, 4]
     injflag = any([retrieval_table{:,5}]' == i',2);
     boxchart([retrieval_table{injflag,5}]', [retrieval_table{injflag,4}]','BoxFaceColor',color_map(j,:))
@@ -89,7 +88,7 @@ for i = [1, 2; 3, 4]
 end
 ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
-xticks([1.5, 3.5]), xticklabels({'inital rules', 'second rules'}), ylim([0.5 4.5])
+xticks([1.5, 3.5]), xticklabels({'inital rules', 'second rules'}), ylim([0.5 4.5]), xlim([0.5 4.5])
 
 max_initial = max(max([retrieval_table{ctrl_flag(:,1),4}]',[retrieval_table{injected_flag(:,1),4}]'));
 plot([1 2],[max_initial+0.1 max_initial+0.1], 'k')
@@ -105,18 +104,18 @@ end
 
 max_second = max(max([retrieval_table{ctrl_flag(:,2),4}]',[retrieval_table{injected_flag(:,2),4}]'));
 plot([3 4],[max_second+0.1 max_second+0.1], 'k')
-if p0 <= 0.05 && p0 > 0.01
+if p1 <= 0.05 && p1 > 0.01
     text(3.5, max_second+0.2,'*','HorizontalAlignment','center')
-elseif p0 <= 0.01 && p0 > 0.001
+elseif p1 <= 0.01 && p1 > 0.001
     text(3.5, max_second+0.2,'**','HorizontalAlignment','center')
-elseif p0 <= 0.001
+elseif p1 <= 0.001
     text(3.5, max_second+0.2,'***','HorizontalAlignment','center')
 else
     text(3.5, max_second+0.2,'ns','HorizontalAlignment','center')
 end
 
 legend('saline','CNO','Location','southeast'); legend('boxoff')
-savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures\Cohort_18','retrieval_test.fig'))
+%savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures\Cohort_18','retrieval_test.fig'))
 
 %% Memory-Test (Break ad libitum)
 % table for last four sessions before break
@@ -262,7 +261,7 @@ else
 end
 
 legend('saline','CNO','Location','southwest'); legend('boxoff')
-savefig(f2, fullfile('Z:\Josephine\Master-Thesis_Figures\Cohort_18','break.fig'))
+%savefig(f2, fullfile('Z:\Josephine\Master-Thesis_Figures\Cohort_18','break.fig'))
 
 % check if "memory deficit" results from NGFs or GFs
 % + plot bodyweight
@@ -277,16 +276,26 @@ for i = 1:length(cohort_Data18)
         sesFlagaf = find(isafter, 1, 'first');
 
         eventsbe = cohort_Data18(i).Lick_Events{sesFlagbe};
-        GoFail = (sum(strcmp('Go Failure (LP1)',eventsbe))+sum(strcmp('Go Failure (LP2)',eventsbe)))/numel(eventsbe);
-        NoGoFail = (sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsbe))+...
-            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsbe)))/numel(eventsbe);
+        Go_tot = (sum(strcmp('Go Failure (LP1)',eventsbe))+sum(strcmp('Go Failure (LP2)',eventsbe))...
+            +sum(strcmp('Go Success (LP1)',eventsbe))+sum(strcmp('Go Success (LP2)',eventsbe)));
+        GoFail = ((sum(strcmp('Go Failure (LP1)',eventsbe))+sum(strcmp('Go Failure (LP2)',eventsbe)))/Go_tot)*100;
+        NoGo_tot = (sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsbe))+...
+            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsbe))+...
+            sum(strcmp('No-Go Success (LP1)',eventsbe))+sum(strcmp('No-Go Success (LP2)',eventsbe)));
+        NoGoFail = ((sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsbe))+...
+            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsbe)))/NoGo_tot)*100;
 
         event_table(i,1) = GoFail; event_table(i,2) = NoGoFail;
 
         eventsaf = cohort_Data18(i).Lick_Events{sesFlagaf};
-        GoFail = (sum(strcmp('Go Failure (LP1)',eventsaf))+sum(strcmp('Go Failure (LP2)',eventsaf)))/numel(eventsaf);
-        NoGoFail = (sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsaf))+...
-            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsaf)))/numel(eventsaf);
+        Go_tot = (sum(strcmp('Go Failure (LP1)',eventsaf))+sum(strcmp('Go Failure (LP2)',eventsaf))...
+            +sum(strcmp('Go Success (LP1)',eventsaf))+sum(strcmp('Go Success (LP2)',eventsaf)));
+        GoFail = ((sum(strcmp('Go Failure (LP1)',eventsaf))+sum(strcmp('Go Failure (LP2)',eventsaf)))/Go_tot)*100;
+        NoGo_tot = (sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsaf))+...
+            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsaf))+...
+            sum(strcmp('No-Go Success (LP1)',eventsaf))+sum(strcmp('No-Go Success (LP2)',eventsaf)));
+        NoGoFail = ((sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsaf))+...
+            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsaf)))/NoGo_tot)*100;
 
         event_table(i,3) = GoFail; event_table(i,4) = NoGoFail;
         event_table(i,5) = cohort_Data18(i).bodyweight(sesFlagbe,2); event_table(i,6) = cohort_Data18(i).bodyweight(sesFlagaf,2);
@@ -297,16 +306,26 @@ for i = 1:length(cohort_Data18)
         sesFlagaf = find(isafter, 1, 'first');
 
         eventsbe = cohort_Data18(i).Lick_Events{sesFlagbe};
-        GoFail = (sum(strcmp('Go Failure (LP1)',eventsbe))+sum(strcmp('Go Failure (LP2)',eventsbe)))/numel(eventsbe);
-        NoGoFail = (sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsbe))+...
-            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsbe)))/numel(eventsbe);
+        Go_tot = (sum(strcmp('Go Failure (LP1)',eventsbe))+sum(strcmp('Go Failure (LP2)',eventsbe))...
+            +sum(strcmp('Go Success (LP1)',eventsbe))+sum(strcmp('Go Success (LP2)',eventsbe)));
+        GoFail = ((sum(strcmp('Go Failure (LP1)',eventsbe))+sum(strcmp('Go Failure (LP2)',eventsbe)))/Go_tot)*100;
+        NoGo_tot = (sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsbe))+...
+            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsbe))+...
+            sum(strcmp('No-Go Success (LP1)',eventsbe))+sum(strcmp('No-Go Success (LP2)',eventsbe)));
+        NoGoFail = ((sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsbe))+...
+            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsbe)))/NoGo_tot)*100;
         
         event_table(i,1) = GoFail; event_table(i,2) = NoGoFail;
 
         eventsaf = cohort_Data18(i).Lick_Events{sesFlagaf};
-        GoFail = (sum(strcmp('Go Failure (LP1)',eventsaf))+sum(strcmp('Go Failure (LP2)',eventsaf)))/numel(eventsaf);
-        NoGoFail = (sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsaf))+...
-            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsaf)))/numel(eventsaf);
+        Go_tot = (sum(strcmp('Go Failure (LP1)',eventsaf))+sum(strcmp('Go Failure (LP2)',eventsaf))...
+            +sum(strcmp('Go Success (LP1)',eventsaf))+sum(strcmp('Go Success (LP2)',eventsaf)));
+        GoFail = ((sum(strcmp('Go Failure (LP1)',eventsaf))+sum(strcmp('Go Failure (LP2)',eventsaf)))/Go_tot)*100;
+        NoGo_tot = (sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsaf))+...
+            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsaf))+...
+            sum(strcmp('No-Go Success (LP1)',eventsaf))+sum(strcmp('No-Go Success (LP2)',eventsaf)));
+        NoGoFail = ((sum(strcmp('No-Go Failure (LP1), Noise triggered',eventsaf))+...
+            sum(strcmp('No-Go Failure (LP2), Noise triggered',eventsaf)))/NoGo_tot)*100;
 
         event_table(i,3) = GoFail; event_table(i,4) = NoGoFail;
         event_table(i,5) = cohort_Data18(i).bodyweight(sesFlagbe,2); event_table(i,6) = cohort_Data18(i).bodyweight(sesFlagaf,2);
@@ -314,30 +333,82 @@ for i = 1:length(cohort_Data18)
 end
 event_table(:,7) = [1,2,1,2,1,2,1,2]';
 
+% figure, hold on
+% scatter(1,event_table(event_table(:,7)==1,1), 'MarkerEdgeColor', '#D95319', 'Jitter', 'on')
+% scatter(1,event_table(event_table(:,7)==1,2), 'MarkerEdgeColor', '#D95319', 'Jitter', 'on', 'Marker', 'square')
+% scatter(1,event_table(event_table(:,7)==2,1), 'MarkerEdgeColor', 'k', 'Jitter', 'on')
+% scatter(1,event_table(event_table(:,7)==2,2), 'MarkerEdgeColor', 'k', 'Jitter', 'on', 'Marker', 'square')
+% 
+% scatter(1,event_table(event_table(:,7)==1,3), 'MarkerEdgeColor', '#D95319', 'MarkerFaceColor', '#D95319', 'Jitter', 'on')
+% scatter(1,event_table(event_table(:,7)==1,4), 'MarkerEdgeColor', '#D95319', 'MarkerFaceColor', '#D95319', 'Jitter', 'on', 'Marker', 'square')
+% scatter(1,event_table(event_table(:,7)==2,3), 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'k', 'Jitter', 'on')
+% scatter(1,event_table(event_table(:,7)==2,4), 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'k', 'Jitter', 'on', 'Marker', 'square')
+% 
+% xticks([])
+% ylabel('Counts [%]')
+% title({'Distribution of Failures', 'before and after Break'})
+% legend('Go Failure','','','','No-Go Failure'); legend('boxoff')
+% 
+% figure, hold on
+% scatter(1,event_table(event_table(:,7)==1,5), 'MarkerEdgeColor', '#D95319', 'Jitter', 'on')
+% scatter(1,event_table(event_table(:,7)==2,5), 'MarkerEdgeColor', 'k', 'Jitter', 'on')
+% scatter(1,event_table(event_table(:,7)==1,6), 'MarkerEdgeColor', '#D95319', 'MarkerFaceColor', '#D95319', 'Jitter', 'on')
+% scatter(1,event_table(event_table(:,7)==2,6), 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'k', 'Jitter', 'on')
+% 
+% title('Bodyweight before and after Break')
+% ylabel('Bodyweight [%]')
+
 figure, hold on
-scatter(1,event_table(event_table(:,7)==1,1), 'MarkerEdgeColor', '#D95319', 'Jitter', 'on')
-scatter(1,event_table(event_table(:,7)==1,2), 'MarkerEdgeColor', '#D95319', 'Jitter', 'on', 'Marker', 'square')
-scatter(1,event_table(event_table(:,7)==2,1), 'MarkerEdgeColor', 'k', 'Jitter', 'on')
-scatter(1,event_table(event_table(:,7)==2,2), 'MarkerEdgeColor', 'k', 'Jitter', 'on', 'Marker', 'square')
-
-scatter(1,event_table(event_table(:,7)==1,3), 'MarkerEdgeColor', '#D95319', 'MarkerFaceColor', '#D95319', 'Jitter', 'on')
-scatter(1,event_table(event_table(:,7)==1,4), 'MarkerEdgeColor', '#D95319', 'MarkerFaceColor', '#D95319', 'Jitter', 'on', 'Marker', 'square')
-scatter(1,event_table(event_table(:,7)==2,3), 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'k', 'Jitter', 'on')
-scatter(1,event_table(event_table(:,7)==2,4), 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'k', 'Jitter', 'on', 'Marker', 'square')
-
-%xticks([])
-ylabel('Counts [%]')
-title({'Distribution of Failures', 'before and after Break'})
-legend('Go Failure','','','','No-Go Failure'); legend('boxoff')
+for i = 1:8
+    if event_table(i,7)==1
+        plot([1,2],[event_table(i,1),event_table(i,3)],'Color','#D95319','LineStyle','--')
+    elseif event_table(i,7)==2
+        plot([1,2],[event_table(i,1),event_table(i,3)],'Color','k','LineStyle','--')
+    end
+end
+plot([1,2],[mean(event_table(:,1),'omitnan'),mean(event_table(:,3),'omitnan')],'LineWidth',2,'Color','k')
+ylabel('Proportion')
+title({'Distribution of Go-Failures', 'before and after Break'})
+xticks([1, 2]), xticklabels({'before', 'after'})
+legend('Saline','CNO'); legend('boxoff')
 
 figure, hold on
-scatter(1,event_table(event_table(:,7)==1,5), 'MarkerEdgeColor', '#D95319', 'Jitter', 'on')
-scatter(1,event_table(event_table(:,7)==2,5), 'MarkerEdgeColor', 'k', 'Jitter', 'on')
-scatter(1,event_table(event_table(:,7)==1,6), 'MarkerEdgeColor', '#D95319', 'MarkerFaceColor', '#D95319', 'Jitter', 'on')
-scatter(1,event_table(event_table(:,7)==2,6), 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'k', 'Jitter', 'on')
+for i = 1:8
+    if event_table(i,7)==1
+        plot([1,2],[event_table(i,2),event_table(i,4)],'Color','#D95319','LineStyle','--')
+    elseif event_table(i,7)==2
+        plot([1,2],[event_table(i,2),event_table(i,4)],'Color','k','LineStyle','--')
+    end
+end
+plot([1,2],[mean(event_table(:,2),'omitnan'),mean(event_table(:,4),'omitnan')],'LineWidth',2,'Color','k')
+ylabel('Proportion')
+title({'Distribution of NoGo-Failures', 'before and after Break'})
+xticks([1, 2]), xticklabels({'before', 'after'})
+legend('Saline','CNO'); legend('boxoff')
 
+figure, hold on
+for i = 1:8
+    if event_table(i,7)==1
+        plot([1,2],[event_table(i,5),event_table(i,6)],'Color','#D95319','LineStyle','--')
+    elseif event_table(i,7)==2
+        plot([1,2],[event_table(i,5),event_table(i,6)],'Color','k','LineStyle','--')
+    end
+end
+plot([1,2],[mean(event_table(:,5),'omitnan'),mean(event_table(:,6),'omitnan')],'LineWidth',2,'Color','k')
 title('Bodyweight before and after Break')
 ylabel('Bodyweight [%]')
+xticks([1, 2]), xticklabels({'before', 'after'})
+legend('Saline','CNO'); legend('boxoff')
+
+bwdif = diff(event_table(:,[5,6]),1,2)./sum(event_table(:,[5,6]),2);
+%clownshow = flip(color_map,1);
+figure, hold on
+arrayfun(@(id) scatter(bwdif(event_table(:,7)==id),event_table(event_table(:,7)==id,3),[],color_map(id,:)),[1,2])
+xline(0,'--','Color',[.7 .7 .7])
+legend('Saline', 'CNO'); legend('boxoff'); legend('location','best')
+xlabel('Weight-Modulation-Index')
+ylabel('Go-Failures Proportion')
+title('hungry motherfuckers')
 
 %% no Backlights
 % table for last two sessions with lights
@@ -438,4 +509,4 @@ else
     text(1.5, max_backlights*1.1,'ns','HorizontalAlignment','center')
 end
 
-savefig(f3, fullfile('Z:\Josephine\Master-Thesis_Figures\Cohort_18','backlights.fig'))
+%savefig(f3, fullfile('Z:\Josephine\Master-Thesis_Figures\Cohort_18','backlights.fig'))

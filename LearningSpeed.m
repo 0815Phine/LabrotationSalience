@@ -114,7 +114,7 @@ SpeedCNO_control_second_mean = mean(SpeedCNO_control_second,2,'omitnan');
 [p3,h3] = ranksum(SpeedSa_second,SpeedCNO_second,'tail','left');
 [p4,h4] = ranksum(Speed20_initial,SpeedSa_initial);
 [p5,h5] = ranksum(Speed20_second,SpeedSa_second);
-[p6,h6] = ranksum(SpeedCNO_initial,SpeedCNO_control_initial);
+[p6,h6] = ranksum(SpeedCNO_initial,SpeedCNO_control_initial,'tail','right');
 [p7,h7] = ranksum(SpeedCNO_second,SpeedCNO_control_second,'tail','right');
 
 %% Plot Data (deltaA comparison initial rules)
@@ -236,11 +236,11 @@ else
 end
 
 %% Plot Data (native-saline-CNO - Boxchart)
-speed_all_native = [[1*ones(size(Speed20_initial))';6*ones(size(Speed20_second))'],...
+speed_all_native = [[1*ones(size(Speed20_initial))';5*ones(size(Speed20_second))'],...
     [Speed20_initial';Speed20_second']];
-speed_all_saline = [[2*ones(size(SpeedSa_initial))';7*ones(size(SpeedSa_second))'],...
+speed_all_saline = [[2*ones(size(SpeedSa_initial))';6*ones(size(SpeedSa_second))'],...
     [SpeedSa_initial';SpeedSa_second']];
-speed_all_CNO = [[3*ones(size(SpeedCNO_initial))';8*ones(size(SpeedCNO_second))'],...
+speed_all_CNO = [[3*ones(size(SpeedCNO_initial))';7*ones(size(SpeedCNO_second))'],...
     [SpeedCNO_initial';SpeedCNO_second']];
 speed_all_CNO_control = [[4*ones(size(SpeedCNO_control_initial))';9*ones(size(SpeedCNO_control_second))'],...
     [SpeedCNO_control_initial';SpeedCNO_control_second']];
@@ -248,10 +248,10 @@ speed_all_CNO_control = [[4*ones(size(SpeedCNO_control_initial))';9*ones(size(Sp
 f5 = figure; boxchart(speed_all_native(:,1), speed_all_native(:,2), 'BoxFaceColor', 'k', 'MarkerColor', 'k')
 hold on; boxchart(speed_all_saline(:,1), speed_all_saline(:,2), 'BoxFaceColor', '#0072BD')
 boxchart(speed_all_CNO(:,1), speed_all_CNO(:,2), 'BoxFaceColor', [1.0000, 0.3216, 0.3020])
-%boxchart(speed_all_CNO_control(:,1), speed_all_CNO_control(:,2), 'BoxFaceColor', '#77AC30')
+%boxchart(speed_all_CNO_control(:,1), speed_all_CNO_control(:,2), 'BoxFaceColor', '#A2142F')
 %scatter(speed_all(:,1),speed_all(:,2),'Marker','.','MarkerEdgeColor','k','Jitter','on')
 ylabel('Trials to Expert'); ylim([200 1900])
-xticks([2 7]), xticklabels({'initial rules', 'second rules'})
+xticks([2 6]), xticklabels({'initial rules', 'second rules'})
 % text(2, 100, 'initial rules', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold')
 % text(7, 100, 'second rules', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold')
 
@@ -277,29 +277,47 @@ else
     text(2.5, speed_max(3)*1.1,'ns','HorizontalAlignment','center')
 end
 
-plot([6 8],[speed_max(6)*1.05+100 speed_max(6)*1.05+100], 'k')
+plot([5 7],[speed_max(6)*1.05+100 speed_max(6)*1.05+100], 'k')
 if p2 <= 0.05 && p2 > 0.01
-    text(7, speed_max(6)*1.1+100,'*','HorizontalAlignment','center','VerticalAlignment','top')
+    text(6, speed_max(6)*1.1+100,'*','HorizontalAlignment','center','VerticalAlignment','top')
 elseif p2 <= 0.01 && p2 > 0.001
-    text(7, speed_max(6)*1.1+100,'**','HorizontalAlignment','center','VerticalAlignment','top')
+    text(6, speed_max(6)*1.1+100,'**','HorizontalAlignment','center','VerticalAlignment','top')
 elseif p2 <= 0.001
-    text(7, speed_max(6)*1.1+100,'***','HorizontalAlignment','center','VerticalAlignment','top')
+    text(6, speed_max(6)*1.1+100,'***','HorizontalAlignment','center','VerticalAlignment','top')
 else
-    text(7, speed_max(6)*1.1+100,'ns','HorizontalAlignment','center')
+    text(6, speed_max(6)*1.1+100,'ns','HorizontalAlignment','center')
 end
 
-plot([7 8],[speed_max(6)*1.05 speed_max(6)*1.05], 'k')
+plot([6 7],[speed_max(6)*1.05 speed_max(6)*1.05], 'k')
 if p3 <= 0.05 && p3 > 0.01
-    text(7.5, speed_max(6)*1.1,'*','HorizontalAlignment','center','VerticalAlignment','top')
+    text(6.5, speed_max(6)*1.1,'*','HorizontalAlignment','center','VerticalAlignment','top')
 elseif p3 <= 0.01 && p3 > 0.001
-    text(7.5, speed_max(6)*1.1,'**','HorizontalAlignment','center','VerticalAlignment','top')
+    text(6.5, speed_max(6)*1.1,'**','HorizontalAlignment','center','VerticalAlignment','top')
 elseif p3 <= 0.001
-    text(7.5, speed_max(6)*1.1,'***','HorizontalAlignment','center','VerticalAlignment','top')
+    text(6.5, speed_max(6)*1.1,'***','HorizontalAlignment','center','VerticalAlignment','top')
 else
-    text(7.5, speed_max(6)*1.1,'ns','HorizontalAlignment','center')
+    text(6.5, speed_max(6)*1.1,'ns','HorizontalAlignment','center')
 end
 
 legend('native','saline','CNO','Location','southeast'); legend('boxoff')
+
+%% 
+factor_CNO = SpeedCNO_second./SpeedCNO_initial;
+factor_saline = SpeedSa_second./SpeedSa_initial;
+speed_all_initial_adjust = speed_all_initial;
+speed_all_initial_adjust(19:30,:) = []; speed_all_initial_adjust(2:6,:) = []; speed_all_initial_adjust(4,:) = [];
+factor_native = speed_all_second(:,2)./speed_all_initial_adjust(:,2);
+
+[p8,h8] = ranksum(factor_CNO,factor_saline,'tail','right');
+[p9,h9] = ranksum(factor_CNO,factor_native,'tail','right');
+
+figure, hold on
+boxchart(ones(size(factor_native)),factor_native, 'BoxFaceColor', 'k', 'MarkerColor', 'k')
+boxchart(1+ones(size(factor_saline)),factor_saline, 'BoxFaceColor', [0 0.45 0.74], 'MarkerColor', [0 0.45 0.74])
+boxchart(2+ones(size(factor_CNO)),factor_CNO, 'BoxFaceColor', [1 0.32 0.30], 'MarkerColor', [1 0.32 0.30])
+title('Second Rule/Initial Rule')
+ylabel('Factor'); xticks([1 2 3]); xticklabels({'Native' 'Saline' 'CNO'})
+xlim([0.5 3.5]); ylim([0.5 5.5])
 
 %% Save all Plots
 %savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_initial.fig'))

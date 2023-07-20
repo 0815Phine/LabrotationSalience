@@ -97,7 +97,7 @@ elseif p(2,1) <= 0.001
     text(1.5, max(dprime_max)+0.3,'***','HorizontalAlignment','center')
 end
 
-savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures\Whiskerpluck','whiskerpluck_all.fig'))
+% savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures\Whiskerpluck','whiskerpluck_all.fig'))
 
 % all whiskerplucks combined before and after (1 session)
 sesFlag = (whiskerpluck_table(1:120,2)<2);
@@ -122,7 +122,7 @@ elseif p(2,1) <= 0.001
     text(1.5, max(dprime_max)+0.3,'***','HorizontalAlignment','center')
 end
 
-savefig(f2, fullfile('Z:\Josephine\Master-Thesis_Figures\Whiskerpluck','whiskerpluck_all_first.fig'))
+% savefig(f2, fullfile('Z:\Josephine\Master-Thesis_Figures\Whiskerpluck','whiskerpluck_all_first.fig'))
 
 % for individual contrast
 for i= contrast
@@ -150,5 +150,5 @@ for i= contrast
         text(1.5, dprime_max(iii)+0.3,'***','HorizontalAlignment','center')
     end
 
-    savefig(loopf, fullfile('Z:\Josephine\Master-Thesis_Figures\Whiskerpluck',sprintf('whiskerpluck_%d.fig',i)))
+    % savefig(loopf, fullfile('Z:\Josephine\Master-Thesis_Figures\Whiskerpluck',sprintf('whiskerpluck_%d.fig',i)))
 end

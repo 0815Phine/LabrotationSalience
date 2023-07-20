@@ -12,9 +12,7 @@ end
 
 % load Cohort Data
 cohort_Data18 = animalData.cohort(18).animal;
-cohort_Data19 = animalData.cohort(19).animal;
 cohort_Table18 = create_cohort_table (cohort_Data18);
-cohort_Table19 = create_cohort_table (cohort_Data19);
 
 %% Retrieval-Test
 stages = string({'P3.2','P3.4'});
@@ -361,44 +359,56 @@ event_table(:,7) = [1,2,1,2,1,2,1,2]';
 figure, hold on
 for i = 1:8
     if event_table(i,7)==1
-        plot([1,2],[event_table(i,1),event_table(i,3)],'Color','#D95319','LineStyle','--')
+        plot([1,2],[event_table(i,1),event_table(i,3)],'Color',[0 0.45 0.74],'LineStyle','--')
     elseif event_table(i,7)==2
-        plot([1,2],[event_table(i,1),event_table(i,3)],'Color','k','LineStyle','--')
+        plot([1,2],[event_table(i,1),event_table(i,3)],'Color',[1 0.32 0.30],'LineStyle','--')
     end
 end
-plot([1,2],[mean(event_table(:,1),'omitnan'),mean(event_table(:,3),'omitnan')],'LineWidth',2,'Color','k')
-ylabel('Proportion')
+% plot([1,2],[mean(event_table(:,1),'omitnan'),mean(event_table(:,3),'omitnan')],'LineWidth',2,'Color','k')
+plot([1,2],[mean(event_table(event_table(:,7)==1,1),'omitnan'), mean(event_table(event_table(:,7)==1,3),'omitnan')],...
+    'LineWidth',2,'Color',[0 0.45 0.74])
+plot([1,2],[mean(event_table(event_table(:,7)==2,1),'omitnan'), mean(event_table(event_table(:,7)==2,3),'omitnan')],...
+    'LineWidth',2,'Color',[1 0.32 0.30])
+ylabel('Proportion [%]')
 title({'Distribution of Go-Failures', 'before and after Break'})
 xticks([1, 2]), xticklabels({'before', 'after'})
-legend('Saline','CNO'); legend('boxoff')
+legend('saline','CNO'); legend('boxoff')
 
 figure, hold on
 for i = 1:8
     if event_table(i,7)==1
-        plot([1,2],[event_table(i,2),event_table(i,4)],'Color','#D95319','LineStyle','--')
+        plot([1,2],[event_table(i,2),event_table(i,4)],'Color',[0 0.45 0.74],'LineStyle','--')
     elseif event_table(i,7)==2
-        plot([1,2],[event_table(i,2),event_table(i,4)],'Color','k','LineStyle','--')
+        plot([1,2],[event_table(i,2),event_table(i,4)],'Color',[1 0.32 0.30],'LineStyle','--')
     end
 end
-plot([1,2],[mean(event_table(:,2),'omitnan'),mean(event_table(:,4),'omitnan')],'LineWidth',2,'Color','k')
-ylabel('Proportion')
+% plot([1,2],[mean(event_table(:,2),'omitnan'),mean(event_table(:,4),'omitnan')],'LineWidth',2,'Color','k')
+plot([1,2],[mean(event_table(event_table(:,7)==1,2),'omitnan'), mean(event_table(event_table(:,7)==1,4),'omitnan')],...
+    'LineWidth',2,'Color',[0 0.45 0.74])
+plot([1,2],[mean(event_table(event_table(:,7)==2,2),'omitnan'), mean(event_table(event_table(:,7)==2,4),'omitnan')],...
+    'LineWidth',2,'Color',[1 0.32 0.30])
+ylabel('Proportion [%]')
 title({'Distribution of NoGo-Failures', 'before and after Break'})
 xticks([1, 2]), xticklabels({'before', 'after'})
-legend('Saline','CNO'); legend('boxoff')
+legend('saline','CNO'); legend('boxoff')
 
 figure, hold on
 for i = 1:8
     if event_table(i,7)==1
-        plot([1,2],[event_table(i,5),event_table(i,6)],'Color','#D95319','LineStyle','--')
+        plot([1,2],[event_table(i,5),event_table(i,6)],'Color',[0 0.45 0.74],'LineStyle','--')
     elseif event_table(i,7)==2
-        plot([1,2],[event_table(i,5),event_table(i,6)],'Color','k','LineStyle','--')
+        plot([1,2],[event_table(i,5),event_table(i,6)],'Color',[1 0.32 0.30],'LineStyle','--')
     end
 end
-plot([1,2],[mean(event_table(:,5),'omitnan'),mean(event_table(:,6),'omitnan')],'LineWidth',2,'Color','k')
-title('Bodyweight before and after Break')
-ylabel('Bodyweight [%]')
+% plot([1,2],[mean(event_table(:,5),'omitnan'),mean(event_table(:,6),'omitnan')],'LineWidth',2,'Color','k')
+plot([1,2],[mean(event_table(event_table(:,7)==1,5),'omitnan'), mean(event_table(event_table(:,7)==1,6),'omitnan')],...
+    'LineWidth',2,'Color',[0 0.45 0.74])
+plot([1,2],[mean(event_table(event_table(:,7)==2,5),'omitnan'), mean(event_table(event_table(:,7)==2,6),'omitnan')],...
+    'LineWidth',2,'Color',[1 0.32 0.30])
+title('Bodyweight')
+ylabel('[%]')
 xticks([1, 2]), xticklabels({'before', 'after'})
-legend('Saline','CNO'); legend('boxoff')
+legend('saline','CNO'); legend('boxoff')
 
 bwdif = diff(event_table(:,[5,6]),1,2)./sum(event_table(:,[5,6]),2);
 %clownshow = flip(color_map,1);

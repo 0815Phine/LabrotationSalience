@@ -224,9 +224,9 @@ for ii = cohortFlag
 end
 
 %% Population trial d'prime CNO Cohort
-figure
+fig_1 = figure;
 
-alldvalues = NaN(969,8);
+alldvaluesCNO = NaN(969,8);
 cohortFlag = [18, 19];
 mice = string({'#70','#72','#74','#76','#79','#80','#83','#84'});
 for ii = cohortFlag
@@ -247,21 +247,21 @@ for ii = cohortFlag
             %plot(xvalues, dvalues, 'Color', '#bfbfbf'), hold on
             
             if ii == 18
-                alldvalues(1:length(dvalues),i) = dvalues;
+                alldvaluesCNO(1:length(dvalues),i) = dvalues;
             elseif i == 2
-                alldvalues(1:length(dvalues),i-1) = dvalues;
+                alldvaluesCNO(1:length(dvalues),i-1) = dvalues;
             elseif i == 6
-                alldvalues(1:length(dvalues),i-1) = dvalues;
+                alldvaluesCNO(1:length(dvalues),i-1) = dvalues;
             else
-                alldvalues(1:length(dvalues),i) = dvalues;
+                alldvaluesCNO(1:length(dvalues),i) = dvalues;
             end
         continue
         end
     end
 end
 
-trials_dprime_mean = mean(alldvalues,2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
-trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
+trials_dprime_mean = mean(alldvaluesCNO,2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
+trials_dprime_std = std(alldvaluesCNO,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
 curve1 = trials_dprime_mean + trials_dprime_std;
 curve2 = trials_dprime_mean - trials_dprime_std;
 fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],...
@@ -271,7 +271,7 @@ fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(cu
 plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color', [1 0.32 0.30])
 
 % get d_values for Saline animals
-alldvalues = NaN(1124,6);
+alldvaluesSaline = NaN(1124,6);
 mice = string({'#69','#71','#73','#75','#78','#82'});
 for ii = cohortFlag
     cohortData = animalData.cohort(ii).animal;
@@ -291,21 +291,21 @@ for ii = cohortFlag
             %plot(xvalues, dvalues, 'Color', '#bfbfbf'), hold on
             
             if i == 7
-                alldvalues(1:length(dvalues),i-1) = dvalues;
+                alldvaluesSaline(1:length(dvalues),i-1) = dvalues;
             elseif ii == 18
-                alldvalues(1:length(dvalues),i) = dvalues;
+                alldvaluesSaline(1:length(dvalues),i) = dvalues;
             elseif i == 1
-                alldvalues(1:length(dvalues),i+1) = dvalues;
+                alldvaluesSaline(1:length(dvalues),i+1) = dvalues;
             elseif i == 5
-                alldvalues(1:length(dvalues),i-1) = dvalues;
+                alldvaluesSaline(1:length(dvalues),i-1) = dvalues;
             end
         continue
         end
     end
 end
 
-trials_dprime_mean = mean(alldvalues,2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
-trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
+trials_dprime_mean = mean(alldvaluesSaline,2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
+trials_dprime_std = std(alldvaluesSaline,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
 curve1 = trials_dprime_mean + trials_dprime_std;
 curve2 = trials_dprime_mean - trials_dprime_std;
 fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(curve2')],[0 0 .85],...
@@ -318,12 +318,55 @@ xlabel('Trials')
 ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
-title ('Population Performance over trials (initial rules; contrast 20mm; CNO)')
-legend('','CNO','','saline'); legend('boxoff'); legend('location','best')
+title ('Initial rules')
+plot([560.5 560.5], [-0.5 1.65], 'Color', [0 0.45 0.74], 'LineStyle', ':')
+plot([496 496], [-0.5 1.65], 'Color', [1 0.32 0.30], 'LineStyle', ':')
+
+% statistics on d'primes
+endflag = size(alldvaluesCNO);
+endflag = endflag(1);
+[p0, h0] = ranksum(reshape(alldvaluesCNO(endflag-200:endflag,:),[],1), reshape(alldvaluesSaline(endflag-200:endflag,:), [], 1));
+% plot([endflag endflag], [2.25 4.25], 'Color', [.7 .7 .7]); plot([endflag+200 endflag+200], [2.25 4.25], 'Color', [.7 .7 .7])
+plot([endflag endflag+200], [4.25 4.25], 'k');
+if p0 <= 0.05 && p0 > 0.01
+    text(endflag+100, 4.3,'*','HorizontalAlignment','center')
+elseif p0 <= 0.01 && p0 > 0.001
+    text(endflag+100, 4.3,'**','HorizontalAlignment','center')
+elseif p0 <= 0.001
+    text(endflag+100, 4.3,'***','HorizontalAlignment','center')
+else
+    text(endflag+100, 4.3,'ns','HorizontalAlignment','center')
+end
+
+legend('','CNO','','Saline'); legend('boxoff'); legend('location','best')
+
+fig_2 = figure; hold on
+boxchart(ones(numel(alldvaluesCNO(endflag-200:endflag,:)),1), reshape(alldvaluesCNO(endflag-200:endflag,:),[],1),...
+    'BoxFaceColor', [1 0.32 0.30],'Notch', 'on')
+hold on; boxchart(1+ones(numel(alldvaluesSaline(endflag-200:endflag,:)),1), reshape(alldvaluesSaline(endflag-200:endflag,:), [], 1),...
+    'BoxFaceColor', [0 0.45 0.74], 'Notch', 'on')
+scatter(ones(numel(alldvaluesCNO(endflag-200:endflag,:)),1), reshape(alldvaluesCNO(endflag-200:endflag,:),[],1),...
+    'MarkerEdgeColor', [1 0.32 0.30], 'Marker', '.', 'XJitter', 'randn', 'MarkerEdgeAlpha', 0.4)
+scatter(1+ones(numel(alldvaluesSaline(endflag-200:endflag,:)),1), reshape(alldvaluesSaline(endflag-200:endflag,:),[],1),...
+    'MarkerEdgeColor', [0 0.45 0.74], 'Marker', '.', 'XJitter', 'randn', 'MarkerEdgeAlpha', 0.4)
+
+plot([1 2], [4.25 4.25], 'k');
+if p0 <= 0.05 && p0 > 0.01
+    text(1.5, 4.3,'*','HorizontalAlignment','center')
+elseif p0 <= 0.01 && p0 > 0.001
+    text(1.5, 4.3,'**','HorizontalAlignment','center')
+elseif p0 <= 0.001
+    text(1.5, 4.3,'***','HorizontalAlignment','center')
+else
+    text(1.5, 4.3,'ns','HorizontalAlignment','center')
+end
+
+title('Population performance in expert animals (initial rule)')
+xticks([1 2]), xticklabels({'CNO' 'Saline'}), ylabel('d prime')
 
 % second rules
-figure
-alldvalues = NaN(1980,8);
+fig_3 = figure;
+alldvaluesCNO = NaN(1580,8);
 mice = string({'#70','#72','#74','#76','#79','#80','#83','#84'});
 for ii = cohortFlag
     cohortData = animalData.cohort(ii).animal;
@@ -346,21 +389,21 @@ for ii = cohortFlag
             end
 
             if i == 7
-                alldvalues(1:length(dvalues),i-1) = dvalues;
+                alldvaluesCNO(1:length(dvalues),i-1) = dvalues;
             elseif ii == 18
-                alldvalues(1:length(dvalues),i) = dvalues;
+                alldvaluesCNO(1:length(dvalues),i) = dvalues;
             elseif i == 1
-                alldvalues(1:length(dvalues),i+1) = dvalues;
+                alldvaluesCNO(1:length(dvalues),i+1) = dvalues;
             elseif i == 5
-                alldvalues(1:length(dvalues),i-1) = dvalues;
+                alldvaluesCNO(1:length(dvalues),i-1) = dvalues;
             end
         continue
         end
     end
 end
 
-trials_dprime_mean = mean(alldvalues,2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
-trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
+trials_dprime_mean = mean(alldvaluesCNO,2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
+trials_dprime_std = std(alldvaluesCNO,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
 curve1 = trials_dprime_mean + trials_dprime_std;
 curve2 = trials_dprime_mean - trials_dprime_std;
 % plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'); hold on
@@ -370,7 +413,7 @@ fill([201:length(curve1)+200 fliplr(201:length(curve1)+200)], [curve1' fliplr(cu
 plot((201:length(trials_dprime_mean)+200),trials_dprime_mean, 'Color',  [1 0.32 0.30])
 
 % Saline animals
-alldvalues = NaN(2164,6);
+alldvaluesSaline = NaN(2164,6);
 mice = string({'#69','#71','#73','#75','#78','#82'});
 for ii = cohortFlag
     cohortData = animalData.cohort(ii).animal;
@@ -393,21 +436,21 @@ for ii = cohortFlag
             end
 
             if i == 7
-                alldvalues(1:length(dvalues),i-1) = dvalues;
+                alldvaluesSaline(1:length(dvalues),i-1) = dvalues;
             elseif ii == 18
-                alldvalues(1:length(dvalues),i) = dvalues;
+                alldvaluesSaline(1:length(dvalues),i) = dvalues;
             elseif i == 1
-                alldvalues(1:length(dvalues),i+1) = dvalues;
+                alldvaluesSaline(1:length(dvalues),i+1) = dvalues;
             elseif i == 5
-                alldvalues(1:length(dvalues),i-1) = dvalues;
+                alldvaluesSaline(1:length(dvalues),i-1) = dvalues;
             end
         continue
         end
     end
 end
 
-trials_dprime_mean = mean(alldvalues,2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
-trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
+trials_dprime_mean = mean(alldvaluesSaline,2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
+trials_dprime_std = std(alldvaluesSaline,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
 curve1 = trials_dprime_mean + trials_dprime_std;
 curve2 = trials_dprime_mean - trials_dprime_std;
 % plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'); hold on
@@ -420,5 +463,68 @@ xlabel('Trials')
 ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
-title ('Population Performance over trials (second rules; contrast 20mm; CNO)')
-legend('','CNO','','saline'); legend('boxoff'); legend('location','best')
+title ('Second rules')
+plot([953 953], [-1.5 1.65], 'Color', [0 0.45 0.74], 'LineStyle', ':')
+plot([1324 1324], [-1.5 1.65], 'Color', [1 0.32 0.30], 'LineStyle', ':')
+xlim([200 2400]); ylim([-1.5 5])
+
+% statistics on d'primes
+endflag = size(alldvaluesCNO);
+endflag = endflag(1);
+[p1, h1] = ranksum(reshape(alldvaluesCNO(endflag-200:endflag,:),[],1), reshape(alldvaluesSaline(endflag-200:endflag,:), [], 1));
+% plot([endflag endflag], [2.25 4.25], 'Color', [.7 .7 .7]); plot([endflag+200 endflag+200], [2.25 4.25], 'Color', [.7 .7 .7])
+plot([endflag endflag+200], [4.25 4.25], 'k');
+if p1 <= 0.05 && p1 > 0.01
+    text(endflag+100, 4.3,'*','HorizontalAlignment','center')
+elseif p1 <= 0.01 && p1 > 0.001
+    text(endflag+100, 4.3,'**','HorizontalAlignment','center')
+elseif p1 <= 0.001
+    text(endflag+100, 4.3,'***','HorizontalAlignment','center')
+else
+    text(endflag+100, 4.3,'ns','HorizontalAlignment','center')
+end
+
+crossflag = 953;
+[p2, h2] = ranksum(reshape(alldvaluesCNO(crossflag-200:crossflag,:),[],1), reshape(alldvaluesSaline(crossflag-200:crossflag,:), [], 1));
+plot([crossflag-200 crossflag], [4.25 4.25], 'k');
+if p2 <= 0.05 && p2 > 0.01
+    text(crossflag-100, 4.3,'*','HorizontalAlignment','center')
+elseif p2 <= 0.01 && p2 > 0.001
+    text(crossflag-100, 4.3,'**','HorizontalAlignment','center')
+elseif p2 <= 0.001
+    text(crossflag-100, 4.3,'***','HorizontalAlignment','center')
+else
+    text(crossflag-100, 4.3,'ns','HorizontalAlignment','center')
+end
+
+legend('','CNO','','Saline'); legend('boxoff'); legend('location','best')
+
+fig_4 = figure; hold on
+boxchart(ones(numel(alldvaluesCNO(endflag-200:endflag,:)),1), reshape(alldvaluesCNO(endflag-200:endflag,:),[],1),...
+    'BoxFaceColor', [1 0.32 0.30],'Notch', 'on')
+hold on; boxchart(1+ones(numel(alldvaluesSaline(endflag-200:endflag,:)),1), reshape(alldvaluesSaline(endflag-200:endflag,:), [], 1),...
+    'BoxFaceColor', [0 0.45 0.74], 'Notch', 'on')
+scatter(ones(numel(alldvaluesCNO(endflag-200:endflag,:)),1), reshape(alldvaluesCNO(endflag-200:endflag,:),[],1),...
+    'MarkerEdgeColor', [1 0.32 0.30], 'Marker', '.', 'XJitter', 'randn', 'MarkerEdgeAlpha', 0.4)
+scatter(1+ones(numel(alldvaluesSaline(endflag-200:endflag,:)),1), reshape(alldvaluesSaline(endflag-200:endflag,:),[],1),...
+    'MarkerEdgeColor', [0 0.45 0.74], 'Marker', '.', 'XJitter', 'randn', 'MarkerEdgeAlpha', 0.4)
+
+plot([1 2], [4.25 4.25], 'k');
+if p2 <= 0.05 && p2 > 0.01
+    text(1.5, 4.3,'*','HorizontalAlignment','center')
+elseif p2 <= 0.01 && p2 > 0.001
+    text(1.5, 4.3,'**','HorizontalAlignment','center')
+elseif p2 <= 0.001
+    text(1.5, 4.3,'***','HorizontalAlignment','center')
+else
+    text(1.5, 4.3,'ns','HorizontalAlignment','center')
+end
+
+title('Population performance in expert animals (switched rule)')
+xticks([1 2]), xticklabels({'CNO' 'Saline'}), ylabel('d prime')
+
+%% Save Figures
+%saveFigure(fig_1,fullfile('Z:\Josephine\Master-Thesis_Figures\Performance','Trial-dprime_CNO_saline_initial'),true,true)
+saveFigure(fig_2,fullfile('Z:\Josephine\Master-Thesis_Figures\Performance','Peak_Performance_CNO_initial_rules'),true,true)
+%saveFigure(fig_3,fullfile('Z:\Josephine\Master-Thesis_Figures\Performance','Trial-dprime_CNO_saline_switched'),true,true)
+saveFigure(fig_4,fullfile('Z:\Josephine\Master-Thesis_Figures\Performance','Peak_Performance_CNO_switched_rules'),true,true)

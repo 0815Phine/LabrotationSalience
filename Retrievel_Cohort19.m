@@ -76,42 +76,54 @@ injected_flag = [retrieval_table{:,5}]' == [3,6];
 
 %% plot data
 f1 = figure;
-color_map = [[0 0.4470 0.7410]; [0 0.4470 0.7410]; [1 0.3216 0.3020]]; j=1;
-for i = [1, 2, 3; 4, 5, 6]
+% color_map = [[0 0.4470 0.7410]; [0 0.4470 0.7410]; [1 0.3216 0.3020]]; j=1;
+% for i = [1, 2, 3; 4, 5, 6]
+%     injflag = any([retrieval_table{:,5}]' == i',2);
+%     boxchart([retrieval_table{injflag,5}]', [retrieval_table{injflag,4}]','BoxFaceColor',color_map(j,:),'MarkerColor',color_map(j,:))
+%     j=j+1;
+%     if i(1) == 1
+%         hold on
+%     end
+% end
+
+color_map = [[0 0.4470 0.7410]; [1 0.3216 0.3020]]; j=1;
+for i = [2, 3; 5, 6]
     injflag = any([retrieval_table{:,5}]' == i',2);
     boxchart([retrieval_table{injflag,5}]', [retrieval_table{injflag,4}]','BoxFaceColor',color_map(j,:),'MarkerColor',color_map(j,:))
     j=j+1;
-    if i(1) == 1
+    if i(1) == 2
         hold on
     end
 end
-ylabel('d prime'), xlabel('sessions')
+
+title('Retrieval test')
+ylabel('d prime'),
 yline([1.65, 1.65],'Color','black','LineStyle','--')
-xticks(3.5), xticklabels({'ruleswitch'}), ylim([0.5 5]), xlim([0.5 6.5])
+xticks([2.5 5.5]), xticklabels({'Initial rule' 'Second rule'}), ylim([1 5]), xlim([1.5 6.5])
 
-max_initial = max(max([retrieval_table{ctrl1_flag(:,1),4}]',[retrieval_table{ctrl2_flag(:,1),4}]'));
-plot([1 2],[max_initial+0.1 max_initial+0.1], 'k')
-if p0 <= 0.05 && p0 > 0.01
-    text(1.5, max_initial+0.2,'*','HorizontalAlignment','center')
-elseif p0 <= 0.01 && p0 > 0.001
-    text(1.5, max_initial+0.2,'**','HorizontalAlignment','center')
-elseif p0 <= 0.001
-    text(1.5, max_initial+0.2,'***','HorizontalAlignment','center')
-else
-    text(1.5, max_initial+0.2,'ns','HorizontalAlignment','center')
-end
-
-max_second = max(max([retrieval_table{ctrl1_flag(:,2),4}]',[retrieval_table{ctrl2_flag(:,2),4}]'));
-plot([4 5],[max_second+0.1 max_second+0.1], 'k')
-if p1 <= 0.05 && p1 > 0.01
-    text(4.5, max_second+0.2,'*','HorizontalAlignment','center')
-elseif p1 <= 0.01 && p1 > 0.001
-    text(4.5, max_second+0.2,'**','HorizontalAlignment','center')
-elseif p1 <= 0.001
-    text(4.5, max_second+0.2,'***','HorizontalAlignment','center')
-else
-    text(4.5, max_second+0.25,'ns','HorizontalAlignment','center')
-end
+% max_initial = max(max([retrieval_table{ctrl1_flag(:,1),4}]',[retrieval_table{ctrl2_flag(:,1),4}]'));
+% plot([1 2],[max_initial+0.1 max_initial+0.1], 'k')
+% if p0 <= 0.05 && p0 > 0.01
+%     text(1.5, max_initial+0.2,'*','HorizontalAlignment','center')
+% elseif p0 <= 0.01 && p0 > 0.001
+%     text(1.5, max_initial+0.2,'**','HorizontalAlignment','center')
+% elseif p0 <= 0.001
+%     text(1.5, max_initial+0.2,'***','HorizontalAlignment','center')
+% else
+%     text(1.5, max_initial+0.2,'ns','HorizontalAlignment','center')
+% end
+% 
+% max_second = max(max([retrieval_table{ctrl1_flag(:,2),4}]',[retrieval_table{ctrl2_flag(:,2),4}]'));
+% plot([4 5],[max_second+0.1 max_second+0.1], 'k')
+% if p1 <= 0.05 && p1 > 0.01
+%     text(4.5, max_second+0.2,'*','HorizontalAlignment','center')
+% elseif p1 <= 0.01 && p1 > 0.001
+%     text(4.5, max_second+0.2,'**','HorizontalAlignment','center')
+% elseif p1 <= 0.001
+%     text(4.5, max_second+0.2,'***','HorizontalAlignment','center')
+% else
+%     text(4.5, max_second+0.25,'ns','HorizontalAlignment','center')
+% end
 
 max_second = max(max([retrieval_table{ctrl2_flag(:,1),4}]',[retrieval_table{injected_flag(:,1),4}]'));
 plot([2 3],[max_second+0.1 max_second+0.1], 'k')
@@ -126,19 +138,15 @@ else
 end
 
 max_second = max(max([retrieval_table{ctrl2_flag(:,2),4}]',[retrieval_table{injected_flag(:,2),4}]'));
-plot([5 6],[max_second+0.2 max_second+0.2], 'k')
+plot([5 6],[max_second+0.1 max_second+0.1], 'k')
 if p3 <= 0.05 && p3 > 0.01
-    text(5.5, max_second+0.3,'*','HorizontalAlignment','center')
+    text(5.5, max_second+0.2,'*','HorizontalAlignment','center')
 elseif p3 <= 0.01 && p3 > 0.001
-    text(5.5, max_second+0.3,'**','HorizontalAlignment','center')
+    text(5.5, max_second+0.2,'**','HorizontalAlignment','center')
 elseif p3 <= 0.001
-    text(5.5, max_second+0.3,'***','HorizontalAlignment','center')
+    text(5.5, max_second+0.2,'***','HorizontalAlignment','center')
 else
-    text(5.5, max_second+0.35,'ns','HorizontalAlignment','center')
+    text(5.5, max_second+0.24,'ns','HorizontalAlignment','center')
 end
 
 legend('saline','','CNO','Location','southeast'); legend('boxoff')
-
-%% paired substraction
-% first_Sa = [retrieval_table{string(retrieval_table(:,5)) == '1', 4}]';
-% second_Sa = [retrieval_table{string(retrieval_table(:,5)) == '2', 4}]';

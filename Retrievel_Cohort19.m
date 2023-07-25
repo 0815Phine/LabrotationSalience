@@ -86,8 +86,16 @@ f1 = figure;
 %     end
 % end
 
+for i = 1:length(retrieval_table)
+    if retrieval_table{i,5} == 5
+        retrieval_table(i,5) = {4};
+    elseif retrieval_table{i,5} == 6
+        retrieval_table(i,5) = {5};
+    end
+end
+
 color_map = [[0 0.4470 0.7410]; [1 0.3216 0.3020]]; j=1;
-for i = [2, 3; 5, 6]
+for i = [2, 3; 4, 5]
     injflag = any([retrieval_table{:,5}]' == i',2);
     boxchart([retrieval_table{injflag,5}]', [retrieval_table{injflag,4}]','BoxFaceColor',color_map(j,:),'MarkerColor',color_map(j,:))
     j=j+1;
@@ -99,7 +107,7 @@ end
 title('Retrieval test')
 ylabel('d prime'),
 yline([1.65, 1.65],'Color','black','LineStyle','--')
-xticks([2.5 5.5]), xticklabels({'Initial rule' 'Second rule'}), ylim([1 5]), xlim([1.5 6.5])
+xticks([2.5 4.5]), xticklabels({'Initial rule' 'Switched rule'}), ylim([1 5]), xlim([1.5 5.5])
 
 % max_initial = max(max([retrieval_table{ctrl1_flag(:,1),4}]',[retrieval_table{ctrl2_flag(:,1),4}]'));
 % plot([1 2],[max_initial+0.1 max_initial+0.1], 'k')
@@ -138,15 +146,13 @@ else
 end
 
 max_second = max(max([retrieval_table{ctrl2_flag(:,2),4}]',[retrieval_table{injected_flag(:,2),4}]'));
-plot([5 6],[max_second+0.1 max_second+0.1], 'k')
+plot([4 5],[max_second+0.1 max_second+0.1], 'k')
 if p3 <= 0.05 && p3 > 0.01
-    text(5.5, max_second+0.2,'*','HorizontalAlignment','center')
+    text(4.5, max_second+0.2,'*','HorizontalAlignment','center')
 elseif p3 <= 0.01 && p3 > 0.001
-    text(5.5, max_second+0.2,'**','HorizontalAlignment','center')
+    text(4.5, max_second+0.2,'**','HorizontalAlignment','center')
 elseif p3 <= 0.001
-    text(5.5, max_second+0.2,'***','HorizontalAlignment','center')
+    text(4.5, max_second+0.2,'***','HorizontalAlignment','center')
 else
-    text(5.5, max_second+0.24,'ns','HorizontalAlignment','center')
+    text(4.5, max_second+0.24,'ns','HorizontalAlignment','center')
 end
-
-legend('saline','','CNO','Location','southeast'); legend('boxoff')

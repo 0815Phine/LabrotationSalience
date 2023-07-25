@@ -87,9 +87,9 @@ SpeedSa_second_mean = mean(SpeedSa_second,2,'omitnan');
 
 %Speed CNO
 SpeedCNO_initial = [cohort_Data18(2).intersec_initial,cohort_Data18(4).intersec_initial,cohort_Data18(6).intersec_initial,cohort_Data18(8).intersec_initial,...
-    cohort_Data19(2).intersec_initial,cohort_Data19(3).intersec_initial,cohort_Data19(6).intersec_initial,cohort_Data19(7).intersec_initial];
+    cohort_Data19(2).intersec_initial,cohort_Data19(3).intersec_initial,cohort_Data19(6).intersec_initial];
 SpeedCNO_second = [cohort_Data18(2).intersec_second,cohort_Data18(4).intersec_second,cohort_Data18(6).intersec_second,cohort_Data18(8).intersec_second,...
-    cohort_Data19(2).intersec_second,cohort_Data19(3).intersec_second,cohort_Data19(6).intersec_second,cohort_Data19(7).intersec_second];
+    cohort_Data19(2).intersec_second,cohort_Data19(3).intersec_second,cohort_Data19(6).intersec_second];
 
 SpeedCNO_initial_std = std(SpeedCNO_initial,0,2,'omitnan');
 SpeedCNO_initial_mean = mean(SpeedCNO_initial,2,'omitnan');
@@ -242,16 +242,16 @@ speed_all_saline = [[2*ones(size(SpeedSa_initial))';6*ones(size(SpeedSa_second))
     [SpeedSa_initial';SpeedSa_second']];
 speed_all_CNO = [[3*ones(size(SpeedCNO_initial))';7*ones(size(SpeedCNO_second))'],...
     [SpeedCNO_initial';SpeedCNO_second']];
-speed_all_CNO_control = [[4*ones(size(SpeedCNO_control_initial))';9*ones(size(SpeedCNO_control_second))'],...
+speed_all_CNO_control = [[4*ones(size(SpeedCNO_control_initial))';8*ones(size(SpeedCNO_control_second))'],...
     [SpeedCNO_control_initial';SpeedCNO_control_second']];
 
 f5 = figure; boxchart(speed_all_native(:,1), speed_all_native(:,2), 'BoxFaceColor', 'k', 'MarkerColor', 'k')
 hold on; boxchart(speed_all_saline(:,1), speed_all_saline(:,2), 'BoxFaceColor', '#0072BD')
 boxchart(speed_all_CNO(:,1), speed_all_CNO(:,2), 'BoxFaceColor', [1.0000, 0.3216, 0.3020])
-%boxchart(speed_all_CNO_control(:,1), speed_all_CNO_control(:,2), 'BoxFaceColor', '#A2142F')
+boxchart(speed_all_CNO_control(:,1), speed_all_CNO_control(:,2), 'BoxFaceColor', '#A2142F')
 %scatter(speed_all(:,1),speed_all(:,2),'Marker','.','MarkerEdgeColor','k','Jitter','on')
-ylabel('Trials to Expert'); ylim([200 1900])
-xticks([2 6]), xticklabels({'initial rules', 'second rules'})
+ylabel('Trials to expert'); ylim([200 1900])
+xticks([2 6]), xticklabels({'Initial rules', 'Second rules'})
 % text(2, 100, 'initial rules', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold')
 % text(7, 100, 'second rules', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold')
 
@@ -299,7 +299,7 @@ else
     text(6.5, speed_max(6)*1.1,'ns','HorizontalAlignment','center')
 end
 
-legend('native','saline','CNO','Location','southeast'); legend('boxoff')
+legend('native','saline','CNO','CNO-control','Location','southeast'); legend('boxoff')
 
 %% 
 factor_CNO = SpeedCNO_second./SpeedCNO_initial;

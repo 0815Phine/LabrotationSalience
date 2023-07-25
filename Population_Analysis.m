@@ -39,6 +39,7 @@ for ii = cohortFlag
         end
     end
 end
+alldvalues(:,17) = [];
 
 trials_dprime_mean = mean(alldvalues,2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
 trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
@@ -228,7 +229,7 @@ fig_1 = figure;
 
 alldvaluesCNO = NaN(969,8);
 cohortFlag = [18, 19];
-mice = string({'#70','#72','#74','#76','#79','#80','#83','#84'});
+mice = string({'#70','#72','#74','#76','#79','#80','#83'});
 for ii = cohortFlag
     cohortData = animalData.cohort(ii).animal;
     for i = 1:length(cohortData)
@@ -319,8 +320,8 @@ ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
 title ('Initial rules')
-plot([560.5 560.5], [-0.5 1.65], 'Color', [0 0.45 0.74], 'LineStyle', ':')
-plot([496 496], [-0.5 1.65], 'Color', [1 0.32 0.30], 'LineStyle', ':')
+plot([560.5 560.5], [-0.5 1.65], 'Color', [0 0.45 0.74], 'LineStyle', ':','LineWidth',1)
+plot([559 559], [-0.5 1.65], 'Color', [1 0.32 0.30], 'LineStyle', ':','LineWidth',1)
 
 % statistics on d'primes
 endflag = size(alldvaluesCNO);
@@ -366,8 +367,8 @@ xticks([1 2]), xticklabels({'CNO' 'Saline'}), ylabel('d prime')
 
 % second rules
 fig_3 = figure;
-alldvaluesCNO = NaN(1580,8);
-mice = string({'#70','#72','#74','#76','#79','#80','#83','#84'});
+alldvaluesCNO = NaN(1532,8);
+mice = string({'#70','#72','#74','#76','#79','#80','#83'});
 for ii = cohortFlag
     cohortData = animalData.cohort(ii).animal;
     for i = 1:length(cohortData)
@@ -464,8 +465,8 @@ ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
 title ('Second rules')
-plot([953 953], [-1.5 1.65], 'Color', [0 0.45 0.74], 'LineStyle', ':')
-plot([1324 1324], [-1.5 1.65], 'Color', [1 0.32 0.30], 'LineStyle', ':')
+plot([953 953], [-1.5 1.65], 'Color', [0 0.45 0.74], 'LineStyle', ':','LineWidth',1)
+plot([1303 1303], [-1.5 1.65], 'Color', [1 0.32 0.30], 'LineStyle', ':','LineWidth',1)
 xlim([200 2400]); ylim([-1.5 5])
 
 % statistics on d'primes

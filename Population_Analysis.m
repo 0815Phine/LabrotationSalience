@@ -1,4 +1,4 @@
-    clearvars
+clearvars
 close all
 
 startPath = 'Z:\Filippo\Animals';

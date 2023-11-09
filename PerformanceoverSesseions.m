@@ -40,18 +40,21 @@ session_dprime_std = std(alldvalues,0,2,'omitnan'); session_dprime_std(isnan(ses
 curve1 = session_dprime_mean + session_dprime_std;
 curve2 = session_dprime_mean - session_dprime_std;
 
-fill([1:length(curve1) fliplr(1:length(curve1))], [curve1' fliplr(curve2')],[0 0 .85],...
-    'FaceColor','#e6e6e6', 'EdgeColor','none','FaceAlpha',0.5); hold on
-plot((1:length(session_dprime_mean)),session_dprime_mean, 'Color', 'k')
+speed = find(session_dprime_mean>1.65,1);
 
-xlabel('Session')
+fill([1:length(curve1) fliplr(1:length(curve1))], [curve1' fliplr(curve2')],[0 0 .85],...
+    'FaceColor','#a6a6a6', 'EdgeColor','none','FaceAlpha',0.5); hold on
+plot((1:length(session_dprime_mean)),session_dprime_mean, 'Color', 'k')
+plot([speed speed], [-3 1.65], 'Color', 'k')
+
+xlabel('Sessions')
 ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
-title ('Population Performance over sessions (initial rules; contrast 20mm)')
+% title ('Population Performance over sessions (initial rules; contrast 20mm)')
 
 %% switched rule
-figure
+% figure
 
 alldvalues = NaN(54,6);
 cohortFlag = 11;
@@ -71,12 +74,15 @@ session_dprime_std = std(alldvalues,0,2,'omitnan'); session_dprime_std(isnan(ses
 curve1 = session_dprime_mean + session_dprime_std;
 curve2 = session_dprime_mean - session_dprime_std;
 
+speed =find(session_dprime_mean>1.65,1);
+
 fill([1:length(curve1) fliplr(1:length(curve1))], [curve1' fliplr(curve2')],[0 0 .85],...
     'FaceColor','#e6e6e6', 'EdgeColor','none','FaceAlpha',0.5); hold on
-plot((1:length(session_dprime_mean)),session_dprime_mean, 'Color', 'k')
+plot((1:length(session_dprime_mean)),session_dprime_mean, 'Color', [0.5 0.5 0.5])
+plot([speed speed], [-3 1.65], 'Color', 'k')
 
-xlabel('Session')
-ylabel('d prime')
-yline([1.65, 1.65],'Color','black','LineStyle','--')
-yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
-title ('Population Performance over sessions (switched rules; contrast 20mm)')
+% xlabel('Sessions')
+% ylabel('d prime')
+% yline([1.65, 1.65],'Color','black','LineStyle','--')
+% yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
+title ('Population Performance over sessions')

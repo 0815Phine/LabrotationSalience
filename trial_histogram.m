@@ -38,6 +38,13 @@ for ii = cohortFlag
 end
 alltrials(17,:) = [];
 
+endflag = size(alltrials);
+for i = 1:endflag(1)
+    naivetrials_ini (i,1) = mean(alltrials(i,1:4));
+    experttrials_ini (i,1) = mean(alltrials(i,5:8));
+end
+[p1,h1]=ranksum(naivetrials_ini,experttrials_ini);
+
 ztrials = zscore(alltrials,0,2);
 
 %% plot data
@@ -67,6 +74,31 @@ title('Trial-Histogram initial rule')
 xlabel('Trials')
 legend('naive','expert'); legend('boxoff')
 
+%% line plot
+figure, hold on
+
+for i = 1:length(experttrials_ini)
+    plot([1,2],[naivetrials_ini(i),experttrials_ini(i)],'Color','k')
+end
+
+plot([1,2],[mean(naivetrials_ini),mean(experttrials_ini)],'LineWidth',1.5)
+
+maxexpert = max(experttrials_ini);
+plot([1 2],[maxexpert*1.05 maxexpert*1.05], 'k')
+if p1 <= 0.05 && p1 > 0.01
+    text(1.5, maxexpert*1.1,'*','HorizontalAlignment','center')
+elseif p1 <= 0.01 && p1 > 0.001
+    text(1.5, maxexpert*1.1,'**','HorizontalAlignment','center')
+elseif p1 <= 0.001
+    text(1.5, maxexpert*1.1,'***','HorizontalAlignment','center')
+else
+    text(1.5, maxexpert*1.1,'ns','HorizontalAlignment','center')
+end
+
+title('Trials per animal')
+xticks([1 2]); xticklabels({'naive','expert'})
+ylabel('Trials')
+
 %% trials per session second rule
 cohortFlag = 11;
 
@@ -86,6 +118,13 @@ for ii = cohortFlag
        
     end
 end
+
+endflag = size(alltrials);
+for i = 1:endflag(1)
+    naivetrials_swi (i,1) = mean(alltrials(i,1:4));
+    experttrials_swi (i,1) = mean(alltrials(i,5:8));
+end
+[p2,h2]=ranksum(naivetrials_swi,experttrials_swi);
 
 ztrials = zscore(alltrials,0,2);
 
@@ -114,3 +153,28 @@ histogram(alltrials(:,5:8),edges)
 title('Trial-Histogram switched rule')
 xlabel('Trials')
 legend('naive','expert'); legend('boxoff')
+
+%% line plot
+figure, hold on
+
+for i = 1:length(experttrials_swi)
+    plot([1,2],[naivetrials_swi(i),experttrials_swi(i)],'Color','k')
+end
+
+plot([1,2],[mean(naivetrials_swi),mean(experttrials_swi)],'LineWidth',1.5)
+
+maxexpert = max(experttrials_swi);
+plot([1 2],[maxexpert*1.05 maxexpert*1.05], 'k')
+if p2 <= 0.05 && p2 > 0.01
+    text(1.5, maxexpert*1.1,'*','HorizontalAlignment','center')
+elseif p2 <= 0.01 && p2 > 0.001
+    text(1.5, maxexpert*1.1,'**','HorizontalAlignment','center')
+elseif p2 <= 0.001
+    text(1.5, maxexpert*1.1,'***','HorizontalAlignment','center')
+else
+    text(1.5, maxexpert*1.1,'ns','HorizontalAlignment','center')
+end
+
+title('Trials per animal')
+xticks([1 2]); xticklabels({'naive','expert'})
+ylabel('Trials')

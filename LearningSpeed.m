@@ -319,6 +319,36 @@ title('Second Rule/Initial Rule')
 ylabel('Factor'); xticks([1 2 3]); xticklabels({'Native' 'Saline' 'CNO'})
 xlim([0.5 3.5]); ylim([0.5 5.5])
 
+%% line plot (contrast 20mm)
+figure, hold on
+
+xvalues = ones(1,length(Speed20_initial)); scatter(xvalues,Speed20_initial, 'k','filled')
+xvalues = ones(1,length(Speed20_second)); scatter(xvalues+1,Speed20_second, 'k','filled'),
+
+for i = 1:length(Speed20_second)
+    plot([1,2],[Speed20_initial(i),Speed20_second(i)],'Color','k')
+end
+
+plot([1,2],[Speed20_initial_mean, Speed20_second_mean],'LineWidth', 1.5)
+
+[p8,h8] = ranksum(Speed20_initial,Speed20_second);
+
+plot([1 2],[speed_max(6)*1.05 speed_max(6)*1.05], 'k')
+if p3 <= 0.05 && p3 > 0.01
+    text(6.5, speed_max(6)*1.1,'*','HorizontalAlignment','center','VerticalAlignment','top')
+elseif p3 <= 0.01 && p3 > 0.001
+    text(6.5, speed_max(6)*1.1,'**','HorizontalAlignment','center','VerticalAlignment','top')
+elseif p3 <= 0.001
+    text(6.5, speed_max(6)*1.1,'***','HorizontalAlignment','center','VerticalAlignment','top')
+else
+    text(6.5, speed_max(6)*1.1,'ns','HorizontalAlignment','center')
+end
+
+
+title('trials to expert per animal')
+xticks([1,2]), xticklabels({'initial rule','switched rule'})
+ylabel('Trials to expert')
+
 %% Save all Plots
 %savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_initial.fig'))
 %savefig(f2, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_second.fig'))

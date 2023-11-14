@@ -333,15 +333,15 @@ plot([1,2],[Speed20_initial_mean, Speed20_second_mean],'LineWidth', 1.5)
 
 [p8,h8] = ranksum(Speed20_initial,Speed20_second);
 
-plot([1 2],[speed_max(6)*1.05 speed_max(6)*1.05], 'k')
-if p3 <= 0.05 && p3 > 0.01
-    text(6.5, speed_max(6)*1.1,'*','HorizontalAlignment','center','VerticalAlignment','top')
-elseif p3 <= 0.01 && p3 > 0.001
-    text(6.5, speed_max(6)*1.1,'**','HorizontalAlignment','center','VerticalAlignment','top')
-elseif p3 <= 0.001
-    text(6.5, speed_max(6)*1.1,'***','HorizontalAlignment','center','VerticalAlignment','top')
+plot([1 2],[speed_max(4)*1.05 speed_max(4)*1.05], 'k')
+if p8 <= 0.05 && p8 > 0.01
+    text(1.5, speed_max(4)*1.1,'*','HorizontalAlignment','center','VerticalAlignment','top')
+elseif p8 <= 0.01 && p8 > 0.001
+    text(1.5, speed_max(4)*1.1,'**','HorizontalAlignment','center','VerticalAlignment','top')
+elseif p8 <= 0.001
+    text(1.5, speed_max(4)*1.1,'***','HorizontalAlignment','center','VerticalAlignment','top')
 else
-    text(6.5, speed_max(6)*1.1,'ns','HorizontalAlignment','center')
+    text(1.5, speed_max(4)*1.1,'ns','HorizontalAlignment','center')
 end
 
 

@@ -122,6 +122,7 @@ ylabel('Lick rate')
 title ('Population lick rates (switched rule; contrast 20mm)')
 ylim([0 1]); xlim([1 53])
 %}
+
 %% plot data
 fig_1 = plot_patch(1-allnogosuc_initial,all_ses_ini,'r',30);
 plot_patch(allgosuc_initial,all_ses_ini,'g',30,fig_1);
@@ -293,6 +294,7 @@ for i = 1:length(cohortData)
     relativeEvents(i) = allLickEvents/allEvents;
 end
 relLicks = [relLicks(:)', {relativeEvents}];
+
 %plot data
 fig_4 = figure; hold on
 scatter(Speed20_second, relativeEvents, 'MarkerEdgeColor','k')
@@ -307,6 +309,112 @@ plot(ax, min(speed20{1}):10:max(speed20{1}), feval(mdls2{1}, min(speed20{1}):10:
 ax = get(fig_4, 'Children');
 plot(ax, xlim(ax), feval(mdls{2}, xlim(ax)), '--k')
 
-
 saveFigure(fig_3,fullfile('Z:\Josephine\Master-Thesis_Figures\Lick_Rates','Initial_total_events_20'),true, true)
 saveFigure(fig_4,fullfile('Z:\Josephine\Master-Thesis_Figures\Lick_Rates','Switched_total_events_20'),true, true)
+
+%% neutral state
+cohortFlag = [11 12 15 16];
+all_ses_neu = [];
+for ii = cohortFlag
+    cohortData = animalData.cohort(ii).animal;
+    for i = 1:length(cohortData)
+        isP3 = contains(cohortData(i).session_names,'P3.3');
+        sesFlag_first = find(isP3, 1, 'first');
+        sesFlag_last = find(isP3, 1, 'last');
+        num_ses = sesFlag_last-sesFlag_first;
+        
+        if isempty(num_ses)
+            continue
+        else
+            % norm_ses_neu = (1:num_ses)/num_ses;
+            % all_ses_neu = cat(1, all_ses_neu(:), {norm_ses_neu});
+     
+            gosuc = cohortData(i).gogo_suc;
+            gosuc(sesFlag_last+1:end) = [];
+            gosuc(1:sesFlag_first-1) = [];
+            if ii == 11
+                allgosuc(1:length(gosuc),i) = gosuc;
+            elseif ii == 12
+                allgosuc(1:length(gosuc),i+6) = gosuc;
+            elseif ii == 15
+                allgosuc(1:length(gosuc),i+12) = gosuc;
+            elseif ii==16
+                allgosuc(1:length(gosuc),i+13) = gosuc;
+            end
+
+            nogosuc = cohortData(i).nogo_suc;
+            nogosuc(sesFlag_last+1:end) = [];
+            nogosuc(1:sesFlag_first-1) = [];
+            if ii == 11
+                allnogosuc(1:length(nogosuc),i) = nogosuc;
+            elseif ii == 12
+                allnogosuc(1:length(nogosuc),i+6) = nogosuc;
+            elseif ii == 15
+                allnogosuc(1:length(nogosuc),i+12) = nogosuc;
+            elseif ii == 16
+                allnogosuc(1:length(nogosuc),i+13) = nogosuc;
+            end
+
+            neulick = cohortData(i).medium_lick;
+            neulick(sesFlag_last+1:end) = [];
+            neulick(1:sesFlag_first-1) = [];
+            if ii == 11
+                allneutral(1:length(neulick),i) = neulick;
+            elseif ii == 12
+                allneutral(1:length(neulick),i+6) = neulick;
+            elseif ii == 15
+                allneutral(1:length(neulick),i+12) = neulick;
+            elseif ii == 16
+                allneutral(1:length(neulick),i+13) = neulick;
+            end
+        end
+    end
+end
+
+% plot data
+
+% plot data with session proportion
+% fig_prop = plot_patch(1-allnogosuc,all_ses_neu,'r',7);
+% plot_patch(allgosuc,all_ses_neu,'g',7,fig_prop);
+% plot_patch(allneutral,all_ses_neu,'#EDB120',7,fig_prop)
+
+% as all animals had 8 sessions in stage 3 we don't necessarly need the
+% proportion function
+xvalues = 1:8;
+
+%nogo trials
+sig_plot = std(1-allnogosuc,1,2,'omitnan');
+mu_plot = mean(1-allnogosuc,2,"omitnan");
+curve1 = mu_plot + sig_plot;
+curve2 = mu_plot - sig_plot;
+
+fig_5 = plot(xvalues, mu_plot, 'Color', 'r'); hold on
+fill([1:length(curve1) fliplr(1:length(curve1))], [curve1' fliplr(curve2')],[0 0 .85],...
+     'FaceColor','r', 'EdgeColor','none','FaceAlpha',0.1);
+
+%go trials
+sig_plot = std(allgosuc,1,2,'omitnan');
+mu_plot = mean(allgosuc,2,"omitnan");
+curve1 = mu_plot + sig_plot;
+curve2 = mu_plot - sig_plot;
+
+plot(xvalues, mu_plot, 'Color', 'g')
+fill([1:length(curve1) fliplr(1:length(curve1))], [curve1' fliplr(curve2')],[0 0 .85],...
+     'FaceColor','g', 'EdgeColor','none','FaceAlpha',0.1);
+
+%neutral trials
+sig_plot = std(allneutral,1,2,'omitnan');
+mu_plot = mean(allneutral,2,"omitnan");
+curve1 = mu_plot + sig_plot;
+curve2 = mu_plot - sig_plot;
+
+plot(xvalues, mu_plot, 'Color', '#EDB120')
+fill([1:length(curve1) fliplr(1:length(curve1))], [curve1' fliplr(curve2')],[0 0 .85],...
+     'FaceColor','#EDB120', 'EdgeColor','none','FaceAlpha',0.1);
+
+% labels
+ylim([0,1])
+title('Population lick rates (neutral state; contrast 20mm)')
+xlabel('Session'); ylabel('Lick rate')
+legend({'No-Go trials' '' 'Go trials' '' 'Neutral trials'}, 'Box', 'off', 'Location', 'best')
+set(gca,'Box','off','Color','none')

@@ -344,7 +344,6 @@ else
     text(1.5, speed_max(4)*1.1,'ns','HorizontalAlignment','center')
 end
 
-
 title('trials to expert per animal')
 xticks([1,2]), xticklabels({'initial rule','switched rule'})
 ylabel('Trials to expert')

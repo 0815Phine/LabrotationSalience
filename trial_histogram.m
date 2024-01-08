@@ -1,6 +1,7 @@
 clearvars
 close all
 
+% load animalData.mat
 startPath = 'Z:\Filippo\Animals';
 try
     load(fullfile(startPath,'animalData.mat'))
@@ -10,171 +11,161 @@ catch
     return
 end
 
-%% trials per session initial rule
-cohortFlag = [11, 14, 17];
+%% trials per session initial rule (should be called P3.2) expert vs. naive
 
-alltrials = NaN (19,8);
-for ii = cohortFlag
-    cohortData = animalData.cohort(ii).animal;
-    for i = 1:length(cohortData)
-        isP2 = contains(cohortData(i).session_names,'P3.2');
+% add the cohorts you want to analyze
+cohortFlag = [11, 14, 17];
+numCohorts = length(cohortFlag);
+numMice = arrayfun(@(x) length(animalData.cohort(x).animal), cohortFlag);
+
+% specify the number of sessions you want to analyze for each condition
+numSes = 4;
+
+alltrials_ini = NaN (sum(numMice),numSes*2);
+for cohortIdx = 1:numCohorts
+    cohortData = animalData.cohort(cohortFlag(cohortIdx)).animal;
+    mouseFlag = length(cohortData);
+
+    for mouseIdx = 1:mouseFlag
+        isP2 = contains(cohortData(mouseIdx).session_names,'P3.2');
         sesFlag_first = find(isP2, 1, 'first');
         sesFlag_last = find(isP2, 1, 'last');
 
-        trialcountnaive = cellfun(@numel, animalData.cohort(ii).animal(i).Lick_Events(sesFlag_first:sesFlag_first+3));
-        trialcountexp = cellfun(@numel, animalData.cohort(ii).animal(i).Lick_Events(sesFlag_last-3:sesFlag_last));
+        % count trials
+        trialcountnaive = cellfun(@numel, cohortData(mouseIdx).Lick_Events(sesFlag_first:sesFlag_first+(numSes-1)));
+        trialcountexp = cellfun(@numel, cohortData(mouseIdx).Lick_Events(sesFlag_last-(numSes-1):sesFlag_last));
         
-        if ii == 11
-            alltrials(i,1:4) = trialcountnaive;
-            alltrials(i,5:8) = trialcountexp;
-        elseif ii == 14
-            alltrials(i+6,1:4) = trialcountnaive;
-            alltrials(i+6,5:8) = trialcountexp;
-        elseif ii == 17
-            alltrials(i+14,1:4) = trialcountnaive;
-            alltrials(i+14,5:8) = trialcountexp;
-        end
+        rowIdx = sum(numMice(1:cohortIdx-1)) + mouseIdx;
+        alltrials_ini(rowIdx, 1:numSes) = trialcountnaive;
+        alltrials_ini(rowIdx, numSes+1:numSes*2) = trialcountexp;
     end
 end
-alltrials(17,:) = [];
 
-endflag = size(alltrials);
-for i = 1:endflag(1)
-    naivetrials_ini (i,1) = mean(alltrials(i,1:4));
-    experttrials_ini (i,1) = mean(alltrials(i,5:8));
+% this removes the the 17th row as the animal did not completed the stage
+% (optional)
+alltrials_ini(17,:) = [];
+
+% calculate mean trials for both conditions
+naivetrials_ini = mean(alltrials_ini(:,1:numSes), 2);
+experttrials_ini = mean(alltrials_ini(:,numSes+1:numSes*2), 2);
+
+% Statistics and normalization
+[p1,h1] = ranksum(naivetrials_ini, experttrials_ini);
+ztrials_ini = zscore(alltrials_ini,0,2);
+
+%% trials per session second rule (should be called P3.4) expert vs. naive
+
+% add the cohorts you want to analyze
+cohortFlag = 11;
+numCohorts = length(cohortFlag);
+numMice = arrayfun(@(x) length(animalData.cohort(x).animal), cohortFlag);
+
+% specify the number of sessions you want to analyze for each condition
+numSes = 4;
+
+alltrials_swi = NaN (sum(numMice),numSes*2);
+for cohortIdx = 1:numCohorts
+    cohortData = animalData.cohort(cohortFlag(cohortIdx)).animal;
+    mouseFlag = length(cohortData);
+
+    for mouseIdx = 1:length(cohortData)
+        isP4 = contains(cohortData(mouseIdx).session_names,'P3.4');
+        sesFlag_first = find(isP4, 1, 'first');
+        sesFlag_last = find(isP4, 1, 'last');
+        
+        % count Trials
+        trialcountnaive = cellfun(@numel, cohortData(mouseIdx).Lick_Events(sesFlag_first:sesFlag_first+(numSes-1)));
+        trialcountexp = cellfun(@numel, cohortData(mouseIdx).Lick_Events(sesFlag_last-(numSes-1):sesFlag_last));
+        
+        rowIdx = sum(numMice(1:cohortIdx-1)) + mouseIdx;
+        alltrials_swi(rowIdx, 1:numSes) = trialcountnaive;
+        alltrials_swi(rowIdx, numSes+1:numSes*2) = trialcountexp;      
+    end
 end
-[p1,h1]=ranksum(naivetrials_ini,experttrials_ini);
 
-ztrials = zscore(alltrials,0,2);
+% calculate mean trials for both conditions
+naivetrials_swi = mean(alltrials_swi(:,1:numSes), 2);
+experttrials_swi = mean(alltrials_swi(:,numSes+1:numSes*2), 2);
 
-%% plot data
-f1 = figure; trialbars = bar3(ztrials);
+% Statistics and normalization
+[p2,h2]=ranksum(naivetrials_swi, experttrials_swi);
+ztrials_swi = zscore(alltrials_swi,0,2);
 
-numBars = size(ztrials,1);
-numSets = size(ztrials,2);
+%% plot data initial rule
+
+% 3d bar plot
+f1 = figure; trialbars = bar3(ztrials_ini);
+numBars = size(ztrials_ini,1);
+numSets = size(ztrials_ini,2);
 for i = 1:numSets
     zdata = ones(6*numBars,4);
     k = 1;
     for j = 0:6:(6*numBars-6)
-      zdata(j+1:j+6,:) = ztrials(k,i);
+      zdata(j+1:j+6,:) = ztrials_ini(k,i);
       k = k+1;
     end
     set(trialbars(i),'Cdata',zdata)
 end
-
 colorbar
 xlabel('Sessions'); xticks([]); xticklabels([])
 ylabel('Animals'); yticks([]); yticklabels([])
 title('Trialcount initial rule')
 
-f3 = figure; edges = 0:10:150;
-histogram(alltrials(:,1:4),edges); hold on
-histogram(alltrials(:,5:8),edges)
+% histogram
+f2 = figure; edges = 0:10:150;
+histogram(alltrials_ini(:,1:4),edges); hold on
+histogram(alltrials_ini(:,5:8),edges)
 title('Trial-Histogram initial rule')
 xlabel('Trials')
 legend('naive','expert'); legend('boxoff')
 
-%% line plot
-figure, hold on
-
+% line plot
+f3 = figure; hold on
 for i = 1:length(experttrials_ini)
     plot([1,2],[naivetrials_ini(i),experttrials_ini(i)],'Color','k')
 end
-
 plot([1,2],[mean(naivetrials_ini),mean(experttrials_ini)],'LineWidth',1.5)
-
 maxexpert = max(experttrials_ini);
-plot([1 2],[maxexpert*1.05 maxexpert*1.05], 'k')
-if p1 <= 0.05 && p1 > 0.01
-    text(1.5, maxexpert*1.1,'*','HorizontalAlignment','center')
-elseif p1 <= 0.01 && p1 > 0.001
-    text(1.5, maxexpert*1.1,'**','HorizontalAlignment','center')
-elseif p1 <= 0.001
-    text(1.5, maxexpert*1.1,'***','HorizontalAlignment','center')
-else
-    text(1.5, maxexpert*1.1,'ns','HorizontalAlignment','center')
-end
-
+plotStatistics(p1,maxexpert,1,2)
 title('Trials per animal')
 xticks([1 2]); xticklabels({'naive','expert'})
 ylabel('Trials')
 
-%% trials per session second rule
-cohortFlag = 11;
+%% plot data switched rule
 
-alltrials = NaN (6,8);
-for ii = cohortFlag
-    cohortData = animalData.cohort(ii).animal;
-    for i = 1:length(cohortData)
-        isP4 = contains(cohortData(i).session_names,'P3.4');
-        sesFlag_first = find(isP4, 1, 'first');
-        sesFlag_last = find(isP4, 1, 'last');
-
-        trialcountnaive = cellfun(@numel, animalData.cohort(ii).animal(i).Lick_Events(sesFlag_first:sesFlag_first+3));
-        trialcountexp = cellfun(@numel, animalData.cohort(ii).animal(i).Lick_Events(sesFlag_last-3:sesFlag_last));
-        
-        alltrials(i,1:4) = trialcountnaive;
-        alltrials(i,5:8) = trialcountexp;
-       
-    end
-end
-
-endflag = size(alltrials);
-for i = 1:endflag(1)
-    naivetrials_swi (i,1) = mean(alltrials(i,1:4));
-    experttrials_swi (i,1) = mean(alltrials(i,5:8));
-end
-[p2,h2]=ranksum(naivetrials_swi,experttrials_swi);
-
-ztrials = zscore(alltrials,0,2);
-
-%% plot data
-f2 = figure; trialbars = bar3(ztrials);
-
-numBars = size(ztrials,1);
-numSets = size(ztrials,2);
+% 3d bar plot
+f4 = figure; trialbars = bar3(ztrials_swi);
+numBars = size(ztrials_swi,1);
+numSets = size(ztrials_swi,2);
 for i = 1:numSets
     zdata = ones(6*numBars,4);
     k = 1;
     for j = 0:6:(6*numBars-6)
-      zdata(j+1:j+6,:) = ztrials(k,i);
+      zdata(j+1:j+6,:) = ztrials_swi(k,i);
       k = k+1;
     end
     set(trialbars(i),'Cdata',zdata)
 end
-
 colorbar
 xlabel('Sessions'); xticks([]); xticklabels([])
 ylabel('Animals'); yticks([]); yticklabels([])
 title('Trialcount switched rule')
 
-f4 = figure; histogram(alltrials(:,1:4),edges); hold on
-histogram(alltrials(:,5:8),edges)
+% histogram
+f5 = figure; histogram(alltrials_swi(:,1:4),edges); hold on
+histogram(alltrials_swi(:,5:8),edges)
 title('Trial-Histogram switched rule')
 xlabel('Trials')
 legend('naive','expert'); legend('boxoff')
 
-%% line plot
-figure, hold on
-
+% line plot
+f6 = figure; hold on
 for i = 1:length(experttrials_swi)
     plot([1,2],[naivetrials_swi(i),experttrials_swi(i)],'Color','k')
 end
-
 plot([1,2],[mean(naivetrials_swi),mean(experttrials_swi)],'LineWidth',1.5)
-
 maxexpert = max(experttrials_swi);
-plot([1 2],[maxexpert*1.05 maxexpert*1.05], 'k')
-if p2 <= 0.05 && p2 > 0.01
-    text(1.5, maxexpert*1.1,'*','HorizontalAlignment','center')
-elseif p2 <= 0.01 && p2 > 0.001
-    text(1.5, maxexpert*1.1,'**','HorizontalAlignment','center')
-elseif p2 <= 0.001
-    text(1.5, maxexpert*1.1,'***','HorizontalAlignment','center')
-else
-    text(1.5, maxexpert*1.1,'ns','HorizontalAlignment','center')
-end
-
+plotStatistics(p2,maxexpert,1,2)
 title('Trials per animal')
 xticks([1 2]); xticklabels({'naive','expert'})
 ylabel('Trials')

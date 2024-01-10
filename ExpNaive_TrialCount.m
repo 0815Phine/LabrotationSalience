@@ -12,7 +12,6 @@ catch
 end
 
 %% trials per session initial rule (should be called P3.2) expert vs. naive
-
 % add the cohorts you want to analyze
 cohortFlag = [11, 14, 17];
 numCohorts = length(cohortFlag);
@@ -54,7 +53,6 @@ experttrials_ini = mean(alltrials_ini(:,numSes+1:numSes*2), 2);
 ztrials_ini = zscore(alltrials_ini,0,2);
 
 %% trials per session second rule (should be called P3.4) expert vs. naive
-
 % add the cohorts you want to analyze
 cohortFlag = 11;
 numCohorts = length(cohortFlag);
@@ -92,7 +90,6 @@ experttrials_swi = mean(alltrials_swi(:,numSes+1:numSes*2), 2);
 ztrials_swi = zscore(alltrials_swi,0,2);
 
 %% plot data initial rule
-
 % 3d bar plot
 f1 = figure; trialbars = bar3(ztrials_ini);
 numBars = size(ztrials_ini,1);
@@ -132,7 +129,6 @@ xticks([1 2]); xticklabels({'naive','expert'})
 ylabel('Trials')
 
 %% plot data switched rule
-
 % 3d bar plot
 f4 = figure; trialbars = bar3(ztrials_swi);
 numBars = size(ztrials_swi,1);

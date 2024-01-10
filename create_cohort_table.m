@@ -1,5 +1,6 @@
 function [CohortTable] = create_cohort_table (Cohort_Data)
 % thanks Nadine for the inspiration (:
+% creates a table (CohortTable) containing mouse_ID, stage, session_num and d_prime
 
 flag = 0;
 for m = 1:size(Cohort_Data,2)

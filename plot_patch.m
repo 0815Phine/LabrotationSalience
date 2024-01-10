@@ -14,7 +14,7 @@ plot(common_axis, mean(inter_data, 1, "omitnan"), "Color", color)
 ylim([0,1]); hold on;
 sig_plot = std(inter_data,1,1,'omitnan');
 mu_plot = mean(inter_data,1,"omitnan");
-nogosuc_patch = patch('XData', [common_axis, flip(common_axis)],'YData', [sig_plot+mu_plot, flip(-sig_plot+mu_plot)]);
-nogosuc_patch.FaceAlpha = 0.1; nogosuc_patch.EdgeColor = "none";
-nogosuc_patch.FaceColor = color;
+my_patch = patch('XData', [common_axis, flip(common_axis)],'YData', [sig_plot+mu_plot, flip(-sig_plot+mu_plot)]);
+my_patch.FaceAlpha = 0.1; my_patch.EdgeColor = "none";
+my_patch.FaceColor = color;
 end

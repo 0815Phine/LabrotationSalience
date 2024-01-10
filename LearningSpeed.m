@@ -10,7 +10,21 @@ catch
     return
 end
 
-% load Cohort Data
+%% create Speed-structure
+% add cohorts you want to analyze
+% cohorts = [11, 14, 15, 16, 17, 18, 19];
+% contrast = [20, 16, 14, 12];
+% intersecFlag = {'intersec_initial', 'intersec_second'};
+% 
+% Speed = struct();
+% Speed_std = struct();
+% Speed_mean = struct();
+% for cohortIDX = 1:length(cohorts)
+%     cohort_Data = animalData.cohort(cohorts(cohortIDX)).animal;
+% 
+%     horzcat(cohort_Data.(intersecFlag{1}))
+%     horzcat(cohort_Data.(intersecFlag{2}))
+
 cohort_Data11 = animalData.cohort(11).animal;
 cohort_Data14 = animalData.cohort(14).animal;
 cohort_Data15 = animalData.cohort(15).animal;
@@ -108,14 +122,14 @@ SpeedCNO_control_second_std = std(SpeedCNO_control_second,0,2,'omitnan');
 SpeedCNO_control_second_mean = mean(SpeedCNO_control_second,2,'omitnan');
 
 %% Some Statistics
-[p0,h0] = ranksum(Speed20_initial,SpeedCNO_initial,'tail','left');
-[p1,h1] = ranksum(SpeedSa_initial,SpeedCNO_initial,'tail','left');
-[p2,h2] = ranksum(Speed20_second,SpeedCNO_second,'tail','left');
-[p3,h3] = ranksum(SpeedSa_second,SpeedCNO_second,'tail','left');
-[p4,h4] = ranksum(Speed20_initial,SpeedSa_initial);
-[p5,h5] = ranksum(Speed20_second,SpeedSa_second);
-[p6,h6] = ranksum(SpeedCNO_initial,SpeedCNO_control_initial,'tail','right');
-[p7,h7] = ranksum(SpeedCNO_second,SpeedCNO_control_second,'tail','right');
+[p0,~] = ranksum(Speed20_initial,SpeedCNO_initial,'tail','left');
+[p1,~] = ranksum(SpeedSa_initial,SpeedCNO_initial,'tail','left');
+[p2,~] = ranksum(Speed20_second,SpeedCNO_second,'tail','left');
+[p3,~] = ranksum(SpeedSa_second,SpeedCNO_second,'tail','left');
+[p4,~] = ranksum(Speed20_initial,SpeedSa_initial);
+[p5,~] = ranksum(Speed20_second,SpeedSa_second);
+[p6,~] = ranksum(SpeedCNO_initial,SpeedCNO_control_initial,'tail','right');
+[p7,~] = ranksum(SpeedCNO_second,SpeedCNO_control_second,'tail','right');
 
 %% Plot Data (deltaA comparison initial rules)
 deltaA = [12,14,16,20];
@@ -191,49 +205,10 @@ ylim([150, 2000])
 
 speed_max = arrayfun(@(c) max(speed_all(speed_all(:,1) == c, 2)), x);
 
-plot([1 3],[speed_max(3)+150 speed_max(3)+150], 'k')
-if p0 <= 0.05 && p0 > 0.01
-    text(2, speed_max(3)+200,'*','HorizontalAlignment','center')
-elseif p0 <= 0.01 && p0 > 0.001
-    text(2, speed_max(3)+200,'**','HorizontalAlignment','center')
-elseif p0 <= 0.001
-    text(2, speed_max(3)+200,'***','HorizontalAlignment','center')
-else
-    text(2, speed_max(3)+200,'ns','HorizontalAlignment','center')
-end
-
-plot([2 3],[speed_max(3)+50 speed_max(3)+50], 'k')
-if p1 <= 0.05 && p1 > 0.01
-    text(2.5, speed_max(3)+100,'*','HorizontalAlignment','center')
-elseif p1 <= 0.01 && p1 > 0.001
-    text(2.5, speed_max(3)+100,'**','HorizontalAlignment','center')
-elseif p1 <= 0.001
-    text(2.5, speed_max(3)+100,'***','HorizontalAlignment','center')
-else
-    text(2.5, speed_max(3)+100,'ns','HorizontalAlignment','center')
-end
-
-plot([5 7],[speed_max(6)+150 speed_max(6)+150], 'k')
-if p2 <= 0.05 && p2 > 0.01
-    text(6, speed_max(6)+200,'*','HorizontalAlignment','center')
-elseif p2 <= 0.01 && p2 > 0.001
-    text(6, speed_max(6)+200,'**','HorizontalAlignment','center')
-elseif p2 <= 0.001
-    text(6, speed_max(6)+200,'***','HorizontalAlignment','center')
-else
-    text(6, speed_max(6)+200,'ns','HorizontalAlignment','center')
-end
-
-plot([6 7],[speed_max(6)+50 speed_max(6)+50], 'k')
-if p3 <= 0.05 && p3 > 0.01
-    text(6.5, speed_max(6)+100,'*','HorizontalAlignment','center')
-elseif p3 <= 0.01 && p3 > 0.001
-    text(6.5, speed_max(6)+100,'**','HorizontalAlignment','center')
-elseif p3 <= 0.001
-    text(6.5, speed_max(6)+100,'***','HorizontalAlignment','center')
-else
-    text(6.5, speed_max(6)+100,'ns','HorizontalAlignment','center')
-end
+plotStatistics(p0, speed_max(3)+100, 1, 3)
+plotStatistics(p1, speed_max(3), 2, 3)
+plotStatistics(p2, speed_max(6)+100, 5, 7)
+plotStatistics(p3, speed_max(6), 6, 7)
 
 %% Plot Data (native-saline-CNO - Boxchart)
 speed_all_native = [[1*ones(size(Speed20_initial))';5*ones(size(Speed20_second))'],...
@@ -255,71 +230,44 @@ xticks([2 6]), xticklabels({'Initial rules', 'Second rules'})
 % text(2, 100, 'initial rules', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold')
 % text(7, 100, 'second rules', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold')
 
-plot([1 3],[speed_max(3)*1.15 speed_max(3)*1.15], 'k')
-if p0 <= 0.05 && p0 > 0.01
-    text(2, speed_max(3)*1.2,'*','HorizontalAlignment','center')
-elseif p0 <= 0.01 && p0 > 0.001
-    text(2, speed_max(3)*1.2,'**','HorizontalAlignment','center')
-elseif p0 <= 0.001
-    text(2, speed_max(3)*1.2,'***','HorizontalAlignment','center')
-else
-    text(2, speed_max(3)*1.2,'ns','HorizontalAlignment','center')
-end
-
-plot([2 3],[speed_max(3)*1.05 speed_max(3)*1.05], 'k')
-if p1 <= 0.05 && p1 > 0.01
-    text(2.5, speed_max(3)*1.1,'*','HorizontalAlignment','center')
-elseif p1 <= 0.01 && p1 > 0.001
-    text(2.5, speed_max(3)*1.1,'**','HorizontalAlignment','center')
-elseif p1 <= 0.001
-    text(2.5, speed_max(3)*1.1,'***','HorizontalAlignment','center')
-else
-    text(2.5, speed_max(3)*1.1,'ns','HorizontalAlignment','center')
-end
-
-plot([5 7],[speed_max(6)*1.05+100 speed_max(6)*1.05+100], 'k')
-if p2 <= 0.05 && p2 > 0.01
-    text(6, speed_max(6)*1.1+100,'*','HorizontalAlignment','center','VerticalAlignment','top')
-elseif p2 <= 0.01 && p2 > 0.001
-    text(6, speed_max(6)*1.1+100,'**','HorizontalAlignment','center','VerticalAlignment','top')
-elseif p2 <= 0.001
-    text(6, speed_max(6)*1.1+100,'***','HorizontalAlignment','center','VerticalAlignment','top')
-else
-    text(6, speed_max(6)*1.1+100,'ns','HorizontalAlignment','center')
-end
-
-plot([6 7],[speed_max(6)*1.05 speed_max(6)*1.05], 'k')
-if p3 <= 0.05 && p3 > 0.01
-    text(6.5, speed_max(6)*1.1,'*','HorizontalAlignment','center','VerticalAlignment','top')
-elseif p3 <= 0.01 && p3 > 0.001
-    text(6.5, speed_max(6)*1.1,'**','HorizontalAlignment','center','VerticalAlignment','top')
-elseif p3 <= 0.001
-    text(6.5, speed_max(6)*1.1,'***','HorizontalAlignment','center','VerticalAlignment','top')
-else
-    text(6.5, speed_max(6)*1.1,'ns','HorizontalAlignment','center')
-end
+plotStatistics(p0, speed_max(3)+100, 1, 3)
+plotStatistics(p1, speed_max(3), 2, 3)
+plotStatistics(p2, speed_max(6)+100, 5, 7)
+plotStatistics(p3, speed_max(6), 6, 7)
 
 legend('native','saline','CNO','CNO-control','Location','southeast'); legend('boxoff')
 
-%% 
+%% calculate factor between initial and switched rule learning
 factor_CNO = SpeedCNO_second./SpeedCNO_initial;
 factor_saline = SpeedSa_second./SpeedSa_initial;
+% for native animals all animals not trained on 20mm contrast are removed
 speed_all_initial_adjust = speed_all_initial;
 speed_all_initial_adjust(19:30,:) = []; speed_all_initial_adjust(2:6,:) = []; speed_all_initial_adjust(4,:) = [];
 factor_native = speed_all_second(:,2)./speed_all_initial_adjust(:,2);
 
-[p8,h8] = ranksum(factor_CNO,factor_saline,'tail','right');
-[p9,h9] = ranksum(factor_CNO,factor_native,'tail','right');
+% calculate if there is a difference between CNO, native and saline animals
+[p,~] = ranksum(factor_CNO,factor_saline,'tail','right');
+if p <= 0.05
+    fprintf('The factor between CNO and saline animals is significantly different (p=%d).\n', p)
+else
+    fprintf('The factor between CNO and saline animals is not significantly different.\n')
+end
+[p,~] = ranksum(factor_CNO,factor_native,'tail','right');
+if p <= 0.05
+    fprintf('The factor between CNO and native animals is significantly different (p=%d).\n', p)
+else
+    fprintf('The factor between CNO and native animals is not significantly different.\n')
+end
 
-figure, hold on
-boxchart(ones(size(factor_native)),factor_native, 'BoxFaceColor', 'k', 'MarkerColor', 'k')
-boxchart(1+ones(size(factor_saline)),factor_saline, 'BoxFaceColor', [0 0.45 0.74], 'MarkerColor', [0 0.45 0.74])
-boxchart(2+ones(size(factor_CNO)),factor_CNO, 'BoxFaceColor', [1 0.32 0.30], 'MarkerColor', [1 0.32 0.30])
-title('Second Rule/Initial Rule')
-ylabel('Factor'); xticks([1 2 3]); xticklabels({'Native' 'Saline' 'CNO'})
-xlim([0.5 3.5]); ylim([0.5 5.5])
+% figure, hold on
+% boxchart(ones(size(factor_native)),factor_native, 'BoxFaceColor', 'k', 'MarkerColor', 'k')
+% boxchart(1+ones(size(factor_saline)),factor_saline, 'BoxFaceColor', [0 0.45 0.74], 'MarkerColor', [0 0.45 0.74])
+% boxchart(2+ones(size(factor_CNO)),factor_CNO, 'BoxFaceColor', [1 0.32 0.30], 'MarkerColor', [1 0.32 0.30])
+% title('Second Rule/Initial Rule')
+% ylabel('Factor'); xticks([1 2 3]); xticklabels({'Native' 'Saline' 'CNO'})
+% xlim([0.5 3.5]); ylim([0.5 5.5])
 
-%% line plot (contrast 20mm)
+%% line plot (contrast 20mm) initial vs. switched
 figure, hold on
 
 xvalues = ones(1,length(Speed20_initial)); scatter(xvalues,Speed20_initial, 'k','filled')
@@ -331,18 +279,8 @@ end
 
 plot([1,2],[Speed20_initial_mean, Speed20_second_mean],'LineWidth', 1.5)
 
-[p8,h8] = ranksum(Speed20_initial,Speed20_second);
-
-plot([1 2],[speed_max(4)*1.05 speed_max(4)*1.05], 'k')
-if p8 <= 0.05 && p8 > 0.01
-    text(1.5, speed_max(4)*1.1,'*','HorizontalAlignment','center','VerticalAlignment','top')
-elseif p8 <= 0.01 && p8 > 0.001
-    text(1.5, speed_max(4)*1.1,'**','HorizontalAlignment','center','VerticalAlignment','top')
-elseif p8 <= 0.001
-    text(1.5, speed_max(4)*1.1,'***','HorizontalAlignment','center','VerticalAlignment','top')
-else
-    text(1.5, speed_max(4)*1.1,'ns','HorizontalAlignment','center')
-end
+[p8,~] = ranksum(Speed20_initial, Speed20_second);
+plotStatistics(p8, speed_max(4), 1, 2)
 
 title('trials to expert per animal')
 xticks([1,2]), xticklabels({'initial rule','switched rule'})

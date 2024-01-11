@@ -10,117 +10,181 @@ catch
     return
 end
 
-%% create Speed-structure
+%% create Speed-cell for each cohort (ATTENTION: for contrast=20mm and CNO analysis cohorts have to be pooled later on)
 % add cohorts you want to analyze
-% cohorts = [11, 14, 15, 16, 17, 18, 19];
-% contrast = [20, 16, 14, 12];
-% intersecFlag = {'intersec_initial', 'intersec_second'};
+cohorts = [11, 14, 15, 16, 17, 18, 19];
+FieldofChoice = {'intersec_initial', 'intersec_second'};
+
+Speed_initial = cell(1, length(cohorts));
+Speed_switched = cell(1, length(cohorts));
+Speed_initial_std = zeros(1, length(cohorts));
+Speed_initial_mean = zeros(1, length(cohorts));
+Speed_switched_std = zeros(1, length(cohorts));
+Speed_switched_mean = zeros(1, length(cohorts));
+for cohortIDX = 1:length(cohorts)
+    cohort_Data = animalData.cohort(cohorts(cohortIDX)).animal;
+
+    % cohort 16 was trained on two different contrasts therefore animals have to be split
+    if cohorts(cohortIDX) == 16
+        Speed_initial{cohortIDX} = cell(1,2);
+        Speed_switched{cohortIDX} = cell(1,2);
+        for mouseIDX = 1:length(cohort_Data)
+            session_names{mouseIDX} = cohort_Data(mouseIDX).session_names;
+            Flag_14mm(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, '14mm')) > 0;
+            Flag_16mm(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, '16mm')) > 0;
+        end
+        Speed_initial{cohortIDX}{1} = horzcat(cohort_Data(Flag_14mm).(FieldofChoice{1}));
+        Speed_initial{cohortIDX}{2}  = horzcat(cohort_Data(Flag_16mm).(FieldofChoice{1}));
+        Speed_switched{cohortIDX}{1} = horzcat(cohort_Data(Flag_14mm).(FieldofChoice{2}));
+        Speed_switched{cohortIDX}{2}  = horzcat(cohort_Data(Flag_16mm).(FieldofChoice{2}));
+
+    % cohort 18 retreived different intervention and therefore has to be split
+    elseif cohorts(cohortIDX) == 18
+        Speed_initial{cohortIDX} = cell(1,2);
+        Speed_switched{cohortIDX} = cell(1,2);
+        for mouseIDX = 1:length(cohort_Data)
+            session_names{mouseIDX} = cohort_Data(mouseIDX).session_names;
+            % counterintuively Saline-animals are the only ones that have CNO written in any session name
+            Flag_Saline(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, 'CNO')) > 0;
+            Flag_CNO(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, 'CNO')) == 0;
+        end
+        Speed_initial{cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{1}));
+        Speed_initial{cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{1}));
+        Speed_switched{cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{2}));
+        Speed_switched{cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{2}));
+
+    % cohort 19 retreived different intervention and therefore has to be split
+    elseif cohorts(cohortIDX) == 19
+        Speed_initial{cohortIDX} = cell(1,3);
+        Speed_switched{cohortIDX} = cell(1,3);
+        for mouseIDX = 1:length(cohort_Data)
+            session_names{mouseIDX} = cohort_Data(mouseIDX).session_names;
+            % mCherry and CNO animals can only be seperated manually
+            if mouseIDX == 4 || mouseIDX == 8
+                Flag_mCherry(mouseIDX,1) = true;
+            else
+                % counterintuively Saline-animals are the only ones that have CNO written in any session name
+                Flag_Saline(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, 'CNO')) > 0;
+                Flag_CNO(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, 'CNO')) == 0;
+            end
+        end
+        Speed_initial{cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{1}));
+        Speed_initial{cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{1}));
+        Speed_initial{cohortIDX}{3}  = horzcat(cohort_Data(Flag_mCherry).(FieldofChoice{1}));
+        Speed_switched{cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{2}));
+        Speed_switched{cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{2}));
+        Speed_switched{cohortIDX}{3}  = horzcat(cohort_Data(Flag_mCherry).(FieldofChoice{2}));
+
+    else
+        Speed_initial{cohortIDX} = horzcat(cohort_Data.(FieldofChoice{1}));
+        Speed_switched{cohortIDX} = horzcat(cohort_Data.(FieldofChoice{2}));
+
+        Speed_initial_std(cohortIDX) = std(Speed_initial{cohortIDX}, 0, 2, 'omitnan');
+        Speed_initial_mean(cohortIDX) = mean(Speed_initial{cohortIDX}, 2, 'omitnan');
+
+        Speed_switched_std(cohortIDX) = std(Speed_switched{cohortIDX}, 0, 2, 'omitnan');
+        Speed_switched_mean(cohortIDX) = mean(Speed_switched{cohortIDX}, 2, 'omitnan');
+    end
+end
+
+%% original Code (still should work, just uncomment)
+% cohort_Data11 = animalData.cohort(11).animal;
+% cohort_Data14 = animalData.cohort(14).animal;
+% cohort_Data15 = animalData.cohort(15).animal;
+% cohort_Data16 = animalData.cohort(16).animal;
+% cohort_Data17 = animalData.cohort(17).animal;
+% cohort_Data18 = animalData.cohort(18).animal;
+% cohort_Data19 = animalData.cohort(19).animal;
 % 
-% Speed = struct();
-% Speed_std = struct();
-% Speed_mean = struct();
-% for cohortIDX = 1:length(cohorts)
-%     cohort_Data = animalData.cohort(cohorts(cohortIDX)).animal;
+% %%Cohort 11 + 14 + 17 (contrast = 20)
+% Speed20_initial = horzcat(cohort_Data11.intersec_initial,cohort_Data14.intersec_initial,cohort_Data17.intersec_initial);
+% Speed20_second = horzcat(cohort_Data11.intersec_second);
 % 
-%     horzcat(cohort_Data.(intersecFlag{1}))
-%     horzcat(cohort_Data.(intersecFlag{2}))
+% Speed20_initial_std = std(Speed20_initial,0,2,'omitnan');
+% Speed20_initial_mean = mean(Speed20_initial,2,'omitnan');
+% 
+% Speed20_second_std = std(Speed20_second,0,2,'omitnan');
+% Speed20_second_mean = mean(Speed20_second,2,'omitnan');
+% 
+% %%Cohort 15 (contrast = 12)
+% Speed12_initial = horzcat(cohort_Data15.intersec_initial);
+% Speed12_second = horzcat(cohort_Data15(1).intersec_second);
+% 
+% Speed12_initial_std = std(Speed12_initial,0,2,'omitnan');
+% Speed12_initial_mean = mean(Speed12_initial,2,'omitnan');
+% 
+% Speed12_second_std = std(Speed12_second,0,2,'omitnan');
+% Speed12_second_mean = mean(Speed12_second,2,'omitnan');
+% 
+% %%Cohort 16 (contrast = 14 or 16)
+% % STD & Mean for deltaA = 14
+% Speed14_initial = nan(1,3);
+% for i = 1:3
+%     Speed14_initial(1,i) = cohort_Data16(i).intersec_initial;
+% end
+% Speed14_second = nan(1,2);
+% for i = 1:2
+%     Speed14_second(1,i) = cohort_Data16(i).intersec_second;
+% end
+% 
+% Speed14_initial_std = std(Speed14_initial,0,2,'omitnan');
+% Speed14_initial_mean = mean(Speed14_initial,2,'omitnan');
+% 
+% Speed14_second_std = std(Speed14_second,0,2,'omitnan');
+% Speed14_second_mean = mean(Speed14_second,2,'omitnan');
+% 
+% % STD & Mean for deltaA = 16
+% Speed16_initial = nan(1,3);
+% for i = 4:6
+%     Speed16_initial(1,i-3) = cohort_Data16(i).intersec_initial;
+% end
+% Speed16_second = nan(1,3);
+% for i = 4:6
+%     Speed16_second(1,i-3) = cohort_Data16(i).intersec_second;
+% end
+% 
+% Speed16_initial_std = std(Speed16_initial,0,2,'omitnan');
+% Speed16_initial_mean = mean(Speed16_initial,2,'omitnan');
+% 
+% Speed16_second_std = std(Speed16_second,0,2,'omitnan');
+% Speed16_second_mean = mean(Speed16_second,2,'omitnan');
+% 
+% %%Cohort 18 + 19 - DREADD-Cohort
+% %Speed Saline
+% SpeedSa_initial = [cohort_Data18(1).intersec_initial,cohort_Data18(3).intersec_initial,cohort_Data18(5).intersec_initial,cohort_Data18(7).intersec_initial,...
+%     cohort_Data19(1).intersec_initial,cohort_Data19(5).intersec_initial];
+% SpeedSa_second = [cohort_Data18(1).intersec_second,cohort_Data18(3).intersec_second,cohort_Data18(5).intersec_second,cohort_Data18(7).intersec_second,...
+%     cohort_Data19(1).intersec_second,cohort_Data19(5).intersec_second];
+% 
+% SpeedSa_initial_std = std(SpeedSa_initial,0,2,'omitnan');
+% SpeedSa_initial_mean = mean(SpeedSa_initial,2,'omitnan');
+% 
+% SpeedSa_second_std = std(SpeedSa_second,0,2,'omitnan');
+% SpeedSa_second_mean = mean(SpeedSa_second,2,'omitnan');
+% 
+% %Speed CNO
+% SpeedCNO_initial = [cohort_Data18(2).intersec_initial,cohort_Data18(4).intersec_initial,cohort_Data18(6).intersec_initial,cohort_Data18(8).intersec_initial,...
+%     cohort_Data19(2).intersec_initial,cohort_Data19(3).intersec_initial,cohort_Data19(6).intersec_initial];
+% SpeedCNO_second = [cohort_Data18(2).intersec_second,cohort_Data18(4).intersec_second,cohort_Data18(6).intersec_second,cohort_Data18(8).intersec_second,...
+%     cohort_Data19(2).intersec_second,cohort_Data19(3).intersec_second,cohort_Data19(6).intersec_second];
+% 
+% SpeedCNO_initial_std = std(SpeedCNO_initial,0,2,'omitnan');
+% SpeedCNO_initial_mean = mean(SpeedCNO_initial,2,'omitnan');
+% 
+% SpeedCNO_second_std = std(SpeedCNO_second,0,2,'omitnan');
+% SpeedCNO_second_mean = mean(SpeedCNO_second,2,'omitnan');
+% 
+% %Speed mCherry (CNO-Controls)
+% SpeedCNO_control_initial = [cohort_Data19(4).intersec_initial,cohort_Data19(8).intersec_initial];
+% SpeedCNO_control_second = [cohort_Data19(4).intersec_second,cohort_Data19(8).intersec_second];
+% 
+% SpeedCNO_control_initial_std = std(SpeedCNO_control_initial,0,2,'omitnan');
+% SpeedCNO_control_initial_mean = mean(SpeedCNO_control_initial,2,'omitnan');
+% 
+% SpeedCNO_control_second_std = std(SpeedCNO_control_second,0,2,'omitnan');
+% SpeedCNO_control_second_mean = mean(SpeedCNO_control_second,2,'omitnan');
 
-cohort_Data11 = animalData.cohort(11).animal;
-cohort_Data14 = animalData.cohort(14).animal;
-cohort_Data15 = animalData.cohort(15).animal;
-cohort_Data16 = animalData.cohort(16).animal;
-cohort_Data17 = animalData.cohort(17).animal;
-cohort_Data18 = animalData.cohort(18).animal;
-cohort_Data19 = animalData.cohort(19).animal;
-
-%% Cohort 11 + 14 + 17 (contrast = 20)
-Speed20_initial = horzcat(cohort_Data11.intersec_initial,cohort_Data14.intersec_initial,cohort_Data17.intersec_initial);
-Speed20_second = horzcat(cohort_Data11.intersec_second);
-
-Speed20_initial_std = std(Speed20_initial,0,2,'omitnan');
-Speed20_initial_mean = mean(Speed20_initial,2,'omitnan');
-
-Speed20_second_std = std(Speed20_second,0,2,'omitnan');
-Speed20_second_mean = mean(Speed20_second,2,'omitnan');
-
-%% Cohort 15 (contrast = 12)
-Speed12_initial = horzcat(cohort_Data15.intersec_initial);
-Speed12_second = horzcat(cohort_Data15(1).intersec_second);
-
-Speed12_initial_std = std(Speed12_initial,0,2,'omitnan');
-Speed12_initial_mean = mean(Speed12_initial,2,'omitnan');
-
-Speed12_second_std = std(Speed12_second,0,2,'omitnan');
-Speed12_second_mean = mean(Speed12_second,2,'omitnan');
-
-%% Cohort 16 (contrast = 14 or 16)
-% STD & Mean for deltaA = 14
-Speed14_initial = nan(1,3);
-for i = 1:3
-    Speed14_initial(1,i) = cohort_Data16(i).intersec_initial;
-end
-Speed14_second = nan(1,2);
-for i = 1:2
-    Speed14_second(1,i) = cohort_Data16(i).intersec_second;
-end
-
-Speed14_initial_std = std(Speed14_initial,0,2,'omitnan');
-Speed14_initial_mean = mean(Speed14_initial,2,'omitnan');
-
-Speed14_second_std = std(Speed14_second,0,2,'omitnan');
-Speed14_second_mean = mean(Speed14_second,2,'omitnan');
-
-% STD & Mean for deltaA = 16
-Speed16_initial = nan(1,3);
-for i = 4:6
-    Speed16_initial(1,i-3) = cohort_Data16(i).intersec_initial;
-end
-Speed16_second = nan(1,3);
-for i = 4:6
-    Speed16_second(1,i-3) = cohort_Data16(i).intersec_second;
-end
-
-Speed16_initial_std = std(Speed16_initial,0,2,'omitnan');
-Speed16_initial_mean = mean(Speed16_initial,2,'omitnan');
-
-Speed16_second_std = std(Speed16_second,0,2,'omitnan');
-Speed16_second_mean = mean(Speed16_second,2,'omitnan');
-
-%% Cohort 18 + 19 - DREADD-Cohort
-%Speed Saline
-SpeedSa_initial = [cohort_Data18(1).intersec_initial,cohort_Data18(3).intersec_initial,cohort_Data18(5).intersec_initial,cohort_Data18(7).intersec_initial,...
-    cohort_Data19(1).intersec_initial,cohort_Data19(5).intersec_initial];
-SpeedSa_second = [cohort_Data18(1).intersec_second,cohort_Data18(3).intersec_second,cohort_Data18(5).intersec_second,cohort_Data18(7).intersec_second,...
-    cohort_Data19(1).intersec_second,cohort_Data19(5).intersec_second];
-
-SpeedSa_initial_std = std(SpeedSa_initial,0,2,'omitnan');
-SpeedSa_initial_mean = mean(SpeedSa_initial,2,'omitnan');
-
-SpeedSa_second_std = std(SpeedSa_second,0,2,'omitnan');
-SpeedSa_second_mean = mean(SpeedSa_second,2,'omitnan');
-
-%Speed CNO
-SpeedCNO_initial = [cohort_Data18(2).intersec_initial,cohort_Data18(4).intersec_initial,cohort_Data18(6).intersec_initial,cohort_Data18(8).intersec_initial,...
-    cohort_Data19(2).intersec_initial,cohort_Data19(3).intersec_initial,cohort_Data19(6).intersec_initial];
-SpeedCNO_second = [cohort_Data18(2).intersec_second,cohort_Data18(4).intersec_second,cohort_Data18(6).intersec_second,cohort_Data18(8).intersec_second,...
-    cohort_Data19(2).intersec_second,cohort_Data19(3).intersec_second,cohort_Data19(6).intersec_second];
-
-SpeedCNO_initial_std = std(SpeedCNO_initial,0,2,'omitnan');
-SpeedCNO_initial_mean = mean(SpeedCNO_initial,2,'omitnan');
-
-SpeedCNO_second_std = std(SpeedCNO_second,0,2,'omitnan');
-SpeedCNO_second_mean = mean(SpeedCNO_second,2,'omitnan');
-
-%Speed mCherry (CNO-Controls)
-SpeedCNO_control_initial = [cohort_Data19(4).intersec_initial,cohort_Data19(8).intersec_initial];
-SpeedCNO_control_second = [cohort_Data19(4).intersec_second,cohort_Data19(8).intersec_second];
-
-SpeedCNO_control_initial_std = std(SpeedCNO_control_initial,0,2,'omitnan');
-SpeedCNO_control_initial_mean = mean(SpeedCNO_control_initial,2,'omitnan');
-
-SpeedCNO_control_second_std = std(SpeedCNO_control_second,0,2,'omitnan');
-SpeedCNO_control_second_mean = mean(SpeedCNO_control_second,2,'omitnan');
-
+% the following sections are still only working with the original code (work in progress)
 %% Some Statistics
 [p0,~] = ranksum(Speed20_initial,SpeedCNO_initial,'tail','left');
 [p1,~] = ranksum(SpeedSa_initial,SpeedCNO_initial,'tail','left');

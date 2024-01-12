@@ -10,53 +10,56 @@ catch
     return
 end
 
-%% create Speed-cell for each cohort (ATTENTION: for contrast=20mm and CNO analysis cohorts have to be pooled later on)
+%% create Speed-cell with speed per animal for each cohort
+% ATTENTION: for contrast=20mm and CNO analysis cohorts have to be pooled later on
+% -> this means std and mean have to be calculated with pooled cohorts (see later sections)
+
 % add cohorts you want to analyze
 cohorts = [11, 14, 15, 16, 17, 18, 19];
 FieldofChoice = {'intersec_initial', 'intersec_second'};
 
-Speed_initial = cell(1, length(cohorts));
-Speed_switched = cell(1, length(cohorts));
-Speed_initial_std = zeros(1, length(cohorts));
-Speed_initial_mean = zeros(1, length(cohorts));
-Speed_switched_std = zeros(1, length(cohorts));
-Speed_switched_mean = zeros(1, length(cohorts));
+% we will create two cells for each rule set
+Speed_ini_co = cell(2, length(cohorts));
+Speed_swi_co = cell(2, length(cohorts));
 for cohortIDX = 1:length(cohorts)
     cohort_Data = animalData.cohort(cohorts(cohortIDX)).animal;
 
     % cohort 16 was trained on two different contrasts therefore animals have to be split
     if cohorts(cohortIDX) == 16
-        Speed_initial{cohortIDX} = cell(1,2);
-        Speed_switched{cohortIDX} = cell(1,2);
+        Speed_ini_co{1,cohortIDX} = cell(1,2);
+        Speed_swi_co{1,cohortIDX} = cell(1,2);
+        % creat a flag for the different contrast
         for mouseIDX = 1:length(cohort_Data)
             session_names{mouseIDX} = cohort_Data(mouseIDX).session_names;
             Flag_14mm(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, '14mm')) > 0;
             Flag_16mm(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, '16mm')) > 0;
         end
-        Speed_initial{cohortIDX}{1} = horzcat(cohort_Data(Flag_14mm).(FieldofChoice{1}));
-        Speed_initial{cohortIDX}{2}  = horzcat(cohort_Data(Flag_16mm).(FieldofChoice{1}));
-        Speed_switched{cohortIDX}{1} = horzcat(cohort_Data(Flag_14mm).(FieldofChoice{2}));
-        Speed_switched{cohortIDX}{2}  = horzcat(cohort_Data(Flag_16mm).(FieldofChoice{2}));
+        Speed_ini_co{1,cohortIDX}{1} = horzcat(cohort_Data(Flag_14mm).(FieldofChoice{1}));
+        Speed_ini_co{1,cohortIDX}{2}  = horzcat(cohort_Data(Flag_16mm).(FieldofChoice{1}));
+        Speed_swi_co{1,cohortIDX}{1} = horzcat(cohort_Data(Flag_14mm).(FieldofChoice{2}));
+        Speed_swi_co{1,cohortIDX}{2}  = horzcat(cohort_Data(Flag_16mm).(FieldofChoice{2}));
 
     % cohort 18 retreived different intervention and therefore has to be split
     elseif cohorts(cohortIDX) == 18
-        Speed_initial{cohortIDX} = cell(1,2);
-        Speed_switched{cohortIDX} = cell(1,2);
+        Speed_ini_co{1,cohortIDX} = cell(1,2);
+        Speed_swi_co{1,cohortIDX} = cell(1,2);
+        % create a flag for the different interventions
         for mouseIDX = 1:length(cohort_Data)
             session_names{mouseIDX} = cohort_Data(mouseIDX).session_names;
             % counterintuively Saline-animals are the only ones that have CNO written in any session name
             Flag_Saline(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, 'CNO')) > 0;
             Flag_CNO(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, 'CNO')) == 0;
         end
-        Speed_initial{cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{1}));
-        Speed_initial{cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{1}));
-        Speed_switched{cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{2}));
-        Speed_switched{cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{2}));
+        Speed_ini_co{1,cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{1}));
+        Speed_ini_co{1,cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{1}));
+        Speed_swi_co{1,cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{2}));
+        Speed_swi_co{1,cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{2}));
 
     % cohort 19 retreived different intervention and therefore has to be split
     elseif cohorts(cohortIDX) == 19
-        Speed_initial{cohortIDX} = cell(1,3);
-        Speed_switched{cohortIDX} = cell(1,3);
+        Speed_ini_co{1,cohortIDX} = cell(1,3);
+        Speed_swi_co{1,cohortIDX} = cell(1,3);
+        % create a flag for the different interventions
         for mouseIDX = 1:length(cohort_Data)
             session_names{mouseIDX} = cohort_Data(mouseIDX).session_names;
             % mCherry and CNO animals can only be seperated manually
@@ -68,24 +71,71 @@ for cohortIDX = 1:length(cohorts)
                 Flag_CNO(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, 'CNO')) == 0;
             end
         end
-        Speed_initial{cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{1}));
-        Speed_initial{cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{1}));
-        Speed_initial{cohortIDX}{3}  = horzcat(cohort_Data(Flag_mCherry).(FieldofChoice{1}));
-        Speed_switched{cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{2}));
-        Speed_switched{cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{2}));
-        Speed_switched{cohortIDX}{3}  = horzcat(cohort_Data(Flag_mCherry).(FieldofChoice{2}));
+        Speed_ini_co{1,cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{1}));
+        Speed_ini_co{1,cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{1}));
+        Speed_ini_co{1,cohortIDX}{3}  = horzcat(cohort_Data(Flag_mCherry).(FieldofChoice{1}));
+        Speed_swi_co{1,cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{2}));
+        Speed_swi_co{1,cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{2}));
+        Speed_swi_co{1,cohortIDX}{3}  = horzcat(cohort_Data(Flag_mCherry).(FieldofChoice{2}));
 
+    % the rest can be directly assigned without further preperation
     else
-        Speed_initial{cohortIDX} = horzcat(cohort_Data.(FieldofChoice{1}));
-        Speed_switched{cohortIDX} = horzcat(cohort_Data.(FieldofChoice{2}));
-
-        Speed_initial_std(cohortIDX) = std(Speed_initial{cohortIDX}, 0, 2, 'omitnan');
-        Speed_initial_mean(cohortIDX) = mean(Speed_initial{cohortIDX}, 2, 'omitnan');
-
-        Speed_switched_std(cohortIDX) = std(Speed_switched{cohortIDX}, 0, 2, 'omitnan');
-        Speed_switched_mean(cohortIDX) = mean(Speed_switched{cohortIDX}, 2, 'omitnan');
+        Speed_ini_co{1,cohortIDX} = horzcat(cohort_Data.(FieldofChoice{1}));
+        Speed_swi_co{1,cohortIDX} = horzcat(cohort_Data.(FieldofChoice{2}));
     end
 end
+
+%% Reshape Speed-cell according to contrast
+% add the contrast used for each cohort, keep the same shape as used for the cohorts variable
+contrast16 = [14,16];
+contrastOrder = [20,20,12,NaN,20,NaN,NaN];
+
+% this part adds the contrast value to the cell array
+for contrastIDX = 1:length(contrastOrder)
+    % cohort 16 was trained on two different contrasts
+    if isnan(contrastOrder(contrastIDX)) && cohorts(contrastIDX) == 16
+        Speed_ini_co{2,contrastIDX}{1} = contrast16(1)*ones(size(Speed_ini_co{1,contrastIDX}{1}));
+        Speed_ini_co{2,contrastIDX}{2} = contrast16(2)*ones(size(Speed_ini_co{1,contrastIDX}{2}));
+        Speed_swi_co{2,contrastIDX}{1} = contrast16(1)*ones(size(Speed_swi_co{1,contrastIDX}{1}));
+        Speed_swi_co{2,contrastIDX}{2} = contrast16(2)*ones(size(Speed_swi_co{1,contrastIDX}{2}));
+    else
+        Speed_ini_co{2,contrastIDX} = contrastOrder(contrastIDX)*ones(size(Speed_ini_co{1,contrastIDX}));
+        Speed_swi_co{2,contrastIDX} = contrastOrder(contrastIDX)*ones(size(Speed_swi_co{1,contrastIDX}));
+    end
+end
+
+% now we prepare the cell so we can use it for plotting
+Speed_ini_contrast = Speed_ini_co;
+Speed_swi_contrast = Speed_swi_co;
+% first we break down cohort 16
+for rowIDX = 1:height(Speed_ini_contrast)
+    Speed_co16 = horzcat(Speed_ini_contrast{rowIDX,4});
+    Speed_ini_contrast{rowIDX,4} = horzcat(Speed_co16{1},Speed_co16{2});
+    Speed_co16 = horzcat(Speed_swi_contrast{rowIDX,4});
+    Speed_swi_contrast{rowIDX,4} = horzcat(Speed_co16{1},Speed_co16{2});
+end
+% then we remove cohort 18 and 19 (only important for later analysis)
+Speed_ini_contrast(:,6:7) = [];
+Speed_swi_contrast(:,6:7) = [];
+
+% change the format
+Speed_ini_contrast = cell2mat(Speed_ini_contrast);
+Speed_swi_contrast = cell2mat(Speed_swi_contrast);
+
+% remove animals where learning speed is 0 or NaN(might result from other learning stages used)
+Speed_swi_contrast(:,Speed_swi_contrast(1,:) == 0) = [];
+Speed_swi_contrast(:,isnan(Speed_swi_contrast(1,:))) = [];
+
+%% Calculating mean and std for each contrast
+% we call the contrast deltaA to not run into errors with the contrast function
+deltaA = unique(Speed_ini_contrast(2,:));
+speed_mean = arrayfun(@(c) mean(Speed_ini_contrast(1,Speed_ini_contrast(2,:)==deltaA(c))), 1:length(deltaA));
+speed_mean(2,:) = arrayfun(@(c) mean(Speed_swi_contrast(1,Speed_swi_contrast(2,:)==deltaA(c))), 1:length(deltaA));
+speed_std = arrayfun(@(c) std(Speed_ini_contrast(1,Speed_ini_contrast(2,:)==deltaA(c)),0,2,'omitnan'), 1:length(deltaA));
+speed_std(2,:) = arrayfun(@(c) std(Speed_swi_contrast(1,Speed_swi_contrast(2,:)==deltaA(c)),0,2,'omitnan'), 1:length(deltaA));
+
+%% Reshape Speed-cell for DREADD-analysis
+% add the intervention names
 
 %% original Code (still should work, just uncomment)
 % cohort_Data11 = animalData.cohort(11).animal;
@@ -184,8 +234,8 @@ end
 % SpeedCNO_control_second_std = std(SpeedCNO_control_second,0,2,'omitnan');
 % SpeedCNO_control_second_mean = mean(SpeedCNO_control_second,2,'omitnan');
 
-% the following sections are still only working with the original code (work in progress)
 %% Some Statistics
+% still only works with old code
 [p0,~] = ranksum(Speed20_initial,SpeedCNO_initial,'tail','left');
 [p1,~] = ranksum(SpeedSa_initial,SpeedCNO_initial,'tail','left');
 [p2,~] = ranksum(Speed20_second,SpeedCNO_second,'tail','left');
@@ -195,60 +245,44 @@ end
 [p6,~] = ranksum(SpeedCNO_initial,SpeedCNO_control_initial,'tail','right');
 [p7,~] = ranksum(SpeedCNO_second,SpeedCNO_control_second,'tail','right');
 
-%% Plot Data (deltaA comparison initial rules)
-deltaA = [12,14,16,20];
-speed_initial_mean = [Speed12_initial_mean, Speed14_initial_mean, Speed16_initial_mean, Speed20_initial_mean];
-speed_initial_std = [Speed12_initial_std, Speed14_initial_std, Speed16_initial_std, Speed20_initial_std];
-speed_all_initial = [[12*ones(size(Speed12_initial))';14*ones(size(Speed14_initial))';16*ones(size(Speed16_initial))';20*ones(size(Speed20_initial))'],...
-    [Speed12_initial';Speed14_initial';Speed16_initial';Speed20_initial']];
+%% Comparison between contrasts
+% plot data initial rule
+f1 = figure; errorbar(deltaA,speed_mean(1,:),speed_std(1,:),'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
+hold on; plot(Speed_ini_contrast(2,:),Speed_ini_contrast(1,:),'LineStyle','none','Marker','.')
+xlabel('contrast [mm]'); ylabel('Trials to expert')
+title('Learning time over contrast - initial rule')
+% counting the number of animals for each contrast
+speed_max = arrayfun(@(c) max(Speed_ini_contrast(1, Speed_ini_contrast(2,:) == c)),deltaA);
+arrayfun(@(c, maxVal)...
+    text(c, maxVal+100, sprintf('n=%d', sum(Speed_ini_contrast(2,:) == c)), 'HorizontalAlignment', 'center'), deltaA, speed_max);
+%xlim([5 22]); ylim([200 1800])
+%xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
 
-f1 = figure; errorbar(deltaA,speed_initial_mean,speed_initial_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
-hold on; plot(speed_all_initial(:,1),speed_all_initial(:,2),'LineStyle','none','Marker','.')
+% plot data switched rule
+f2 = figure; errorbar(deltaA,speed_mean(2,:),speed_std(2,:),'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
+hold on; plot(Speed_swi_contrast(2,:),Speed_swi_contrast(1,:),'LineStyle','none','Marker','.')
+xlabel('contrast [mm]'); ylabel('Trials to expert')
+title('Learning time over contrast - switched rule')
+% counting the number of animals for each contrast
+speed_max = arrayfun(@(c) max(Speed_swi_contrast(1, Speed_swi_contrast(2,:) == c)),deltaA);
+arrayfun(@(c, maxVal)...
+    text(c, maxVal+100, sprintf('n=%d', sum(Speed_swi_contrast(2,:) == c)), 'HorizontalAlignment', 'center'), deltaA, speed_max);
+%xlim([5 22]); ylim([800 3000])
+%xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
+
+% Boxcharts (initial and switched rule)
+f3 = figure; boxchart(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:), 'BoxFaceColor', 'k')
+hold on; boxchart(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:))
 xlabel('contrast [mm]')
 ylabel('Trials to expert')
-title('Learning Speed over contrast - initial Rules')
-xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
-xlim([5 22])
-
-speed_max_initial = arrayfun(@(c) max(speed_all_initial(speed_all_initial(:,1) == c, 2)), deltaA);
-text(12,speed_max_initial(1)+100,sprintf('n=%d',sum(speed_all_initial(:,1) == 12)),'HorizontalAlignment','center')
-text(14,speed_max_initial(2)+100,sprintf('n=%d',sum(speed_all_initial(:,1) == 14)),'HorizontalAlignment','center')
-text(16,speed_max_initial(3)+100,sprintf('n=%d',sum(speed_all_initial(:,1) == 16)),'HorizontalAlignment','center')
-text(20,speed_max_initial(4)+100,sprintf('n=%d',sum(speed_all_initial(:,1) == 20)),'HorizontalAlignment','center')
-ylim([200 1800])
-
-%% Plot Data (deltaA comparison ruleswitch)
-speed_second_mean = [Speed12_second_mean, Speed14_second_mean, Speed16_second_mean, Speed20_second_mean];
-speed_second_std = [Speed12_second_std, Speed14_second_std, Speed16_second_std, Speed20_second_std];
-speed_all_second = [[12*ones(size(Speed12_second))';14*ones(size(Speed14_second))';16*ones(size(Speed16_second))';20*ones(size(Speed20_second))'],...
-    [Speed12_second';Speed14_second';Speed16_second';Speed20_second']];
-
-f2 = figure; errorbar(deltaA,speed_second_mean,speed_second_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
-hold on; plot(speed_all_second(:,1),speed_all_second(:,2),'LineStyle','none','Marker','.')
-xlabel('contrast [mm]')
-ylabel('Trials to expert')
-title('Learning Speed over contrast - second Rules')
-xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
-xlim([5 22])
-
-speed_max_second = arrayfun(@(c) max(speed_all_second(speed_all_second(:,1) == c, 2)), deltaA);
-text(12,speed_max_second(1)+100,sprintf('n=%d',sum(speed_all_second(:,1) == 12)),'HorizontalAlignment','center')
-text(14,2615,sprintf('n=%d',sum(speed_all_second(:,1) == 14)),'HorizontalAlignment','center')
-text(16,speed_max_second(3)+100,sprintf('n=%d',sum(speed_all_second(:,1) == 16)),'HorizontalAlignment','center')
-text(20,speed_max_second(4)+100,sprintf('n=%d',sum(speed_all_second(:,1) == 20)),'HorizontalAlignment','center')
-ylim([800 3000])
-
-%% Plot Data (deltaA comparison - Boxchart)
-f3 = figure; boxchart(speed_all_initial(:,1), speed_all_initial(:,2), 'BoxFaceColor', 'k')
-hold on; boxchart(speed_all_second(:,1), speed_all_second(:,2))
-xlabel('contrast [mm]')
-ylabel('Trials to expert')
-title('Learning Speed over contrast')
+title('Learning time over contrast')
 %xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
 xlim([10 22])
-legend('initial Rules','second Rules','Location','southwest')
+legend('Initial rule','Switched rule','Location','southwest')
 
-%% Plot Data (native-saline-CNO)
+% the following sections are still only working with the original code
+%% Comparison of DREADD-Cohorts (native-saline-CNO-mCherry)
+% Plot Data (native-saline-CNO)
 x = [1,2,3,5,6,7];
 speed_mean = [Speed20_initial_mean, SpeedSa_initial_mean, SpeedCNO_initial_mean, Speed20_second_mean, SpeedSa_second_mean, SpeedCNO_second_mean];
 speed_std = [Speed20_initial_std, SpeedSa_initial_std, SpeedCNO_initial_std, Speed20_second_std, SpeedSa_second_std, SpeedCNO_second_std];
@@ -274,7 +308,7 @@ plotStatistics(p1, speed_max(3), 2, 3)
 plotStatistics(p2, speed_max(6)+100, 5, 7)
 plotStatistics(p3, speed_max(6), 6, 7)
 
-%% Plot Data (native-saline-CNO - Boxchart)
+% Plot Data (native-saline-CNO - Boxchart)
 speed_all_native = [[1*ones(size(Speed20_initial))';5*ones(size(Speed20_second))'],...
     [Speed20_initial';Speed20_second']];
 speed_all_saline = [[2*ones(size(SpeedSa_initial))';6*ones(size(SpeedSa_second))'],...

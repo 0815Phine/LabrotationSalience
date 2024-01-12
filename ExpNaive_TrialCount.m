@@ -40,8 +40,7 @@ for cohortIdx = 1:numCohorts
     end
 end
 
-% this removes the the 17th row as the animal did not completed the stage
-% (optional)
+% this removes the the 17th row as the animal did not completed the stage (optional)
 alltrials_ini(17,:) = [];
 
 % calculate mean trials for both conditions

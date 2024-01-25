@@ -48,7 +48,7 @@ naivetrials_ini = mean(alltrials_ini(:,1:numSes), 2);
 experttrials_ini = mean(alltrials_ini(:,numSes+1:numSes*2), 2);
 
 % Statistics and normalization
-[p1,h1] = ranksum(naivetrials_ini, experttrials_ini);
+[p1,~] = signrank(naivetrials_ini, experttrials_ini);
 ztrials_ini = zscore(alltrials_ini,0,2);
 
 %% trials per session second rule (should be called P3.4) expert vs. naive
@@ -85,7 +85,7 @@ naivetrials_swi = mean(alltrials_swi(:,1:numSes), 2);
 experttrials_swi = mean(alltrials_swi(:,numSes+1:numSes*2), 2);
 
 % Statistics and normalization
-[p2,h2]=ranksum(naivetrials_swi, experttrials_swi);
+[p2,~] = signrank(naivetrials_swi, experttrials_swi);
 ztrials_swi = zscore(alltrials_swi,0,2);
 
 %% plot data initial rule

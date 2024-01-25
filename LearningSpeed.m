@@ -1,17 +1,18 @@
-clearvars
-close all
-
-startPath = 'Z:\Filippo\Animals';
-try
-    load(fullfile(startPath,'animalData.mat'))
-catch
-    fprintf(2,'\nThe variable "animalData.mat" doesn''t exist.')
-    fprintf(2,'\nYou have to create it first.\n\n')
-    return
-end
+% clearvars
+% close all
+% 
+% startPath = 'Z:\Filippo\Animals';
+% try
+%     load(fullfile(startPath,'animalData.mat'))
+% catch
+%     fprintf(2,'\nThe variable "animalData.mat" doesn''t exist.')
+%     fprintf(2,'\nYou have to create it first.\n\n')
+%     return
+% end
 
 %% create Speed-cell with speed per animal for each cohort
-% ATTENTION: for contrast=20mm and CNO analysis cohorts have to be pooled later on
+% ATTENTION: to run this script animalData.mat has do be loaded into the workspace
+% for contrast=20mm and CNO analysis cohorts have to be pooled later on
 % -> this means std and mean have to be calculated with pooled cohorts (see later sections)
 
 % add cohorts you want to analyze
@@ -28,7 +29,7 @@ for cohortIDX = 1:length(cohorts)
     if cohorts(cohortIDX) == 16
         Speed_ini_co{1,cohortIDX} = cell(1,2);
         Speed_swi_co{1,cohortIDX} = cell(1,2);
-        % creat a flag for the different contrast
+        % create a flag for the different contrast
         for mouseIDX = 1:length(cohort_Data)
             session_names{mouseIDX} = cohort_Data(mouseIDX).session_names;
             Flag_14mm(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, '14mm')) > 0;
@@ -117,11 +118,9 @@ end
 % then we remove cohort 18 and 19 (only important for later analysis)
 Speed_ini_contrast(:,6:7) = [];
 Speed_swi_contrast(:,6:7) = [];
-
 % change the format
 Speed_ini_contrast = cell2mat(Speed_ini_contrast);
 Speed_swi_contrast = cell2mat(Speed_swi_contrast);
-
 % remove animals where learning speed is 0 or NaN(might result from other learning stages used)
 Speed_swi_contrast(:,Speed_swi_contrast(1,:) == 0) = [];
 Speed_swi_contrast(:,isnan(Speed_swi_contrast(1,:))) = [];
@@ -129,10 +128,86 @@ Speed_swi_contrast(:,isnan(Speed_swi_contrast(1,:))) = [];
 %% Calculating mean and std for each contrast
 % we call the contrast deltaA to not run into errors with the contrast function
 deltaA = unique(Speed_ini_contrast(2,:));
-speed_mean = arrayfun(@(c) mean(Speed_ini_contrast(1,Speed_ini_contrast(2,:)==deltaA(c))), 1:length(deltaA));
-speed_mean(2,:) = arrayfun(@(c) mean(Speed_swi_contrast(1,Speed_swi_contrast(2,:)==deltaA(c))), 1:length(deltaA));
-speed_std = arrayfun(@(c) std(Speed_ini_contrast(1,Speed_ini_contrast(2,:)==deltaA(c)),0,2,'omitnan'), 1:length(deltaA));
-speed_std(2,:) = arrayfun(@(c) std(Speed_swi_contrast(1,Speed_swi_contrast(2,:)==deltaA(c)),0,2,'omitnan'), 1:length(deltaA));
+speed_mean = arrayfun(@(c) mean(Speed_ini_contrast(1,Speed_ini_contrast(2,:)==c)), deltaA);
+speed_mean(2,:) = arrayfun(@(c) mean(Speed_swi_contrast(1,Speed_swi_contrast(2,:)==c)), deltaA);
+speed_std = arrayfun(@(c) std(Speed_ini_contrast(1,Speed_ini_contrast(2,:)==c),0,2,'omitnan'), deltaA);
+speed_std(2,:) = arrayfun(@(c) std(Speed_swi_contrast(1,Speed_swi_contrast(2,:)==c),0,2,'omitnan'), deltaA);
+
+%% Comparison between contrasts
+% plot data initial rule
+f1 = figure; errorbar(deltaA,speed_mean(1,:),speed_std(1,:),'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
+hold on; plot(Speed_ini_contrast(2,:),Speed_ini_contrast(1,:),'LineStyle','none','Marker','.')
+xlabel('contrast [mm]'); ylabel('Trials to expert')
+title('Learning time over contrast - initial rule')
+% counting the number of animals for each contrast
+speed_max = arrayfun(@(c) max(Speed_ini_contrast(1, Speed_ini_contrast(2,:) == c)),deltaA);
+arrayfun(@(c, maxVal)...
+    text(c, maxVal+100, sprintf('n=%d', sum(Speed_ini_contrast(2,:) == c)), 'HorizontalAlignment', 'center'), deltaA, speed_max);
+%xlim([5 22]); ylim([200 1800])
+%xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
+
+% plot data switched rule
+f2 = figure; errorbar(deltaA,speed_mean(2,:),speed_std(2,:),'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
+hold on; plot(Speed_swi_contrast(2,:),Speed_swi_contrast(1,:),'LineStyle','none','Marker','.')
+xlabel('contrast [mm]'); ylabel('Trials to expert')
+title('Learning time over contrast - switched rule')
+% counting the number of animals for each contrast
+speed_max = arrayfun(@(c) max(Speed_swi_contrast(1, Speed_swi_contrast(2,:) == c)),deltaA);
+arrayfun(@(c, maxVal)...
+    text(c, maxVal+100, sprintf('n=%d', sum(Speed_swi_contrast(2,:) == c)), 'HorizontalAlignment', 'center'), deltaA, speed_max);
+%xlim([5 22]); ylim([800 3000])
+%xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
+
+% Boxcharts (initial and switched rule)
+f3 = figure; boxchart(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:), 'BoxFaceColor', 'k')
+hold on; boxchart(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:))
+xlabel('contrast [mm]')
+ylabel('Trials to expert')
+title('Learning time over contrast')
+%xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
+xlim([10 22])
+legend('Initial rule','Switched rule','Location','southwest')
+
+%% Comparison between initial and switched rule
+% compare the learning time as a factor between the switched and initial rule
+% first adjust the speed_ini_contrast array so it only contains animals trained on both rules
+% -> for now this is hard-coded
+speed_ini_adjust = Speed_ini_contrast;
+speed_ini_adjust(:,27:end) = []; speed_ini_adjust(:,23) = []; speed_ini_adjust(:,16:20) = []; speed_ini_adjust(:,7:14) = [];
+% now we calculate the factor for each contrast and compare them to contrast 20mm
+factor = arrayfun(@(c) Speed_swi_contrast(1,Speed_swi_contrast(2,:)==c)./speed_ini_adjust(1,speed_ini_adjust(2,:)==c), deltaA, 'UniformOutput', false);
+factor_mean = mean([factor{:}]);
+for i = 1:length(factor)-1
+    [p,~] = ranksum(factor{1,4},factor{1,i},'tail','right');
+    if p <= 0.05
+        fprintf('The factor between contrast 20mm and contrast %dmm is significantly different (p=%.2f).\n', deltaA(i), p)
+    else
+        fprintf('The factor between contrast 20mm and contrast %dmm is not significantly different (p=%.2f).\n', deltaA(i), p)
+    end
+end
+
+% line plot (contrast 20mm)
+f4 = figure; hold on
+Speed_ini_20 = Speed_ini_contrast(1,Speed_ini_contrast(2,:)==20);
+Speed_swi_20 = Speed_swi_contrast(1,Speed_swi_contrast(2,:)==20);
+% plot all individual animals
+xvalues = ones(1,length(Speed_ini_20)); scatter(xvalues,Speed_ini_20, 'k','filled')
+xvalues = ones(1,length(Speed_swi_20)); scatter(xvalues+1,Speed_swi_20, 'k','filled')
+% connect the pairs
+% -> the logic of the Speed-array guarantes that animal 1 in the initial array is he same animal 1 in the switched array
+% -> this might not be true if the input data is changes!!
+for i = 1:length(Speed_swi_20)
+    plot([1,2],[Speed_ini_20(i),Speed_swi_20(i)],'Color','k')
+end
+% plot the mean and statistics
+plot([1,2],[speed_mean(1,4), speed_mean(2,4)],'LineWidth', 1.5)
+%[p,~] = ranksum(Speed_ini_20, Speed_swi_20);
+p_paired = signrank(Speed_ini_20(1,1:length(Speed_swi_20)), Speed_swi_20);
+plotStatistics(p_paired, speed_max_swi(4), 1, 2)
+% add labels and title
+title('trials to expert per animal')
+xticks([1,2]), xticklabels({'initial rule','switched rule'})
+ylabel('Trials to expert')
 
 %% Reshape Speed-cell for DREADD-analysis
 % add the intervention names
@@ -234,8 +309,8 @@ speed_std(2,:) = arrayfun(@(c) std(Speed_swi_contrast(1,Speed_swi_contrast(2,:)=
 % SpeedCNO_control_second_std = std(SpeedCNO_control_second,0,2,'omitnan');
 % SpeedCNO_control_second_mean = mean(SpeedCNO_control_second,2,'omitnan');
 
+% the following sections are still only working with the original code
 %% Some Statistics
-% still only works with old code
 [p0,~] = ranksum(Speed20_initial,SpeedCNO_initial,'tail','left');
 [p1,~] = ranksum(SpeedSa_initial,SpeedCNO_initial,'tail','left');
 [p2,~] = ranksum(Speed20_second,SpeedCNO_second,'tail','left');
@@ -245,42 +320,6 @@ speed_std(2,:) = arrayfun(@(c) std(Speed_swi_contrast(1,Speed_swi_contrast(2,:)=
 [p6,~] = ranksum(SpeedCNO_initial,SpeedCNO_control_initial,'tail','right');
 [p7,~] = ranksum(SpeedCNO_second,SpeedCNO_control_second,'tail','right');
 
-%% Comparison between contrasts
-% plot data initial rule
-f1 = figure; errorbar(deltaA,speed_mean(1,:),speed_std(1,:),'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
-hold on; plot(Speed_ini_contrast(2,:),Speed_ini_contrast(1,:),'LineStyle','none','Marker','.')
-xlabel('contrast [mm]'); ylabel('Trials to expert')
-title('Learning time over contrast - initial rule')
-% counting the number of animals for each contrast
-speed_max = arrayfun(@(c) max(Speed_ini_contrast(1, Speed_ini_contrast(2,:) == c)),deltaA);
-arrayfun(@(c, maxVal)...
-    text(c, maxVal+100, sprintf('n=%d', sum(Speed_ini_contrast(2,:) == c)), 'HorizontalAlignment', 'center'), deltaA, speed_max);
-%xlim([5 22]); ylim([200 1800])
-%xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
-
-% plot data switched rule
-f2 = figure; errorbar(deltaA,speed_mean(2,:),speed_std(2,:),'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
-hold on; plot(Speed_swi_contrast(2,:),Speed_swi_contrast(1,:),'LineStyle','none','Marker','.')
-xlabel('contrast [mm]'); ylabel('Trials to expert')
-title('Learning time over contrast - switched rule')
-% counting the number of animals for each contrast
-speed_max = arrayfun(@(c) max(Speed_swi_contrast(1, Speed_swi_contrast(2,:) == c)),deltaA);
-arrayfun(@(c, maxVal)...
-    text(c, maxVal+100, sprintf('n=%d', sum(Speed_swi_contrast(2,:) == c)), 'HorizontalAlignment', 'center'), deltaA, speed_max);
-%xlim([5 22]); ylim([800 3000])
-%xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
-
-% Boxcharts (initial and switched rule)
-f3 = figure; boxchart(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:), 'BoxFaceColor', 'k')
-hold on; boxchart(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:))
-xlabel('contrast [mm]')
-ylabel('Trials to expert')
-title('Learning time over contrast')
-%xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
-xlim([10 22])
-legend('Initial rule','Switched rule','Location','southwest')
-
-% the following sections are still only working with the original code
 %% Comparison of DREADD-Cohorts (native-saline-CNO-mCherry)
 % Plot Data (native-saline-CNO)
 x = [1,2,3,5,6,7];
@@ -290,7 +329,7 @@ speed_all = [[1*ones(size(Speed20_initial))';2*ones(size(SpeedSa_initial))';3*on
     5*ones(size(Speed20_second))';6*ones(size(SpeedSa_second))';7*ones(size(SpeedCNO_second))'],...
     [Speed20_initial';SpeedSa_initial';SpeedCNO_initial';Speed20_second';SpeedSa_second';SpeedCNO_second']];
 
-f4 = figure; errorbar(x,speed_mean,speed_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
+f5 = figure; errorbar(x,speed_mean,speed_std,'LineStyle','none','Color','k','Marker','o','MarkerFaceColor','k')
 hold on; plot(speed_all(:,1),speed_all(:,2),'LineStyle','none','Marker','.')
 xticks([1:3,5:7]); xticklabels({'native', 'saline', 'CNO','native', 'saline', 'CNO'});
 ax = gca;
@@ -318,7 +357,7 @@ speed_all_CNO = [[3*ones(size(SpeedCNO_initial))';7*ones(size(SpeedCNO_second))'
 speed_all_CNO_control = [[4*ones(size(SpeedCNO_control_initial))';8*ones(size(SpeedCNO_control_second))'],...
     [SpeedCNO_control_initial';SpeedCNO_control_second']];
 
-f5 = figure; boxchart(speed_all_native(:,1), speed_all_native(:,2), 'BoxFaceColor', 'k', 'MarkerColor', 'k')
+f6 = figure; boxchart(speed_all_native(:,1), speed_all_native(:,2), 'BoxFaceColor', 'k', 'MarkerColor', 'k')
 hold on; boxchart(speed_all_saline(:,1), speed_all_saline(:,2), 'BoxFaceColor', '#0072BD')
 boxchart(speed_all_CNO(:,1), speed_all_CNO(:,2), 'BoxFaceColor', [1.0000, 0.3216, 0.3020])
 boxchart(speed_all_CNO_control(:,1), speed_all_CNO_control(:,2), 'BoxFaceColor', '#A2142F')
@@ -339,9 +378,9 @@ legend('native','saline','CNO','CNO-control','Location','southeast'); legend('bo
 factor_CNO = SpeedCNO_second./SpeedCNO_initial;
 factor_saline = SpeedSa_second./SpeedSa_initial;
 % for native animals all animals not trained on 20mm contrast are removed
-speed_all_initial_adjust = speed_all_initial;
-speed_all_initial_adjust(19:30,:) = []; speed_all_initial_adjust(2:6,:) = []; speed_all_initial_adjust(4,:) = [];
-factor_native = speed_all_second(:,2)./speed_all_initial_adjust(:,2);
+speed_ini_adjust = speed_all_initial;
+speed_ini_adjust(19:30,:) = []; speed_ini_adjust(2:6,:) = []; speed_ini_adjust(4,:) = [];
+factor_native = speed_all_second(:,2)./speed_ini_adjust(:,2);
 
 % calculate if there is a difference between CNO, native and saline animals
 [p,~] = ranksum(factor_CNO,factor_saline,'tail','right');
@@ -365,28 +404,9 @@ end
 % ylabel('Factor'); xticks([1 2 3]); xticklabels({'Native' 'Saline' 'CNO'})
 % xlim([0.5 3.5]); ylim([0.5 5.5])
 
-%% line plot (contrast 20mm) initial vs. switched
-figure, hold on
-
-xvalues = ones(1,length(Speed20_initial)); scatter(xvalues,Speed20_initial, 'k','filled')
-xvalues = ones(1,length(Speed20_second)); scatter(xvalues+1,Speed20_second, 'k','filled'),
-
-for i = 1:length(Speed20_second)
-    plot([1,2],[Speed20_initial(i),Speed20_second(i)],'Color','k')
-end
-
-plot([1,2],[Speed20_initial_mean, Speed20_second_mean],'LineWidth', 1.5)
-
-[p8,~] = ranksum(Speed20_initial, Speed20_second);
-plotStatistics(p8, speed_max(4), 1, 2)
-
-title('trials to expert per animal')
-xticks([1,2]), xticklabels({'initial rule','switched rule'})
-ylabel('Trials to expert')
-
 %% Save all Plots
 %savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_initial.fig'))
 %savefig(f2, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_second.fig'))
 %savefig(f3, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_Boxcharts.fig'))
-%savefig(f4, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_CNO.fig'))
-%savefig(f5, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_CNO_Boxcharts.fig'))
+%savefig(f5, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_CNO.fig'))
+%savefig(f6, fullfile('Z:\Josephine\Master-Thesis_Figures\Learning_Speed','LearningSpeed_CNO_Boxcharts.fig'))

@@ -140,9 +140,9 @@ hold on; plot(Speed_ini_contrast(2,:),Speed_ini_contrast(1,:),'LineStyle','none'
 xlabel('contrast [mm]'); ylabel('Trials to expert')
 title('Learning time over contrast - initial rule')
 % counting the number of animals for each contrast
-speed_max = arrayfun(@(c) max(Speed_ini_contrast(1, Speed_ini_contrast(2,:) == c)),deltaA);
+speed_max_ini = arrayfun(@(c) max(Speed_ini_contrast(1, Speed_ini_contrast(2,:) == c)),deltaA);
 arrayfun(@(c, maxVal)...
-    text(c, maxVal+100, sprintf('n=%d', sum(Speed_ini_contrast(2,:) == c)), 'HorizontalAlignment', 'center'), deltaA, speed_max);
+    text(c, maxVal+100, sprintf('n=%d', sum(Speed_ini_contrast(2,:) == c)), 'HorizontalAlignment', 'center'), deltaA, speed_max_ini);
 %xlim([5 22]); ylim([200 1800])
 %xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
 
@@ -152,9 +152,9 @@ hold on; plot(Speed_swi_contrast(2,:),Speed_swi_contrast(1,:),'LineStyle','none'
 xlabel('contrast [mm]'); ylabel('Trials to expert')
 title('Learning time over contrast - switched rule')
 % counting the number of animals for each contrast
-speed_max = arrayfun(@(c) max(Speed_swi_contrast(1, Speed_swi_contrast(2,:) == c)),deltaA);
+speed_max_swi = arrayfun(@(c) max(Speed_swi_contrast(1, Speed_swi_contrast(2,:) == c)),deltaA);
 arrayfun(@(c, maxVal)...
-    text(c, maxVal+100, sprintf('n=%d', sum(Speed_swi_contrast(2,:) == c)), 'HorizontalAlignment', 'center'), deltaA, speed_max);
+    text(c, maxVal+100, sprintf('n=%d', sum(Speed_swi_contrast(2,:) == c)), 'HorizontalAlignment', 'center'), deltaA, speed_max_swi);
 %xlim([5 22]); ylim([800 3000])
 %xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
 
@@ -202,7 +202,8 @@ end
 % plot the mean and statistics
 plot([1,2],[speed_mean(1,4), speed_mean(2,4)],'LineWidth', 1.5)
 %[p,~] = ranksum(Speed_ini_20, Speed_swi_20);
-p_paired = signrank(Speed_ini_20(1,1:length(Speed_swi_20)), Speed_swi_20);
+%p_paired = signrank(Speed_ini_20(1,1:length(Speed_swi_20)), Speed_swi_20);
+[~,p_paired] = ttest(Speed_ini_20(1,1:length(Speed_swi_20)), Speed_swi_20);
 plotStatistics(p_paired, speed_max_swi(4), 1, 2)
 % add labels and title
 title('trials to expert per animal')

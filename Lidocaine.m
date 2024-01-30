@@ -44,28 +44,21 @@ dprimeBepa = vertcat(alldvalues(1,:),alldvalues(3,:),alldvalues(5,:),alldvalues(
 dprimeBepa = vertcat(dprimeBepa(:,1),dprimeBepa(:,2),dprimeBepa(:,3),dprimeBepa(:,4));
 dprimeLido = vertcat(alldvalues(2,:),alldvalues(4,:),alldvalues(6,:),alldvalues(8,:));
 dprimeLido = vertcat(dprimeLido(:,1),dprimeLido(:,2),dprimeLido(:,3),dprimeLido(:,4));
-[p,h] = ranksum(dprimeBepa,dprimeLido);
+dprimeLido(1:end,2) = ones+1; dprimeBepa(1:end,2) = ones;
+dprime_all = vertcat(dprimeBepa,dprimeLido);
+%[p,~] = ranksum(dprimeBepa,dprimeLido);
+p_paired = anova1(dprime_all(:,1),dprime_all(:,2),'off');
 
 %% plot data
-figure
-xvalues = ones(length(dprimeBepa),1);
+figure, hold on
 
-boxchart(xvalues, dprimeBepa, 'BoxFaceColor', 'k'), hold on
-boxchart(xvalues+1, dprimeLido, 'BoxFaceColor', 'k')
-scatter(xvalues, dprimeBepa,'Marker','.','Jitter','on','MarkerEdgeColor','k')
-scatter(xvalues+1, dprimeLido,'Marker','.','Jitter','on','MarkerEdgeColor','k')
+boxchart(dprimeBepa(:,2), dprimeBepa(:,1), 'BoxFaceColor', 'k')
+boxchart(dprimeLido(:,2), dprimeLido(:,1), 'BoxFaceColor', 'k')
+scatter(dprimeBepa(:,2), dprimeBepa(:,1),'Marker','.','Jitter','on','MarkerEdgeColor','k')
+scatter(dprimeLido(:,2), dprimeLido(:,1),'Marker','.','Jitter','on','MarkerEdgeColor','k')
 
-max_bepa = max(dprimeBepa);
-plot([1 2],[max_bepa*1.05 max_bepa*1.05], 'k')
-if p <= 0.05 && p > 0.01
-    text(1.5, max_bepa*1.1,'*','HorizontalAlignment','center')
-elseif p <= 0.01 && p > 0.001
-    text(1.5, max_bepa*1.1,'**','HorizontalAlignment','center')
-elseif p <= 0.001
-    text(1.5, max_bepa*1.1,'***','HorizontalAlignment','center')
-else
-    text(1.5, max_bepa*1.1,'ns','HorizontalAlignment','center')
-end
+max_bepa = max(dprimeBepa(:,1));
+plotStatistics(p_paired,max_bepa,1,2)
 
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')

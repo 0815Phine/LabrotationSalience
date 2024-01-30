@@ -70,8 +70,8 @@ end
 % some statistics
 ctrl_flag = [retrieval_table{:,5}]' == [1,3];
 injected_flag = [retrieval_table{:,5}]' == [2,4];
-[p0,h0] = ranksum([retrieval_table{ctrl_flag(:,1),4}]',[retrieval_table{injected_flag(:,1),4}]');
-[p1,h1] = ranksum([retrieval_table{ctrl_flag(:,2),4}]',[retrieval_table{injected_flag(:,2),4}]');
+[p0,~] = ranksum([retrieval_table{ctrl_flag(:,1),4}]',[retrieval_table{injected_flag(:,1),4}]');
+[p1,~] = ranksum([retrieval_table{ctrl_flag(:,2),4}]',[retrieval_table{injected_flag(:,2),4}]');
 
 % plot data
 f1 = figure;
@@ -89,28 +89,9 @@ yline([1.65, 1.65],'Color','black','LineStyle','--')
 xticks([1.5, 3.5]), xticklabels({'inital rules', 'second rules'}), ylim([0.5 4.5]), xlim([0.5 4.5])
 
 max_initial = max(max([retrieval_table{ctrl_flag(:,1),4}]',[retrieval_table{injected_flag(:,1),4}]'));
-plot([1 2],[max_initial+0.1 max_initial+0.1], 'k')
-if p0 <= 0.05 && p0 > 0.01
-    text(1.5, max_initial+0.2,'*','HorizontalAlignment','center')
-elseif p0 <= 0.01 && p0 > 0.001
-    text(1.5, max_initial+0.2,'**','HorizontalAlignment','center')
-elseif p0 <= 0.001
-    text(1.5, max_initial+0.2,'***','HorizontalAlignment','center')
-else
-    text(1.5, max_initial+0.2,'ns','HorizontalAlignment','center')
-end
-
+plotStatistics(p0,max_initial,1,2)
 max_second = max(max([retrieval_table{ctrl_flag(:,2),4}]',[retrieval_table{injected_flag(:,2),4}]'));
-plot([3 4],[max_second+0.1 max_second+0.1], 'k')
-if p1 <= 0.05 && p1 > 0.01
-    text(3.5, max_second+0.2,'*','HorizontalAlignment','center')
-elseif p1 <= 0.01 && p1 > 0.001
-    text(3.5, max_second+0.2,'**','HorizontalAlignment','center')
-elseif p1 <= 0.001
-    text(3.5, max_second+0.2,'***','HorizontalAlignment','center')
-else
-    text(3.5, max_second+0.2,'ns','HorizontalAlignment','center')
-end
+plotStatistics(p1,max_second,3,4)
 
 legend('saline','CNO','Location','southeast'); legend('boxoff')
 %savefig(f1, fullfile('Z:\Josephine\Master-Thesis_Figures\Cohort_18','retrieval_test.fig'))
@@ -216,8 +197,8 @@ break_table = vertcat(break_table_before,break_table_after);
 % some statistics
 before_flag = [break_table{:,5}]' == [1,2];
 after_flag = [break_table{:,5}]' == [3,4];
-[p3,h3] = ranksum([break_table{before_flag(:,1),4}]',[break_table{after_flag(:,1),4}]');
-[p4,h4] = ranksum([break_table{before_flag(:,2),4}]',[break_table{after_flag(:,2),4}]');
+[p1,~] = ranksum([break_table{before_flag(:,1),4}]',[break_table{after_flag(:,1),4}]');
+[p2,~] = ranksum([break_table{before_flag(:,2),4}]',[break_table{after_flag(:,2),4}]');
 
 % plot data
 f2 = figure;
@@ -235,28 +216,9 @@ yline([1.65, 1.65],'Color','black','LineStyle','--')
 xticks([1.5, 3.5]), xticklabels({'before break', 'after break'})
 
 max_saline = max([break_table{before_flag(:,1),4}]');
-plot([1 3],[max_saline*1.05 max_saline*1.05], 'k')
-if p3 <= 0.05 && p3 > 0.01
-    text(2, max_saline*1.1,'*','HorizontalAlignment','center')
-elseif p3 <= 0.01 && p3 > 0.001
-    text(2, max_saline*1.1,'**','HorizontalAlignment','center')
-elseif p3 <= 0.001
-    text(2, max_saline*1.1,'***','HorizontalAlignment','center')
-else
-    text(2, max_saline*1.1,'ns','HorizontalAlignment','center')
-end
-
+plotStatistics(p1,max_saline,1,3)
 max_cno = max([break_table{before_flag(:,2),4}]');
-plot([2 4],[max_cno*1.05 max_cno*1.05], 'k')
-if p4 <= 0.05 && p4 > 0.01
-    text(3, max_cno*1.1,'*','HorizontalAlignment','center')
-elseif p4 <= 0.01 && p4 > 0.001
-    text(3, max_cno*1.1,'**','HorizontalAlignment','center')
-elseif p4 <= 0.001
-    text(3, max_cno*1.1,'***','HorizontalAlignment','center')
-else
-    text(3, max_cno*1.1,'ns','HorizontalAlignment','center')
-end
+plotStatistics(p2,max_cno,2,4)
 
 legend('saline','CNO','Location','southwest'); legend('boxoff')
 %savefig(f2, fullfile('Z:\Josephine\Master-Thesis_Figures\Cohort_18','break.fig'))
@@ -497,9 +459,11 @@ backlights_table_after(1:length(backlights_table_after),5) = {2};
 
 % combine both tables
 backlights_table = vertcat(backlights_table_before,backlights_table_after);
+backlights_table(1:end,6) = num2cell(repmat([1,2]',height(backlights_table)/2,1));
 
 % some statistics
-[p2,h2] = ranksum([backlights_table_before{:,4}]',[backlights_table_after{:,4}]');
+%[p,~] = ranksum([backlights_table_before{:,4}]',[backlights_table_after{:,4}]');
+p_paired = anova1([backlights_table{:,4}],[backlights_table{:,5}],'off');
 
 % plot data
 f3 = figure; boxchart([backlights_table{:,5}]', [backlights_table{:,4}]','BoxFaceColor','k')
@@ -508,15 +472,6 @@ yline([1.65, 1.65],'Color','black','LineStyle','--')
 xticks([1, 2]), xticklabels({'backlights on', 'backlights off'})
 
 max_backlights = max([backlights_table{:,4}]');
-plot([1 2],[max_backlights*1.05 max_backlights*1.05], 'k')
-if p2 <= 0.05 && p2 > 0.01
-    text(1.5, max_backlights*1.1,'*','HorizontalAlignment','center')
-elseif p2 <= 0.01 && p2 > 0.001
-    text(1.5, max_backlights*1.1,'**','HorizontalAlignment','center')
-elseif p2 <= 0.001
-    text(1.5, max_backlights*1.1,'***','HorizontalAlignment','center')
-else
-    text(1.5, max_backlights*1.1,'ns','HorizontalAlignment','center')
-end
+plotStatistics(p_paired,max_backlights,1,2)
 
 %savefig(f3, fullfile('Z:\Josephine\Master-Thesis_Figures\Cohort_18','backlights.fig'))

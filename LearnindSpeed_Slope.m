@@ -30,7 +30,8 @@ Slope20_ini_mean = mean(Slope20_ini,2,'omitnan');
 Slope20_swi_mean = mean(Slope20_swi,2,'omitnan');
 
 %[p,~] = ranksum(Slope20_ini,Slope20_swi);
-p_paired = signrank(Slope20_ini(1,1:length(Slope20_swi)), Slope20_swi);
+%p_paired = signrank(Slope20_ini(1,1:length(Slope20_swi)), Slope20_swi);
+[~,p_paired] = ttest(Slope20_ini(1,1:length(Slope20_swi)), Slope20_swi);
 
 %% line plot
 figure, hold on

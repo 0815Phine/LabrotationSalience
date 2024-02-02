@@ -118,6 +118,8 @@ legend('naive','expert'); legend('boxoff')
 
 % line plot
 f3 = figure; hold on
+%boxchart(ones(1,length(naivetrials_ini)),naivetrials_ini,'BoxFaceColor','k','MarkerStyle','none','BoxWidth',0.2)
+%boxchart(ones(1,length(experttrials_ini))+1,experttrials_ini,'BoxFaceColor','k','MarkerStyle','none','BoxWidth',0.2)
 for i = 1:length(experttrials_ini)
     plot([1,2],[naivetrials_ini(i),experttrials_ini(i)],'Color','k')
 end

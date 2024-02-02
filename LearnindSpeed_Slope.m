@@ -43,7 +43,7 @@ for i = 1:length(Slope20_swi)
     plot([1,2],[Slope20_ini(i),Slope20_swi(i)],'Color','k')
 end
 
-plot([1,2],[Slope20_ini_mean, Slope20_swi_mean],'LineWidth', 1.5)
+plot([1,2],[mean(Slope20_ini(1:length(Slope20_swi))), Slope20_swi_mean],'LineWidth', 1.5)
 
 slope_all = horzcat(Slope20_ini,Slope20_swi);
 slope_max = max(slope_all);

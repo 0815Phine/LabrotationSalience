@@ -200,7 +200,7 @@ for i = 1:length(Speed_swi_20)
     plot([1,2],[Speed_ini_20(i),Speed_swi_20(i)],'Color','k')
 end
 % plot the mean and statistics
-plot([1,2],[speed_mean(1,4), speed_mean(2,4)],'LineWidth', 1.5)
+plot([1,2],[mean(Speed_ini_20(1:length(Speed_swi_20))), speed_mean(2,4)],'LineWidth', 1.5)
 %[p,~] = ranksum(Speed_ini_20, Speed_swi_20);
 %p_paired = signrank(Speed_ini_20(1,1:length(Speed_swi_20)), Speed_swi_20);
 [~,p_paired] = ttest(Speed_ini_20(1,1:length(Speed_swi_20)), Speed_swi_20);

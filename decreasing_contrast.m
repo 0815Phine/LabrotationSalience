@@ -10,6 +10,7 @@ catch
     return
 end
 
+%%
 % load Cohort Data
 % add the cohort you want to analyze
 cohortFlag = 14;
@@ -37,8 +38,10 @@ for mf = mouseflag
 end
 
 %% plot data
-f1 = figure; boxchart(categorical(table_last_four(:,2)), [table_last_four{:,4}]','BoxFaceColor', 'k','MarkerStyle','.','MarkerColor','k')
-hold on; xticklabels({'20','16','12','10','8','6','4','2'})
+f1 = figure; hold on; 
+boxchart(categorical(table_last_four(:,2)), [table_last_four{:,4}]','BoxFaceColor', 'k','MarkerStyle','none','MarkerColor','k')
+scatter(categorical(table_last_four(:,2)), [table_last_four{:,4}]','k', '.')
+xticklabels({'20','16','12','10','8','6','4','2'})
 title('Population Performance for last four sessions in each stage (n=8)')
 xlabel('contrast [mm]')
 ylabel('d prime')

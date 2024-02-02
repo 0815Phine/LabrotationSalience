@@ -159,14 +159,16 @@ arrayfun(@(c, maxVal)...
 %xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
 
 % Boxcharts (initial and switched rule)
-f3 = figure; boxchart(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:), 'BoxFaceColor', 'k')
-hold on; boxchart(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:))
-xlabel('contrast [mm]')
+f3 = figure; boxchart(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:), 'BoxFaceColor', 'k', 'MarkerStyle', 'none')
+hold on; boxchart(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:), 'BoxFaceColor', [0.5,0.5,0.5], 'MarkerStyle', 'none')
+scatter(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:),'k','.')
+scatter(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:),'MarkerEdgeColor', [0.5,0.5,0.5],'Marker','.')
+xlabel('Contrast [mm]')
 ylabel('Trials to expert')
 title('Learning time over contrast')
 %xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
-xlim([10 22])
-legend('Initial rule','Switched rule','Location','southwest')
+xlim([10 22]); set ( gca, 'xdir', 'reverse')
+legend('Conditioning','Reversal','Location','southeast','Box','off')
 
 %% Comparison between initial and switched rule
 % compare the learning time as a factor between the switched and initial rule

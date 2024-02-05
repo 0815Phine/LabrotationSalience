@@ -23,10 +23,10 @@ for cohortIDX = 1:length(cohorts)
     Slope20_ini = horzcat(Slope20_ini, cohort_Data.(FieldofChoice{1}));
 end
 
-%Slope20_ini_std = std(Slope20_ini,0,2,'omitnan');
+Slope20_ini_std = std(Slope20_ini,0,2,'omitnan');
 Slope20_ini_mean = mean(Slope20_ini,2,'omitnan');
 
-%Slope20_sec_std = std(Slope20_sec,0,2,'omitnan');
+Slope20_sec_std = std(Slope20_swi,0,2,'omitnan');
 Slope20_swi_mean = mean(Slope20_swi,2,'omitnan');
 
 %[p,~] = ranksum(Slope20_ini,Slope20_swi);
@@ -36,18 +36,20 @@ Slope20_swi_mean = mean(Slope20_swi,2,'omitnan');
 %% line plot
 figure, hold on
 
-xvalues = ones(1,length(Slope20_ini)); scatter(xvalues,Slope20_ini, 'k','filled')
-xvalues = ones(1,length(Slope20_swi)); scatter(xvalues+1,Slope20_swi, 'k','filled'),
+%xvalues = ones(1,length(Slope20_ini)); scatter(xvalues,Slope20_ini, 'k','filled')
+%xvalues = ones(1,length(Slope20_swi)); scatter(xvalues+1,Slope20_swi, 'k','filled'),
 
 for i = 1:length(Slope20_swi)
     plot([1,2],[Slope20_ini(i),Slope20_swi(i)],'Color','k')
 end
 
-plot([1,2],[mean(Slope20_ini(1:length(Slope20_swi))), Slope20_swi_mean],'LineWidth', 1.5)
+%plot([1,2],[mean(Slope20_ini(1:length(Slope20_swi))), Slope20_swi_mean],'LineWidth', 1.5)
 
 slope_all = horzcat(Slope20_ini,Slope20_swi);
 slope_max = max(slope_all);
 plotStatistics(p_paired,slope_max,1,2)
+errorbar(0.9,mean(Slope20_ini(1:length(Slope20_swi))),Slope20_ini_std,'o','Color','k')
+errorbar(2.1,Slope20_swi_mean,Slope20_sec_std,'o','Color','k')
 
 title('learning speed per animal')
 xticks([1,2]), xticklabels({'initial rule','switched rule'})

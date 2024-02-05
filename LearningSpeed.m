@@ -193,8 +193,8 @@ f4 = figure; hold on
 Speed_ini_20 = Speed_ini_contrast(1,Speed_ini_contrast(2,:)==20);
 Speed_swi_20 = Speed_swi_contrast(1,Speed_swi_contrast(2,:)==20);
 % plot all individual animals
-xvalues = ones(1,length(Speed_ini_20)); scatter(xvalues,Speed_ini_20, 'k','filled')
-xvalues = ones(1,length(Speed_swi_20)); scatter(xvalues+1,Speed_swi_20, 'k','filled')
+%xvalues = ones(1,length(Speed_ini_20)); scatter(xvalues,Speed_ini_20, 'k','filled')
+%xvalues = ones(1,length(Speed_swi_20)); scatter(xvalues+1,Speed_swi_20, 'k','filled')
 % connect the pairs
 % -> the logic of the Speed-array guarantes that animal 1 in the initial array is he same animal 1 in the switched array
 % -> this might not be true if the input data is changes!!
@@ -207,6 +207,8 @@ plot([1,2],[mean(Speed_ini_20(1:length(Speed_swi_20))), speed_mean(2,4)],'LineWi
 %p_paired = signrank(Speed_ini_20(1,1:length(Speed_swi_20)), Speed_swi_20);
 [~,p_paired] = ttest(Speed_ini_20(1,1:length(Speed_swi_20)), Speed_swi_20);
 plotStatistics(p_paired, speed_max_swi(4), 1, 2)
+errorbar(0.9,mean(Speed_ini_20(1:length(Speed_swi_20))),speed_std(1,4),'o','Color','k')
+errorbar(2.1,mean(Speed_swi_20),speed_std(2,4),'o','Color','k')
 % add labels and title
 title('trials to expert per animal')
 xticks([1,2]), xticklabels({'initial rule','switched rule'})

@@ -16,7 +16,7 @@
 % -> this means std and mean have to be calculated with pooled cohorts (see later sections)
 
 % add cohorts you want to analyze
-cohorts = [11, 14, 15, 16, 17, 18, 19];
+cohorts = [11, 12, 15, 16, 18, 19];
 FieldofChoice = {'intersec_initial', 'intersec_second'};
 
 % we will create two cells for each rule set
@@ -89,7 +89,7 @@ end
 %% Reshape Speed-cell according to contrast
 % add the contrast used for each cohort, keep the same shape as used for the cohorts variable
 contrast16 = [14,16];
-contrastOrder = [20,20,12,NaN,20,NaN,NaN];
+contrastOrder = [20,20,12,NaN,NaN,NaN];
 
 % this part adds the contrast value to the cell array
 for contrastIDX = 1:length(contrastOrder)
@@ -116,8 +116,8 @@ for rowIDX = 1:height(Speed_ini_contrast)
     Speed_swi_contrast{rowIDX,4} = horzcat(Speed_co16{1},Speed_co16{2});
 end
 % then we remove cohort 18 and 19 (only important for later analysis)
-Speed_ini_contrast(:,6:7) = [];
-Speed_swi_contrast(:,6:7) = [];
+Speed_ini_contrast(:,end-1:end) = [];
+Speed_swi_contrast(:,end-1:end) = [];
 % change the format
 Speed_ini_contrast = cell2mat(Speed_ini_contrast);
 Speed_swi_contrast = cell2mat(Speed_swi_contrast);

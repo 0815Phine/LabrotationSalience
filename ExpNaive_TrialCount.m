@@ -13,7 +13,7 @@
 
 %% trials per session initial rule (should be called P3.2) expert vs. naive
 % add the cohorts you want to analyze
-cohortFlag = [11, 14, 17];
+cohortFlag = [11, 12];
 numCohorts = length(cohortFlag);
 numMice = arrayfun(@(x) length(animalData.cohort(x).animal), cohortFlag);
 
@@ -41,7 +41,7 @@ for cohortIdx = 1:numCohorts
 end
 
 % this removes the the 17th row as the animal did not completed the stage (optional)
-alltrials_ini(17,:) = [];
+%alltrials_ini(17,:) = [];
 
 % calculate mean trials for both conditions
 naivetrials_ini = mean(alltrials_ini(:,1:numSes), 2);
@@ -54,7 +54,7 @@ ztrials_ini = zscore(alltrials_ini,0,2);
 
 %% trials per session second rule (should be called P3.4) expert vs. naive
 % add the cohorts you want to analyze
-cohortFlag = 11;
+%cohortFlag = 11;
 numCohorts = length(cohortFlag);
 numMice = arrayfun(@(x) length(animalData.cohort(x).animal), cohortFlag);
 
@@ -128,8 +128,8 @@ end
 plot([1,2],[mean(naivetrials_ini),mean(experttrials_ini)],'LineWidth',1.5)
 maxexpert = max(experttrials_ini);
 plotStatistics(p1,maxexpert,1,2)
-title('Trials per animal')
-xticks([1 2]); xticklabels({'naive','expert'})
+title('Trials per session', 'Conditioning')
+xticks([1 2]); xticklabels({'Naive','Expert'})
 ylabel('Trials')
 
 %% plot data switched rule

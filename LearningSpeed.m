@@ -161,8 +161,8 @@ arrayfun(@(c, maxVal)...
 % Boxcharts (initial and switched rule)
 f3 = figure; boxchart(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:), 'BoxFaceColor', 'k', 'MarkerStyle', 'none')
 hold on; boxchart(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:), 'BoxFaceColor', [0.5,0.5,0.5], 'MarkerStyle', 'none')
-scatter(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:),'k','.')
-scatter(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:),'MarkerEdgeColor', [0.5,0.5,0.5],'Marker','.')
+%scatter(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:),'k','.')
+%scatter(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:),'MarkerEdgeColor', [0.5,0.5,0.5],'Marker','.')
 xlabel('Contrast [mm]')
 ylabel('Trials to expert')
 title('Learning time over contrast')
@@ -173,9 +173,9 @@ legend('Conditioning','Reversal','Location','southeast','Box','off')
 %% Comparison between initial and switched rule
 % compare the learning time as a factor between the switched and initial rule
 % first adjust the speed_ini_contrast array so it only contains animals trained on both rules
-% -> for now this is hard-coded
+% -> for now this is hard-coded !!!!
 speed_ini_adjust = Speed_ini_contrast;
-speed_ini_adjust(:,27:end) = []; speed_ini_adjust(:,23) = []; speed_ini_adjust(:,16:20) = []; speed_ini_adjust(:,7:14) = [];
+speed_ini_adjust(:,21) = []; speed_ini_adjust(:,14:18) = [];
 % now we calculate the factor for each contrast and compare them to contrast 20mm
 factor = arrayfun(@(c) Speed_swi_contrast(1,Speed_swi_contrast(2,:)==c)./speed_ini_adjust(1,speed_ini_adjust(2,:)==c), deltaA, 'UniformOutput', false);
 factor_mean = mean([factor{:}]);
@@ -210,8 +210,8 @@ plotStatistics(p_paired, speed_max_swi(4), 1, 2)
 errorbar(0.9,mean(Speed_ini_20(1:length(Speed_swi_20))),speed_std(1,4),'o','Color','k')
 errorbar(2.1,mean(Speed_swi_20),speed_std(2,4),'o','Color','k')
 % add labels and title
-title('trials to expert per animal')
-xticks([1,2]), xticklabels({'initial rule','switched rule'})
+title('Learning time per animal')
+xticks([1,2]), xticklabels({'Conditioning','Reversal'})
 ylabel('Trials to expert')
 
 %% Reshape Speed-cell for DREADD-analysis

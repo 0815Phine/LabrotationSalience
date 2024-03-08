@@ -13,14 +13,15 @@
 %% create slope arrays
 % ATTENTION: to run this script animalData.mat has do be loaded into the workspace
 % load cohort-data for 20mm contrast
-cohorts = [11, 14, 17];
+cohorts = [11, 12];
 FieldofChoice = {'slope_initial', 'slope_second'};
 
 Slope20_ini = [];
-Slope20_swi = horzcat(animalData.cohort(11).animal.(FieldofChoice{2}));
+Slope20_swi = [];
 for cohortIDX = 1:length(cohorts)
     cohort_Data = animalData.cohort(cohorts(cohortIDX)).animal;
     Slope20_ini = horzcat(Slope20_ini, cohort_Data.(FieldofChoice{1}));
+    Slope20_swi = horzcat(Slope20_swi, cohort_Data.(FieldofChoice{2}));
 end
 
 Slope20_ini_std = std(Slope20_ini,0,2,'omitnan');
@@ -31,7 +32,7 @@ Slope20_swi_mean = mean(Slope20_swi,2,'omitnan');
 
 %[p,~] = ranksum(Slope20_ini,Slope20_swi);
 %p_paired = signrank(Slope20_ini(1,1:length(Slope20_swi)), Slope20_swi);
-[~,p_paired] = ttest(Slope20_ini(1,1:length(Slope20_swi)), Slope20_swi);
+[~,p_paired] = ttest(Slope20_ini, Slope20_swi);
 
 %% line plot
 figure, hold on
@@ -51,6 +52,6 @@ plotStatistics(p_paired,slope_max,1,2)
 errorbar(0.9,mean(Slope20_ini(1:length(Slope20_swi))),Slope20_ini_std,'o','Color','k')
 errorbar(2.1,Slope20_swi_mean,Slope20_sec_std,'o','Color','k')
 
-title('learning speed per animal')
-xticks([1,2]), xticklabels({'initial rule','switched rule'})
+title('Learning speed per animal')
+xticks([1,2]), xticklabels({'Conditioning','Reversal'})
 ylabel('Slope of logistic fit')

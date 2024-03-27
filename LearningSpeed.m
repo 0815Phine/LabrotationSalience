@@ -12,7 +12,7 @@
 
 %% create Speed-cell with speed per animal for each cohort
 % ATTENTION: to run this script animalData.mat has do be loaded into the workspace
-% for contrast=20mm and CNO analysis cohorts have to be pooled later on
+% for contrast=20mm cohorts have to be pooled later on
 % -> this means std and mean have to be calculated with pooled cohorts (see later sections)
 
 % add cohorts you want to analyze

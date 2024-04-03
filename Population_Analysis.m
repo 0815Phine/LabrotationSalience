@@ -92,5 +92,5 @@ yline([1.65, 1.65],'Color','black','LineStyle','--')
 title ('Population performance over trials')
 
 % for cohort 11 & 12
-%plot([471,471],[-1,1.65],'Color','r')
-%plot([1103,1103],[-1,1.65],'Color','r')
+%plot([471,471],[-2,1.65],'Color','r')
+%plot([1103,1103],[-2,1.65],'Color','r')

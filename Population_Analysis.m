@@ -76,11 +76,11 @@ for stageIDX = 1:length(stages)
     trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
     curve1 = trials_dprime_mean + trials_dprime_std;
     curve2 = trials_dprime_mean - trials_dprime_std;
-    % plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'); hold on
-    % plot(201:length(curve2)+200, curve2,'Color','#4d4d4d')
+    %plot(201:length(curve1)+200, curve1,'Color','#4d4d4d'); hold on
+    %plot(201:length(curve2)+200, curve2,'Color','#4d4d4d')
     fill([(1:length(curve1))+200 fliplr((1:length(curve1))+200)], [curve1' fliplr(curve2')],[0 0 .85],...
         'FaceColor',color_map(stageIDX,:), 'EdgeColor','none','FaceAlpha',0.5); hold on
-    plot((1:length(trials_dprime_mean))+200,trials_dprime_mean, 'Color', 'k', 'LineWidth', 2)
+    plot((1:length(trials_dprime_mean))+200,trials_dprime_mean, 'Color', color_map(stageIDX,:), 'LineWidth', 2)
 
     alldvalues = NaN(max_dvalue,sum(numMice));
 end

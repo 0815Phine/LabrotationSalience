@@ -12,17 +12,23 @@
 % end
 
 %% trials per session initial rule (should be called P3.2) expert vs. naive
+% choose cohorts
+cohorts = arrayfun(@(x) num2str(x), 1:numel(animalData.cohort), 'UniformOutput', false);
+answer = listdlg('ListString',cohorts,'PromptString','Choose your cohort.');
+cohorts = cellfun(@str2double, cohorts(answer));
+%cohortData = horzcat(animalData.cohort(cohorts).animal);
+
 % add the cohorts you want to analyze
-cohortFlag = [11, 12];
-numCohorts = length(cohortFlag);
-numMice = arrayfun(@(x) length(animalData.cohort(x).animal), cohortFlag);
+%cohortFlag = [11, 12];
+%numCohorts = length(cohortFlag);
+numMice = arrayfun(@(x) length(animalData.cohort(x).animal), cohorts);
 
 % specify the number of sessions you want to analyze for each condition
 numSes = 4;
 
 alltrials_ini = NaN (sum(numMice),numSes*2);
-for cohortIdx = 1:numCohorts
-    cohortData = animalData.cohort(cohortFlag(cohortIdx)).animal;
+for cohortIdx = 1:length(cohorts)
+    cohortData = animalData.cohort(cohorts(cohortIdx)).animal;
     mouseFlag = length(cohortData);
 
     for mouseIdx = 1:mouseFlag
@@ -55,15 +61,15 @@ ztrials_ini = zscore(alltrials_ini,0,2);
 %% trials per session second rule (should be called P3.4) expert vs. naive
 % add the cohorts you want to analyze
 %cohortFlag = 11;
-numCohorts = length(cohortFlag);
-numMice = arrayfun(@(x) length(animalData.cohort(x).animal), cohortFlag);
+%numCohorts = length(cohortFlag);
+%numMice = arrayfun(@(x) length(animalData.cohort(x).animal), cohortFlag);
 
 % specify the number of sessions you want to analyze for each condition
-numSes = 4;
+%numSes = 4;
 
 alltrials_swi = NaN (sum(numMice),numSes*2);
-for cohortIdx = 1:numCohorts
-    cohortData = animalData.cohort(cohortFlag(cohortIdx)).animal;
+for cohortIdx = 1:length(cohorts)
+    cohortData = animalData.cohort(cohorts(cohortIdx)).animal;
     mouseFlag = length(cohortData);
 
     for mouseIdx = 1:length(cohortData)
@@ -91,28 +97,28 @@ ztrials_swi = zscore(alltrials_swi,0,2);
 
 %% plot data initial rule
 % 3d bar plot
-f1 = figure; trialbars = bar3(ztrials_ini);
-numBars = size(ztrials_ini,1);
-numSets = size(ztrials_ini,2);
-for i = 1:numSets
-    zdata = ones(6*numBars,4);
-    k = 1;
-    for j = 0:6:(6*numBars-6)
-      zdata(j+1:j+6,:) = ztrials_ini(k,i);
-      k = k+1;
-    end
-    set(trialbars(i),'Cdata',zdata)
-end
-colorbar
-xlabel('Sessions'); xticks([]); xticklabels([])
-ylabel('Animals'); yticks([]); yticklabels([])
-title('Trialcount initial rule')
+%f1 = figure; trialbars = bar3(ztrials_ini);
+%numBars = size(ztrials_ini,1);
+%numSets = size(ztrials_ini,2);
+%for i = 1:numSets
+%    zdata = ones(6*numBars,4);
+%    k = 1;
+%    for j = 0:6:(6*numBars-6)
+%      zdata(j+1:j+6,:) = ztrials_ini(k,i);
+%      k = k+1;
+%    end
+%    set(trialbars(i),'Cdata',zdata)
+%end
+%colorbar
+%xlabel('Sessions'); xticks([]); xticklabels([])
+%ylabel('Animals'); yticks([]); yticklabels([])
+%title('Trialcount initial rule', 'Conditioning')
 
 % histogram
 f2 = figure; edges = 0:10:150;
 histogram(alltrials_ini(:,1:4),edges); hold on
 histogram(alltrials_ini(:,5:8),edges)
-title('Trial-Histogram initial rule')
+title('Trial-Histogram', 'Conditioning')
 xlabel('Trials')
 legend('naive','expert'); legend('boxoff')
 
@@ -134,38 +140,40 @@ ylabel('Trials')
 
 %% plot data switched rule
 % 3d bar plot
-f4 = figure; trialbars = bar3(ztrials_swi);
-numBars = size(ztrials_swi,1);
-numSets = size(ztrials_swi,2);
-for i = 1:numSets
-    zdata = ones(6*numBars,4);
-    k = 1;
-    for j = 0:6:(6*numBars-6)
-      zdata(j+1:j+6,:) = ztrials_swi(k,i);
-      k = k+1;
-    end
-    set(trialbars(i),'Cdata',zdata)
-end
-colorbar
-xlabel('Sessions'); xticks([]); xticklabels([])
-ylabel('Animals'); yticks([]); yticklabels([])
-title('Trialcount switched rule')
+%f4 = figure; trialbars = bar3(ztrials_swi);
+%numBars = size(ztrials_swi,1);
+%numSets = size(ztrials_swi,2);
+%for i = 1:numSets
+%    zdata = ones(6*numBars,4);
+%    k = 1;
+%    for j = 0:6:(6*numBars-6)
+%      zdata(j+1:j+6,:) = ztrials_swi(k,i);
+%      k = k+1;
+%    end
+%    set(trialbars(i),'Cdata',zdata)
+%end
+%colorbar
+%xlabel('Sessions'); xticks([]); xticklabels([])
+%ylabel('Animals'); yticks([]); yticklabels([])
+%title('Trialcount switched rule', 'Reversal')
 
 % histogram
 f5 = figure; histogram(alltrials_swi(:,1:4),edges); hold on
 histogram(alltrials_swi(:,5:8),edges)
-title('Trial-Histogram switched rule')
+title('Trial-Histogram', 'Reversal')
 xlabel('Trials')
 legend('naive','expert'); legend('boxoff')
 
 % line plot
 f6 = figure; hold on
+errorbar(0.9,mean(naivetrials_swi),std(naivetrials_swi),'o','Color','k')
+errorbar(2.1,mean(experttrials_swi),std(naivetrials_swi),'o','Color','k')
 for i = 1:length(experttrials_swi)
     plot([1,2],[naivetrials_swi(i),experttrials_swi(i)],'Color','k')
 end
 plot([1,2],[mean(naivetrials_swi),mean(experttrials_swi)],'LineWidth',1.5)
 maxexpert = max(experttrials_swi);
 plotStatistics(p2,maxexpert,1,2)
-title('Trials per animal')
-xticks([1 2]); xticklabels({'naive','expert'})
+title('Trials per animal', 'Reversal')
+xticks([1 2]); xticklabels({'Naive','Expert'})
 ylabel('Trials')

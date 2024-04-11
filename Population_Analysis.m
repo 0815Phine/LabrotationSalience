@@ -82,6 +82,8 @@ for stageIDX = 1:length(stages)
         'FaceColor',color_map(stageIDX,:), 'EdgeColor','none','FaceAlpha',0.5); hold on
     plot((1:length(trials_dprime_mean))+200,trials_dprime_mean, 'Color', color_map(stageIDX,:), 'LineWidth', 2)
 
+    alldvalues = NaN(max_dvalue,sum(numMice));
+
     %learntime = find(trials_dprime_mean>1.65,1);
     if strcmp(stages{stageIDX}, 'P3.2')
         learntime = mean(vertcat(cohortData.intersec_initial));
@@ -92,8 +94,6 @@ for stageIDX = 1:length(stages)
     else
         continue
     end
-
-    alldvalues = NaN(max_dvalue,sum(numMice));
 end
 
 xlabel('Trials')

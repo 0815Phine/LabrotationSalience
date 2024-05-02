@@ -127,7 +127,7 @@ f3 = figure; hold on
 %boxchart(ones(1,length(naivetrials_ini)),naivetrials_ini,'BoxFaceColor','k','MarkerStyle','none','BoxWidth',0.2)
 %boxchart(ones(1,length(experttrials_ini))+1,experttrials_ini,'BoxFaceColor','k','MarkerStyle','none','BoxWidth',0.2)
 errorbar(0.9,mean(naivetrials_ini),std(naivetrials_ini),'o','Color','k')
-errorbar(2.1,mean(experttrials_ini),std(naivetrials_ini),'o','Color','k')
+errorbar(2.1,mean(experttrials_ini),std(experttrials_ini),'o','Color','k')
 for i = 1:length(experttrials_ini)
     plot([1,2],[naivetrials_ini(i),experttrials_ini(i)],'Color','k')
 end
@@ -167,7 +167,7 @@ legend('naive','expert'); legend('boxoff')
 % line plot
 f6 = figure; hold on
 errorbar(0.9,mean(naivetrials_swi),std(naivetrials_swi),'o','Color','k')
-errorbar(2.1,mean(experttrials_swi),std(naivetrials_swi),'o','Color','k')
+errorbar(2.1,mean(experttrials_swi),std(experttrials_swi),'o','Color','k')
 for i = 1:length(experttrials_swi)
     plot([1,2],[naivetrials_swi(i),experttrials_swi(i)],'Color','k')
 end

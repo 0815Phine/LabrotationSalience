@@ -10,15 +10,26 @@
 %     return
 % end
 
-%% create Speed-cell with speed per animal for each cohort
+%% Gather information
 % ATTENTION: to run this script animalData.mat has do be loaded into the workspace
 % for contrast=20mm cohorts have to be pooled later on
 % -> this means std and mean have to be calculated with pooled cohorts (see later sections)
 
 % add cohorts you want to analyze
-cohorts = [11, 12, 15, 16];
+cohorts = arrayfun(@(x) num2str(x), 1:numel(animalData.cohort), 'UniformOutput', false);
+answer = listdlg('ListString',cohorts,'PromptString','Choose your cohort (11, 12, 15, 16 for Manuscript-Plots).');
+cohorts = cellfun(@str2double, cohorts(answer));
 FieldofChoice = {'intersec_initial', 'intersec_second'};
 
+if sum(ismember([18, 19], cohorts))
+    error('This code does not work with Cohort 18 or 19, use LearningSpeed_DREADDs.m')
+end
+
+% add the contrast used for each cohort, keep the same shape as used for the cohorts variable
+contrast16 = [14,16];
+contrastOrder = [20,20,12,NaN];
+
+%% create Speed-cell with speed per animal for each cohort
 % we will create two cells for each rule set
 Speed_ini_co = cell(2, length(cohorts));
 Speed_swi_co = cell(2, length(cohorts));
@@ -40,45 +51,6 @@ for cohortIDX = 1:length(cohorts)
         Speed_swi_co{1,cohortIDX}{1} = horzcat(cohort_Data(Flag_14mm).(FieldofChoice{2}));
         Speed_swi_co{1,cohortIDX}{2}  = horzcat(cohort_Data(Flag_16mm).(FieldofChoice{2}));
 
-    % % cohort 18 retreived different intervention and therefore has to be split
-    % elseif cohorts(cohortIDX) == 18
-    %     Speed_ini_co{1,cohortIDX} = cell(1,2);
-    %     Speed_swi_co{1,cohortIDX} = cell(1,2);
-    %     % create a flag for the different interventions
-    %     for mouseIDX = 1:length(cohort_Data)
-    %         session_names{mouseIDX} = cohort_Data(mouseIDX).session_names;
-    %         % counterintuively Saline-animals are the only ones that have CNO written in any session name
-    %         Flag_Saline(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, 'CNO')) > 0;
-    %         Flag_CNO(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, 'CNO')) == 0;
-    %     end
-    %     Speed_ini_co{1,cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{1}));
-    %     Speed_ini_co{1,cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{1}));
-    %     Speed_swi_co{1,cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{2}));
-    %     Speed_swi_co{1,cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{2}));
-
-    % cohort 19 retreived different intervention and therefore has to be split
-    % elseif cohorts(cohortIDX) == 19
-    %     Speed_ini_co{1,cohortIDX} = cell(1,3);
-    %     Speed_swi_co{1,cohortIDX} = cell(1,3);
-    %     % create a flag for the different interventions
-    %     for mouseIDX = 1:length(cohort_Data)
-    %         session_names{mouseIDX} = cohort_Data(mouseIDX).session_names;
-    %         % mCherry and CNO animals can only be seperated manually
-    %         if mouseIDX == 4 || mouseIDX == 8
-    %             Flag_mCherry(mouseIDX,1) = true;
-    %         else
-    %             % counterintuively Saline-animals are the only ones that have CNO written in any session name
-    %             Flag_Saline(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, 'CNO')) > 0;
-    %             Flag_CNO(mouseIDX,1) = sum(contains(session_names{1,mouseIDX}, 'CNO')) == 0;
-    %         end
-    %     end
-    %     Speed_ini_co{1,cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{1}));
-    %     Speed_ini_co{1,cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{1}));
-    %     Speed_ini_co{1,cohortIDX}{3}  = horzcat(cohort_Data(Flag_mCherry).(FieldofChoice{1}));
-    %     Speed_swi_co{1,cohortIDX}{1} = horzcat(cohort_Data(Flag_Saline).(FieldofChoice{2}));
-    %     Speed_swi_co{1,cohortIDX}{2}  = horzcat(cohort_Data(Flag_CNO).(FieldofChoice{2}));
-    %     Speed_swi_co{1,cohortIDX}{3}  = horzcat(cohort_Data(Flag_mCherry).(FieldofChoice{2}));
-
     % the rest can be directly assigned without further preperation
     else
         Speed_ini_co{1,cohortIDX} = horzcat(cohort_Data.(FieldofChoice{1}));
@@ -87,10 +59,6 @@ for cohortIDX = 1:length(cohorts)
 end
 
 %% Reshape Speed-cell according to contrast
-% add the contrast used for each cohort, keep the same shape as used for the cohorts variable
-contrast16 = [14,16];
-contrastOrder = [20,20,12,NaN];
-
 % this part adds the contrast value to the cell array
 for contrastIDX = 1:length(contrastOrder)
     % cohort 16 was trained on two different contrasts
@@ -115,9 +83,7 @@ for rowIDX = 1:height(Speed_ini_contrast)
     Speed_co16 = horzcat(Speed_swi_contrast{rowIDX,4});
     Speed_swi_contrast{rowIDX,4} = horzcat(Speed_co16{1},Speed_co16{2});
 end
-% then we remove cohort 18 and 19 (only important for later analysis)
-% Speed_ini_contrast(:,end-1:end) = [];
-% Speed_swi_contrast(:,end-1:end) = [];
+
 % change the format
 Speed_ini_contrast = cell2mat(Speed_ini_contrast);
 Speed_swi_contrast = cell2mat(Speed_swi_contrast);
@@ -168,7 +134,7 @@ ylabel('Trials to expert')
 title('Learning time over contrast')
 %xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
 xlim([10 22]); set ( gca, 'xdir', 'reverse')
-legend('Conditioning','Reversal','Location','southeast','Box','off')
+legend('Initial rule','Reversed rule','Location','southeast','Box','off')
 
 %% Comparison between initial and switched rule
 % compare the learning time as a factor between the switched and initial rule
@@ -199,19 +165,19 @@ Speed_swi_20 = Speed_swi_contrast(1,Speed_swi_contrast(2,:)==20);
 % -> the logic of the Speed-array guarantes that animal 1 in the initial array is he same animal 1 in the switched array
 % -> this might not be true if the input data is changes!!
 for i = 1:length(Speed_swi_20)
-    plot([1,2],[Speed_ini_20(i),Speed_swi_20(i)],'Color','k')
+    plot([1,2],[Speed_ini_20(i),Speed_swi_20(i)],'Color','k','LineStyle',':')
 end
 % plot the mean and statistics
-plot([1,2],[mean(Speed_ini_20(1:length(Speed_swi_20))), speed_mean(2,4)],'LineWidth', 1.5)
+plot([1,2],[mean(Speed_ini_20(1:length(Speed_swi_20))), speed_mean(2,4)], 'Color', 'k', 'LineWidth', 1.5)
 %[p,~] = ranksum(Speed_ini_20, Speed_swi_20);
 %p_paired = signrank(Speed_ini_20(1,1:length(Speed_swi_20)), Speed_swi_20);
 [~,p_paired] = ttest(Speed_ini_20(1,1:length(Speed_swi_20)), Speed_swi_20);
 plotStatistics(p_paired, speed_max_swi(4), 1, 2)
-errorbar(0.9,mean(Speed_ini_20(1:length(Speed_swi_20))),speed_std(1,4),'o','Color','k')
-errorbar(2.1,mean(Speed_swi_20),speed_std(2,4),'o','Color','k')
+errorbar(0.9,mean(Speed_ini_20(1:length(Speed_swi_20))),speed_std(1,4), 'o', 'MarkerFaceColor', [0.1294 0.4 0.6745], 'Color', [0.1294 0.4 0.6745])
+errorbar(2.1,mean(Speed_swi_20),speed_std(2,4), 'o', 'MarkerFaceColor', [0.9373 0.5412 0.3843], 'Color', [0.9373 0.5412 0.3843])
 % add labels and title
 title('Learning time per animal')
-xticks([1,2]), xticklabels({'Conditioning','Reversal'})
+xticks([1,2]), xticklabels({'Initial rule','Reversed rule'})
 ylabel('Trials to expert')
 
 %% Save all Plots

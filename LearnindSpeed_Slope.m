@@ -41,17 +41,17 @@ figure, hold on
 %xvalues = ones(1,length(Slope20_swi)); scatter(xvalues+1,Slope20_swi, 'k','filled'),
 
 for i = 1:length(Slope20_swi)
-    plot([1,2],[Slope20_ini(i),Slope20_swi(i)],'Color','k')
+    plot([1,2],[Slope20_ini(i),Slope20_swi(i)],'Color','k', 'LineStyle', ':')
 end
 
-plot([1,2],[mean(Slope20_ini(1:length(Slope20_swi))), Slope20_swi_mean],'LineWidth', 1.5)
+plot([1,2],[mean(Slope20_ini(1:length(Slope20_swi))), Slope20_swi_mean], 'Color', 'k', 'LineWidth', 1.5)
 
 slope_all = horzcat(Slope20_ini,Slope20_swi);
 slope_max = max(slope_all);
 plotStatistics(p_paired,slope_max,1,2)
-errorbar(0.9,mean(Slope20_ini(1:length(Slope20_swi))),Slope20_ini_std,'o','Color','k')
-errorbar(2.1,Slope20_swi_mean,Slope20_sec_std,'o','Color','k')
+errorbar(0.9,mean(Slope20_ini(1:length(Slope20_swi))),Slope20_ini_std, 'o', 'MarkerFaceColor', [0.1294 0.4 0.6745], 'Color', [0.1294 0.4 0.6745])
+errorbar(2.1,Slope20_swi_mean,Slope20_sec_std, 'o', 'MarkerFaceColor', [0.9373 0.5412 0.3843], 'Color', [0.9373 0.5412 0.3843])
 
 title('Learning speed per animal')
-xticks([1,2]), xticklabels({'Conditioning','Reversal'})
+xticks([1,2]), xticklabels({'Initial rule','Reversed rule'})
 ylabel('Slope of logistic fit')

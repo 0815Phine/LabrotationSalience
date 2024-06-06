@@ -125,8 +125,8 @@ arrayfun(@(c, maxVal)...
 %xline(6,'--','Performance cutoff','LabelHorizontalAlignment','center','LabelVerticalAlignment','middle')
 
 % Boxcharts (initial and switched rule)
-f3 = figure; boxchart(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:), 'BoxFaceColor', 'k', 'MarkerStyle', 'none')
-hold on; boxchart(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:), 'BoxFaceColor', [0.5,0.5,0.5], 'MarkerStyle', 'none')
+f3 = figure; boxchart(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:), 'BoxFaceColor', [0.1294 0.4 0.6745], 'MarkerStyle', 'none')
+hold on; boxchart(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:), 'BoxFaceColor', [0.9373 0.5412 0.3843], 'MarkerStyle', 'none')
 %scatter(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:),'k','.')
 %scatter(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:),'MarkerEdgeColor', [0.5,0.5,0.5],'Marker','.')
 xlabel('Contrast [mm]')

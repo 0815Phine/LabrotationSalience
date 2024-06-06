@@ -71,7 +71,7 @@ for stageIDX = 1:length(stages)
         clear dvalues
     end
     
-    color_map = [[0.2 0.2 0.2]; [0.4 0.4 0.4]; [0.6 0.6 0.6]; [0.8 0.8 0.8]];
+    color_map = [[0.1294 0.4 0.6745]; [0.9373 0.5412 0.3843]; [0.9922 0.8588 0.7804]; [0.8392 0.3765 0.302]];
     trials_dprime_mean = mean(alldvalues,2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
     trials_dprime_std = std(alldvalues,0,2,'omitnan'); trials_dprime_std(isnan(trials_dprime_std)) =[];
     curve1 = trials_dprime_mean + trials_dprime_std;
@@ -87,10 +87,10 @@ for stageIDX = 1:length(stages)
     %learntime = find(trials_dprime_mean>1.65,1);
     if strcmp(stages{stageIDX}, 'P3.2')
         learntime = mean(vertcat(cohortData.intersec_initial));
-        plot([learntime learntime], [-2 1.65], 'Color', 'r',  'LineWidth', 1.5)
+        plot([learntime learntime], [-2 1.65], 'Color', color_map(stageIDX,:),  'LineWidth', 1.5, 'LineStyle', ':')
     elseif strcmp(stages{stageIDX}, 'P3.4')
         learntime = mean(vertcat(cohortData.intersec_second));
-        plot([learntime learntime], [-2 1.65], 'Color', 'r',  'LineWidth', 1.5)
+        plot([learntime learntime], [-2 1.65], 'Color', color_map(stageIDX,:),  'LineWidth', 1.5, 'LineStyle', ':')
     else
         continue
     end
@@ -101,7 +101,7 @@ ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 %yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
 title ('Population performance over trials')
-%legend
+legend('','Initial rule','','','Reversed rule','Location','southeast','Box','off')
 
 % for cohort 11 & 12
 %plot([471,471],[-2,1.65],'Color','r')

@@ -129,6 +129,25 @@ f3 = figure; boxchart(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:), 'BoxFace
 hold on; boxchart(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:), 'BoxFaceColor', [0.9373 0.5412 0.3843], 'MarkerStyle', 'none')
 %scatter(Speed_ini_contrast(2,:), Speed_ini_contrast(1,:),'k','.')
 %scatter(Speed_swi_contrast(2,:), Speed_swi_contrast(1,:),'MarkerEdgeColor', [0.5,0.5,0.5],'Marker','.')
+for contrastIDX = 1:length(contrastOrder)
+    if length(Speed_ini_contrast(1,Speed_ini_contrast(2,:)==deltaA(contrastIDX))) == length(Speed_swi_contrast(1,Speed_swi_contrast(2,:)==deltaA(contrastIDX)))
+        [~,p] = ttest(Speed_ini_contrast(1,Speed_ini_contrast(2,:)==deltaA(contrastIDX)),...
+            Speed_swi_contrast(1,Speed_swi_contrast(2,:)==deltaA(contrastIDX)));
+    else %% not all animals were trained with both rule sets
+        [p,~] = ranksum(Speed_ini_contrast(1,Speed_ini_contrast(2,:)==deltaA(contrastIDX)),...
+            Speed_swi_contrast(1,Speed_swi_contrast(2,:)==deltaA(contrastIDX)));
+    end
+
+    if p <= 0.05 && p > 0.01
+        text(deltaA(contrastIDX), speed_max_swi(contrastIDX)*1.1,'*','HorizontalAlignment','center','VerticalAlignment','top')
+    elseif p <= 0.01 && p > 0.001
+        text(deltaA(contrastIDX), speed_max_swi(contrastIDX)*1.1,'**','HorizontalAlignment','center','VerticalAlignment','top')
+    elseif p <= 0.001
+        text(deltaA(contrastIDX), speed_max_swi(contrastIDX)*1.1,'***','HorizontalAlignment','center','VerticalAlignment','top')
+    else
+        text(deltaA(contrastIDX), speed_max_swi(contrastIDX)*1.1,'ns','HorizontalAlignment','center')
+    end
+end
 xlabel('Contrast [mm]')
 ylabel('Trials to expert')
 title('Learning time over contrast')

@@ -39,6 +39,9 @@ for stageIDX = 1:length(stages)
         isStage = contains(cohortData(mouseIDX).session_names, stages(stageIDX));
         sesFlag_first = find(isStage, 1, 'first');
         sesFlag_last = find(isStage, 1, 'last');
+        if isempty(sesFlag_first)
+            continue
+        end
 
         if strcmp(stages{stageIDX}, 'P3.2')
             trialFlag = sum(cellfun(@numel, cohortData(mouseIDX).Lick_Events(sesFlag_first:sesFlag_last)));
@@ -59,7 +62,7 @@ for stageIDX = 1:length(stages)
             if trialFlag == 0
                 continue
             else
-                dvalues(trialFlag:end) = [];
+                dvalues(trialFlag+1:end) = [];
                 dvalues(1:200) = [];
             end
         end

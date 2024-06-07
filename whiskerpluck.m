@@ -62,14 +62,18 @@ end
 contrast = [20 16 14 12 8];
 for i = contrast
     contFlag = whiskerpluck_table(:,1) == i;
-    groupFlag = contFlag+(whiskerpluck_table(:,2)<2);
-    prepluckFlag = whiskerpluck_table(contFlag, 2) < 0;
-    postpluckFlag = whiskerpluck_table(contFlag, 2) == 1;
+    groupFlag = contFlag+(whiskerpluck_table(:,2)<2); %to tell anova to analyze three before and first after
+    prepluckFlag = whiskerpluck_table(:, 2) == -1; prepluckFlag = contFlag+prepluckFlag == 2;
+    postpluckFlag = whiskerpluck_table(:, 2) == 1; postpluckFlag = contFlag+postpluckFlag == 2;
     ii = [false, ismember(contrast, i)];
     p(1,ii) = anova1(whiskerpluck_table(groupFlag == 2,3),whiskerpluck_table(groupFlag == 2,4),'off');
-    p(2,ii) = ranksum(whiskerpluck_table(prepluckFlag,3),whiskerpluck_table(postpluckFlag,3));
+    %p(2,ii) = ranksum(whiskerpluck_table(prepluckFlag,3),whiskerpluck_table(postpluckFlag,3));
+    [~,p_paired] = ttest(whiskerpluck_table(prepluckFlag,3),whiskerpluck_table(postpluckFlag,3));
+    p(2,ii) = p_paired;
     if p(1,ii) < 0.05 && p(2,ii) < 0.05
         fprintf('The d prime is significantly different before and after the whiskerpluck for a contrast of %dmm, p =  %.3f\n', i, p(2,ii))
+    else
+        fprintf('The d prime is not significantly different before and after the whiskerpluck for a contrast of %dmm, p =  %.3f\n', i, p(2,ii))
     end
 end
 
@@ -118,7 +122,7 @@ for i= contrast
 
     ii = [false, ismember(contrast, i)];
     iii = [ismember(contrast, i)];
-    %plotStatistics(p(2,ii),dprime_max(iii),1,2)
+    plotStatistics(p(2,ii),dprime_max(iii),1,2)
 
     % savefig(loopf, fullfile('Z:\Josephine\Master-Thesis_Figures\Whiskerpluck',sprintf('whiskerpluck_%d.fig',i)))
 end

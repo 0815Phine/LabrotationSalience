@@ -30,6 +30,8 @@ for cohortIdx = 1:numCohorts
     mouseFlag = length(cohortData);
 
     for mouseIdx = 1:mouseFlag
+        animalNum{mouseIdx} = cohortData(mouseIdx).animalName;
+
         isP6 = contains(cohortData(mouseIdx).session_names,'P3.6');
         isP2 = contains(cohortData(mouseIdx).session_names,'P3.2');
         isP4 = contains(cohortData(mouseIdx).session_names,'P3.4');
@@ -53,6 +55,7 @@ for cohortIdx = 1:numCohorts
 end
 
 % remove NaNs that result from animals not going through the extinction stage
+animalNum(find(isnan(alldprime(:,1)))) = [];
 alldprime(isnan(alldprime(:,1)),:) = [];
 
 %% prepare array for plotting
@@ -60,6 +63,23 @@ mouseFlag = 1:height(alldprime);
 dprime_cond =  cell2mat(arrayfun(@(a) vertcat(alldprime(a,1:numSes)), mouseFlag, 'UniformOutput', false));
 dprime_before =  cell2mat(arrayfun(@(a) vertcat(alldprime(a,numSes+1:numSes*2)), mouseFlag, 'UniformOutput', false));
 dprime_after =  cell2mat(arrayfun(@(a) vertcat(alldprime(a,numSes*2+1:numSes*3)), mouseFlag, 'UniformOutput', false));
+
+%% Repeated measures ANOVA
+Intervention = ["ini","rev","ext"];
+InterventionAno = horzcat(Intervention, Intervention, Intervention, Intervention, Intervention)';
+
+animalNumAno = vertcat(animalNum,animalNum,animalNum);
+animalNumAno = vertcat(animalNumAno(:,1),animalNumAno(:,2),animalNumAno(:,3),animalNumAno(:,4),animalNumAno(:,5));
+
+dprime_table = table(animalNumAno, InterventionAno,...
+    horzcat(alldprime(1,[1 5 9]),alldprime(2,[1 5 9]),alldprime(3,[1 5 9]),alldprime(4,[1 5 9]),alldprime(5,[1 5 9]))',...
+    horzcat(alldprime(1,[2 6 10]),alldprime(2,[2 6 10]),alldprime(3,[2 6 10]),alldprime(4,[2 6 10]),alldprime(5,[2 6 10]))',...
+    horzcat(alldprime(1,[3 7 11]),alldprime(2,[3 7 11]),alldprime(3,[3 7 11]),alldprime(4,[3 7 11]),alldprime(5,[3 7 11]))',...
+    horzcat(alldprime(1,[4 8 12]),alldprime(2,[4 8 12]),alldprime(3,[4 8 12]),alldprime(4,[4 8 12]),alldprime(5,[4 8 12]))',...
+    VariableNames = ["animal","Intervention","t1","t2","t3","t4"]);
+
+rm = fitrm(dprime_table,"t1-t4~animal+Intervention");
+ranova(rm)
 
 %%
 f1 = figure; hold on;

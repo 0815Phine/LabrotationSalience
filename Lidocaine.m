@@ -1,14 +1,14 @@
-clearvars
-close all
-
-startPath = 'Z:\Filippo\Animals';
-try
-    load(fullfile(startPath,'animalData.mat'))
-catch
-    fprintf(2,'\nThe variable "animalData.mat" doesn''t exist.')
-    fprintf(2,'\nYou have to create it first.\n\n')
-    return
-end
+% clearvars
+% close all
+% 
+% startPath = 'Z:\Filippo\Animals';
+% try
+%     load(fullfile(startPath,'animalData.mat'))
+% catch
+%     fprintf(2,'\nThe variable "animalData.mat" doesn''t exist.')
+%     fprintf(2,'\nYou have to create it first.\n\n')
+%     return
+% end
 
 %%
 

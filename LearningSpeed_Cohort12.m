@@ -25,7 +25,7 @@ end
 plot([1,2,3,4],speed_mean,'LineWidth', 1.5, 'Color', 'k')
 
 % plot stage distribution
-color_map = [[0.1294 0.4 0.6745]; [0.9373 0.5412 0.3843]; [0.9922 0.8588 0.7804]; [0.8392 0.3765 0.302]];
+color_map = [[0.1294 0.4 0.6745]; [0.9373 0.5412 0.3843]; [0.1294 0.4 0.6745]; [0.9373 0.5412 0.3843]];
 for stageIDX = 1: height(speeds)
     errorbar(stageIDX,speed_mean(stageIDX), speed_std(stageIDX),...
         'o', 'MarkerFaceColor', color_map(stageIDX,:), 'Color', color_map(stageIDX,:))
@@ -34,11 +34,16 @@ end
 % statistics
 speed_max = arrayfun(@(s) max(speeds(s,:)),1:height(speeds));
 for i = 2:height(speeds)
-    [~,p_paired] = ttest(speeds(1,:), speeds(i,:));
-    plotStatistics(p_paired, max(speed_max)+i*100, 1, i)
+    if i == 2
+        [~,p_paired] = ttest(speeds(1,:), speeds(i,:));
+        plotStatistics(p_paired, max(speed_max)+i*100, 1, i)
+    else
+        [~,p_paired] = ttest(speeds(2,:), speeds(i,:));
+        plotStatistics(p_paired, max(speed_max)+i*100, 2, i)
+    end
 end
 
 % add labels and title
 title('Learning time per animal')
-xticks([1,2,3,4]), xticklabels({'Conditioning','Reversal','2nd reversal','3rd reversal'})
+xticks([1,2,3,4]), xticklabels({'Initial rule','Reversed rule','2nd reversal (initial rule)','3rd reversal (reversed rule)'})
 ylabel('Trials to expert')

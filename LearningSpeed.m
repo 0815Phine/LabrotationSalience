@@ -91,6 +91,14 @@ Speed_swi_contrast = cell2mat(Speed_swi_contrast);
 Speed_swi_contrast(:,Speed_swi_contrast(1,:) == 0) = [];
 Speed_swi_contrast(:,isnan(Speed_swi_contrast(1,:))) = [];
 
+% prompt to remove animal #65
+ dlgTitle    = 'User Question';
+ dlgQuestion = 'Do you want to remove animal #65 (only if you choose Manuscript-cohorts!!)';
+ choice = questdlg(dlgQuestion,dlgTitle,'Yes','No', 'Yes');
+ if strcmpi(choice, 'Yes')
+     Speed_ini_contrast(:,21) = [];
+ end
+
 %% Calculating mean and std for each contrast
 % we call the contrast deltaA to not run into errors with the contrast function
 deltaA = unique(Speed_ini_contrast(2,:));

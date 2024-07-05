@@ -19,6 +19,10 @@ answer = listdlg('ListString',cohorts,'PromptString','Choose your cohort.');
 cohorts = cellfun(@str2double, cohorts(answer));
 cohortData = horzcat(animalData.cohort(cohorts).animal);
 
+if sum(ismember(16, cohorts))
+    error('This code does not work with Cohort 16, use Population_Analysis_Cohort16.m')
+end
+
 %% choose stages
 stages = getstagenames(cohortData);
 answer = listdlg('ListString',stages,'PromptString','Choose stages.');

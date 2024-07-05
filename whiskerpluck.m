@@ -126,3 +126,20 @@ for i= contrast
 
     % savefig(loopf, fullfile('Z:\Josephine\Master-Thesis_Figures\Whiskerpluck',sprintf('whiskerpluck_%d.fig',i)))
 end
+
+%% Performance drop progression
+sesFlagbefore = (whiskerpluck_table(1:120,2)==-1);
+before = whiskerpluck_table(sesFlagbefore,[1 3]);
+sesFlagafter = (whiskerpluck_table(1:120,2)==1);
+after = whiskerpluck_table(sesFlagafter,[1 3]);
+diff = before(:,2)-after(:,2);
+
+% plot difference
+figure; boxchart(before(:,1), diff,'BoxFaceColor', 'k','MarkerColor','k'); hold on
+ylabel('d prime(before) - d prime(after)'); xlabel('Contrast')
+title('Whiskerpluck impact on performance')
+
+% plot performance after
+figure; boxchart(whiskerpluck_table(whiskerpluck_table(:,4)==2,1), whiskerpluck_table(whiskerpluck_table(:,4)==2,3),'BoxFaceColor', 'k','MarkerColor','k'); hold on
+ylabel('d prime'); xlabel('Contrast')
+title('Performance after whiskerpluck')

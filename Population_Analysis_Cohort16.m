@@ -66,7 +66,7 @@ for stageIDX = 1:length(stages)
         clear dvalues
     end
 
-    color_map = [[0.2 0.2 0.2]; [0.8 0.8 0.8]];
+    color_map = [[0.1294 0.4 0.6745]; [0.9373 0.5412 0.3843]];
 
     figure(1)
     trials_dprime_mean = mean(alldvalues(:,contrastFlag==14),2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
@@ -75,7 +75,7 @@ for stageIDX = 1:length(stages)
     curve2 = trials_dprime_mean - trials_dprime_std;
     fill([(1:length(curve1))+200 fliplr((1:length(curve1))+200)], [curve1' fliplr(curve2')],[0 0 .85],...
         'FaceColor',color_map(stageIDX,:), 'EdgeColor','none','FaceAlpha',0.5); hold on
-    plot((1:length(trials_dprime_mean))+200,trials_dprime_mean, 'Color', 'k', 'LineWidth', 2)
+    plot((1:length(trials_dprime_mean))+200,trials_dprime_mean, 'Color', color_map(stageIDX,:), 'LineWidth', 2)
 
     figure(2)
     trials_dprime_mean = mean(alldvalues(:,contrastFlag==16),2,'omitnan'); trials_dprime_mean(isnan(trials_dprime_mean)) =[];
@@ -84,7 +84,29 @@ for stageIDX = 1:length(stages)
     curve2 = trials_dprime_mean - trials_dprime_std;
     fill([(1:length(curve1))+200 fliplr((1:length(curve1))+200)], [curve1' fliplr(curve2')],[0 0 .85],...
         'FaceColor',color_map(stageIDX,:), 'EdgeColor','none','FaceAlpha',0.5); hold on
-    plot((1:length(trials_dprime_mean))+200,trials_dprime_mean, 'Color', 'k', 'LineWidth', 2)
+    plot((1:length(trials_dprime_mean))+200,trials_dprime_mean, 'Color', color_map(stageIDX,:), 'LineWidth', 2)
+
+    if strcmp(stages{stageIDX}, 'P3.2')
+        intersec_initial = vertcat(cohortData.intersec_initial);
+        figure(1)
+        learntime = mean(intersec_initial(contrastFlag == 14));
+        plot([learntime learntime], [-2 1.65], 'Color', color_map(stageIDX,:),  'LineWidth', 1.5, 'LineStyle', ':')
+        figure(2)
+        learntime = mean(intersec_initial(contrastFlag == 16));
+        plot([learntime learntime], [-2 1.65], 'Color', color_map(stageIDX,:),  'LineWidth', 1.5, 'LineStyle', ':')
+    elseif strcmp(stages{stageIDX}, 'P3.4')
+        emptyFlag = arrayfun(@(m) isempty(cohortData(m).intersec_second),1:sum(numMice));
+        cohortData(emptyFlag).intersec_second = NaN;
+        intersec_second = vertcat(cohortData.intersec_second);
+        figure(1)
+        learntime = mean(intersec_second(contrastFlag == 14), 'omitnan');
+        plot([learntime learntime], [-2 1.65], 'Color', color_map(stageIDX,:),  'LineWidth', 1.5, 'LineStyle', ':')
+        figure(2)
+        learntime = mean(intersec_second(contrastFlag == 16), 'omitnan');
+        plot([learntime learntime], [-2 1.65], 'Color', color_map(stageIDX,:),  'LineWidth', 1.5, 'LineStyle', ':')
+    else
+        continue
+    end
 
     alldvalues = NaN(max_dvalue,sum(numMice));
 end
@@ -94,13 +116,15 @@ xlabel('Trials')
 ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 % yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
-title (sprintf('Population performance over trials (Cohort %d; contrast 14mm)', cohorts))
+title('Population performance over trials (contrast 14mm)')
+xlim([200 3055])
 
 figure(2)
 xlabel('Trials')
 ylabel('d prime')
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 % yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
-title (sprintf('Population performance over trials (Cohort %d; contrast 16mm)', cohorts))
+title('Population performance over trials (contrast 16mm)')
+xlim([200 3055])
 
 % xlim([200 3054])

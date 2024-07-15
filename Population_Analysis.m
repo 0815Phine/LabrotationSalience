@@ -109,7 +109,3 @@ yline([1.65, 1.65],'Color','black','LineStyle','--')
 %yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')
 title ('Population performance over trials')
 legend('','Initial rule','','','Reversed rule','Location','southeast','Box','off')
-
-% for cohort 11 & 12
-%plot([471,471],[-2,1.65],'Color','r')
-%plot([1103,1103],[-2,1.65],'Color','r')

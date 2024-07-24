@@ -21,10 +21,9 @@ stages = getstagenames(cohortData);
 answer = listdlg('ListString',stages,'PromptString','Choose stages.');
 stages = stages(answer);
 
-%%
+%% count sessions
 for stageIDX = 1:length(stages)
     for mouseIDX = 1:length(cohortData)
-        % Conditioning
         isStage = contains(cohortData(mouseIDX).session_names, stages(stageIDX));
         numSes = sum(isStage);
 
@@ -39,7 +38,7 @@ end
 % Statistics
 [~,p1] = ttest(SesCountini, SesCountsec);
 
-%% line plot mit errorbars
+%% line plot with errorbars
 figure, hold on
 
 %xvalues = ones(1,length(SesCountini)); scatter(xvalues,SesCountini, 'k','filled')
@@ -56,5 +55,5 @@ errorbar(0.9,mean(SesCountini),std(SesCountini),'o','Color','k')
 errorbar(2.1,mean(SesCountsec),std(SesCountsec),'o','Color','k')
 
 title('Number of sessions per animal')
-xticks([1,2]), xticklabels({'Conditioning','Reversal'})
+xticks([1,2]), xticklabels({'Initial rule','Reversed rule'})
 ylabel('Number of sessions')

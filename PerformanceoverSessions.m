@@ -41,7 +41,7 @@ for stageIDX = 1:length(stages)
         clear dvalues
     end
 
-    color_map = [[0.2 0.2 0.2]; [0.8 0.8 0.8]];
+    color_map = [[0.1294 0.4 0.6745]; [0.9373 0.5412 0.3843]];
     session_dprime_mean = mean(alldvalues,2,'omitnan'); session_dprime_mean(isnan(session_dprime_mean)) =[];
     session_dprime_std = std(alldvalues,0,2,'omitnan'); session_dprime_std(isnan(session_dprime_std)) =[];
     curve1 = session_dprime_mean + session_dprime_std;

@@ -1,6 +1,4 @@
 %% Population trial d'prime initial rules cohort 16
-% FOR THE FOLLOWING SECTIONS THERE IS STILL THE ERROR FOR THE SWITCHED RULE
-% (REMOVING TOO MANY DVALUES FROM THE START)
 
 cohorts = 16;
 cohortData = animalData.cohort(cohorts).animal;

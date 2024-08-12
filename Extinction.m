@@ -35,9 +35,15 @@ for cohortIdx = 1:numCohorts
         isP6 = contains(cohortData(mouseIdx).session_names,'P3.6');
         isP2 = contains(cohortData(mouseIdx).session_names,'P3.2');
         isP4 = contains(cohortData(mouseIdx).session_names,'P3.4');
-        sesFlag_first = find(isP6, 1, 'first');
-        sesFlag_last_rev = find(isP4, 1, 'last');
-        sesFlag_last_cond = find(isP2, 1, 'last');
+
+        if isempty(find(isP6, 1, 'first'))
+            continue
+        else
+            sesFlag_first = find(isP6, 1, 'first');
+            sesFlag_last(mouseIdx) = find(isP6, 1, 'last');
+            sesFlag_last_rev = find(isP4, 1, 'last');
+            sesFlag_last_cond = find(isP2, 1, 'last');
+        end
 
         dprime_cond = cohortData(mouseIdx).dvalues_sessions(sesFlag_last_cond-numSes+1:sesFlag_last_cond);
         dprime_before = cohortData(mouseIdx).dvalues_sessions(sesFlag_last_rev-numSes+1:sesFlag_last_rev);

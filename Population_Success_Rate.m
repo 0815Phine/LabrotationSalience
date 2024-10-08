@@ -55,7 +55,7 @@ for stageIDX = 1:length(stages)
     sucrate.overall =  alloverall_suc;
     xfield = fieldnames(sucrate);
     for fieldIDX = 1:length(xfield)
-        sucrate_mean = mean(sucrate.(xfield{fieldIDX}),2,'omitnan');  sucrate_mean(isnan( sucrate_mean)) =[];
+        sucrate_mean = mean(sucrate.(xfield{fieldIDX}),2,'omitnan');  sucrate_mean(isnan(sucrate_mean)) =[];
         sucrate_std = std(sucrate.(xfield{fieldIDX}),0,2,'omitnan'); sucrate_std(isnan(sucrate_std)) =[];
         curve1 = sucrate_mean + sucrate_std;
         curve2 = sucrate_mean - sucrate_std;

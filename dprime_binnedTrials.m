@@ -53,6 +53,7 @@ for stageIDX = 1:length(stages)
             binned_dprime(binIDX) = db;
             clear db
         end
+        plot((1:length(binned_dprime))*bin_size,binned_dprime, 'Color', color_map(stageIDX,:)), hold on
         all_dprime(1:length(binned_dprime),mouseIDX) = binned_dprime';
         clear binned_dprime
     end
@@ -65,7 +66,7 @@ for stageIDX = 1:length(stages)
 
     % plot data
     fill([(1:length(curve1))*bin_size fliplr((1:length(curve1))*bin_size)], [curve1' fliplr(curve2')],[0 0 .85],...
-        'FaceColor',color_map(stageIDX,:), 'EdgeColor','none','FaceAlpha',0.5); hold on
+        'FaceColor',color_map(stageIDX,:), 'EdgeColor','none','FaceAlpha',0.5)
     plot((1:length(dprime_mean))*bin_size,dprime_mean, 'Color', color_map(stageIDX,:), 'LineWidth', 2)
 
     all_dprime = NaN(20,numMice);

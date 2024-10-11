@@ -75,9 +75,6 @@ for stageIDX = 1:length(stages)
     sucrate.overall =  alloverall_suc;
     xfield = fieldnames(sucrate);
     for fieldIDX = 1:length(xfield)
-        sucrate_mean = mean(sucrate.(xfield{fieldIDX}),2,'omitnan');  sucrate_mean(isnan(sucrate_mean)) =[];
-        sucrate_std = std(sucrate.(xfield{fieldIDX}),0,2,'omitnan'); sucrate_std(isnan(sucrate_std)) =[];
-
         % plot both overall success rates together
         if strcmp(xfield{fieldIDX}, 'overall')
             plot_patch(alloverall_suc, axis_overall, stage_color_map(stageIDX,:), 30, fig_ove_n);
@@ -89,7 +86,7 @@ for stageIDX = 1:length(stages)
             if strcmp(xfield{fieldIDX}, 'go')
                 plot_patch(allgo_suc, axis_go, color_map(fieldIDX,:), 30, fig_ini_n);
                 title (sprintf('Population success rates, %s', stages{stageIDX}))
-                xlabel('Training stage progression'); ylabel('Success rate'); ylim([0 1])
+                xlabel('Training stage progression'); ylabel('Success rate')
             elseif strcmp(xfield{fieldIDX}, 'nogo')
                 plot_patch(allnogo_suc, axis_nogo, color_map(fieldIDX,:), 30, fig_ini_n);
                 xline(mean(nonzeros(insight)), '--k', 'LineWidth', 1.5)
@@ -104,7 +101,7 @@ for stageIDX = 1:length(stages)
             if strcmp(xfield{fieldIDX}, 'go')
                 plot_patch(allgo_suc, axis_go, color_map(fieldIDX,:), 40, fig_rev_n);
                 title (sprintf('Population success rates, %s', stages{stageIDX}))
-                xlabel('Training stage progression'); ylabel('Success rate'), ylim([0 1])
+                xlabel('Training stage progression'); ylabel('Success rate')
             elseif strcmp(xfield{fieldIDX}, 'nogo')
                 plot_patch(allnogo_suc, axis_nogo, color_map(fieldIDX,:), 40, fig_rev_n);
                 xline(mean(nonzeros(insight)), '--k', 'LineWidth', 1.5)
@@ -120,6 +117,8 @@ for stageIDX = 1:length(stages)
         end
         
         % plot 'raw' success rates
+        sucrate_mean = mean(sucrate.(xfield{fieldIDX}),2,'omitnan');  sucrate_mean(isnan(sucrate_mean)) =[];
+        sucrate_std = std(sucrate.(xfield{fieldIDX}),0,2,'omitnan'); sucrate_std(isnan(sucrate_std)) =[];
         curve1 = sucrate_mean + sucrate_std;
         curve2 = sucrate_mean - sucrate_std;
 

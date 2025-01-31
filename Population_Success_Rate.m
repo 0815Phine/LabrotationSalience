@@ -52,7 +52,7 @@ for stageIDX = 1:length(stages)
         allnogo_suc(1:length(nogo_suc),mouseIDX) = nogo_suc;
         axis_nogo{mouseIDX} = linspace(0, 1, length(nogo_suc));
 
-        %find where no-go success rat eincreases by a factor of 5
+        %find where no-go success rate increases by a factor of 5
         insight_idx = NaN;
         for i = 2:length(nogo_suc)
             if nogo_suc(i) >= 5*nogo_suc(i-1) && nogo_suc(i-1) ~= 0

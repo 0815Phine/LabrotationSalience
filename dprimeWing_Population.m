@@ -78,7 +78,7 @@ d_oWf = reshape(alld_oW(:,1:4),[],1); % first 4 with only one wing remaining
 d_tWe = reshape(alld_tW(:,5:8),[],1); % 4 expert sessions
 alldprime = horzcat(d_tWe, d_oWf);
 
-[~,p_paired] = ttest(d_tWe, d_oWf);
+[~,p_paired,ci,stats] = ttest(d_tWe, d_oWf);
 
 % plot data
 figure; hold on
@@ -90,7 +90,7 @@ yline([1.65, 1.65],'Color','black','LineStyle','--')
 xticklabels({'two wings', 'one wing'})
 title('Population performance two wings vs. one wing')
 max_dprime = max(max(alldprime));
-plotStatistics(min(p_paired),max_dprime,1,2)
+plotStatistics(min(p_paired),max_dprime,1,2,'k')
 
 %% Comparison left wing vs. right wing remaining
 % statistics

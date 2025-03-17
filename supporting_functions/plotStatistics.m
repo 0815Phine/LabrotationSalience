@@ -1,4 +1,8 @@
-function plotStatistics(p, max, xedgemin, xedgemax)
+function plotStatistics(p, max, xedgemin, xedgemax, color)
+
+if isempty(color)
+    color = 'k';
+end
 
 if isempty(xedgemax)
     xvalue = xedgemin;
@@ -8,13 +12,13 @@ else
 end
 
 if p <= 0.05 && p > 0.01
-    text(xvalue, max*1.1,'*','HorizontalAlignment','center','VerticalAlignment','top')
+    text(xvalue, max*1.1,'*','HorizontalAlignment','center','VerticalAlignment','top','Color', color)
 elseif p <= 0.01 && p > 0.001
-    text(xvalue, max*1.1,'**','HorizontalAlignment','center','VerticalAlignment','top')
+    text(xvalue, max*1.1,'**','HorizontalAlignment','center','VerticalAlignment','top','Color', color)
 elseif p <= 0.001
-    text(xvalue, max*1.1,'***','HorizontalAlignment','center','VerticalAlignment','top')
+    text(xvalue, max*1.1,'***','HorizontalAlignment','center','VerticalAlignment','top','Color', color)
 else
-    text(xvalue, max*1.1,'ns','HorizontalAlignment','center')
+    text(xvalue, max*1.1,'ns','HorizontalAlignment','center','Color', color)
 end
 
 end

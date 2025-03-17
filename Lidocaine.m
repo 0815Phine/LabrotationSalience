@@ -58,7 +58,7 @@ scatter(dprimeBepa(:,2), dprimeBepa(:,1),'Marker','.','Jitter','on','MarkerEdgeC
 scatter(dprimeLido(:,2), dprimeLido(:,1),'Marker','.','Jitter','on','MarkerEdgeColor','k')
 
 max_bepa = max(dprimeBepa(:,1));
-plotStatistics(p_paired,max_bepa,1,2)
+plotStatistics(p_paired,max_bepa,1,2,'k')
 
 yline([1.65, 1.65],'Color','black','LineStyle','--')
 yline([0, 0],'Color',[.7 .7 .7],'LineStyle','--')

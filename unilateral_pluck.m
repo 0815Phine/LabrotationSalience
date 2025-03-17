@@ -18,7 +18,7 @@ for contrastIDX = 1:length(contrast)
     else
         fprintf('The d prime is not significantly different before and after the whiskerpluck. p =  %.3f\n', p_paired)
     end
-    plotStatistics(p_paired,max(T.before)+(contrastIDX/2),contrastIDX,contrastIDX+3)
+    plotStatistics(p_paired,max(T.before)+(contrastIDX/2),contrastIDX,contrastIDX+3,'k')
 end
 
 yline([1.65, 1.65],'Color','black','LineStyle','--')
